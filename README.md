@@ -10,22 +10,21 @@ Rui Alves - up201905853
 
 Victor Laureano - up201700135
 
-Victor Saldanha - up201907226
+Victor Nunes - up201907226
 
-# Uni Services Scheduler
+# NIterature
+
+#### [Use Case Diagram](https://drive.google.com/file/d/1cPQT_nK10CLIqaA6ZtGefjlM9URxYJof/view)
 
 ## Vision Stament
-For members of the University of Porto
-Who would like to book services related with the university
-The Uni Services Scheduler
-Is an app that allows the members of Up to book, schedule, services from within the different campus.
-To do (see the Product vision template here: https://uxstudioteam.com/ux-blog/product-vision/)
+For members of the University of Porto who would like to seamlessly interact with the library services,
+NIterature is an Utility App that provides an easy way to manage UP's library services, such as books reservations.
+Unlike the library's online catalog, our product provides an user friendly interface, through a convenient mobile application.
 
 ## Main Features
- - Book student's library rooms - Allow students to book a library room.
- - Rent games pavilion - Allow students to book games pavillion, to play soccer with friends for example.
+ - Reserve books - Allow UP members to reserve a book in FEUP library.
+ - Renewal of books reservation - Allow UP members to renew the previously reserved book.
 ...
 
 ## Required API's
-- UP services booking API.
 - Library booking api from sigarra.
