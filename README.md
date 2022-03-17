@@ -3,9 +3,13 @@
 ## Members
 
 Bruno Rosendo - up201906334
+
 João Mesquita - up201906682
+
 Rui Alves - up201905853
+
 Victor Laureano - up201700135
+
 Victor Saldanha - up201907226
 
 # Uni Services Scheduler
