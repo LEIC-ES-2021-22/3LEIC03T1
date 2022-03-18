@@ -1,6 +1,31 @@
-# T03G01
+# T03G01 - NIterature
 
-## Members
+
+NIterature Development Report
+
+Welcome to the documentation pages of the NIterature!
+
+You can find here detailed about the module, from a high-level vision to low-level implementation decisions, a kind of Software Development Report, organized by discipline (as of RUP): 
+
+* Business modeling 
+  * [Product Vision](./docs/ProductVision.md)
+  * [Elevator Pitch]
+* [Requirements](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md)
+  * [Use Case Model](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#Use-case-model)
+  * [User stories](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#User-stories)
+  * [Domain model](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#Domain-model)
+* [Architecture and Design]
+  * [Logical architecture]
+  * [Physical architecture]
+  * [Prototype]
+* [Implementation]
+* [Test]
+* [Configuration and change management]
+* [Project management]
+
+So far, contributions are exclusively made by the initial team, but we hope to open them to the community, in all areas and topics: requirements, technologies, development, experimentation, testing, etc.
+
+### Please contact us! 
 
 Bruno Rosendo - up201906334
 
@@ -12,18 +37,4 @@ Victor Laureano - up201700135
 
 Victor Nunes - up201907226
 
-# NIterature
 
-## Vision Stament
-For members of the University of Porto who would like to seamlessly interact with the library services,
-NIterature is an Utility App that provides an easy way to manage UP's library services, such as books reservations.
-Unlike the library's online catalog, our product provides an user friendly interface, through a convenient mobile application.
-
-## Main Features
- - Reserve books - Allow UP members to reserve books in UP's library.
- - Management and renewal of books reservation - Allow UP members to renew the previously reserved books and check return dates.
- - Search and filter the library's book collection.
-
-## Assumptions and dependencies
-- Library booking api from UPDigital.
-- Federated Authentication (UP)
