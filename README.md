@@ -10,8 +10,8 @@ You can find here detailed about the module, from a high-level vision to low-lev
 * Business modeling 
   * [Product Vision](./docs/ProductVision.md)
   * [Elevator Pitch]
-* [Requirements](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md)
-  * [Use Case Model](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#Use-case-model)
+* [Requirements](./docs/requirements.md)
+  * [Use Case Model](./docs/requirements.md#User-caser-model)
   * [User stories](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#User-stories)
   * [Domain model](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#Domain-model)
 * [Architecture and Design]
