@@ -4,7 +4,7 @@
 ### Use case model 
 
  <p align="center" justify="center">
-  <img src="./images/UseCaseView.png"/>
+  <img src="../images/UseCaseView.png"/>
 </p>
 
 |||
