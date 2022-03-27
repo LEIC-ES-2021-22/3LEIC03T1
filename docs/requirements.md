@@ -44,7 +44,7 @@
 | *Description* | The UP member can download the digital version of a book |
 | *Preconditions* | - The user is logged in. <br> - The book has a digital version available |
 | *Postconditions* | - The user is redirected to a webpage where they can download the book  |
-| *Normal flow* | 1. From the book details page, the user clicks on a *Download to PDF* button <br> 2. The application redirects the user to a webpage where they can download the digital book |
+| *Normal flow* | 1. From the book details page, the user clicks on a *E-Book* button <br> 2. The application redirects the user to a webpage where they can download the digital book |
 | *Alternative flows and exceptions* | 1. If the URL provided by the library is not functional, the user will not be able to download the book's digital version |
 
 
