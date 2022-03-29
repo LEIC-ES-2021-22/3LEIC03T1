@@ -12,8 +12,8 @@ You can find here detailed about the module, from a high-level vision to low-lev
   * [Elevator Pitch]
 * [Requirements](./docs/requirements.md)
   * [Use Case Model](./docs/requirements.md#User-caser-model)
-  * [User stories](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#User-stories)
-  * [Domain model](https://github.com/LEIC-ES-2021-22/templates/blob/main/docs/requirements.md#Domain-model)
+  * [User stories](https://github.com/LEIC-ES-2021-22/3LEIC03T1/issues)
+  * [Domain model](./docs/requirements.md#Domain-model)
 * [Architecture and Design]
   * [Logical architecture]
   * [Physical architecture]
