@@ -27,19 +27,25 @@ class LibraryPageState extends SecondaryPageViewState {
                 child: ElevatedButton(
                     child: Text('Reservas'),
                     onPressed: () {
-                      debugPrint('clicked reservas');
+                      debugPrint('clicked reservations');
                     })),
           ],
         ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          FormTextField(
+          Flexible(
+              child: FormTextField(
             TextEditingController(),
             Icons.search,
             minLines: 1,
             maxLines: 2,
             labelText: 'Pesquisa de Livros',
-            bottomMargin: 30.0,
-          ),
+          )),
+          IconButton(
+            icon: Icon(Icons.tune, color: Theme.of(context).accentColor),
+            onPressed: () {
+              debugPrint('clicked icon');
+            },
+          )
         ])
       ]),
     );
