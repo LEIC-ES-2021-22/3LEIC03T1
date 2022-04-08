@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
+import 'package:uni/view/Widgets/form_text_field.dart';
 
 class LibraryPage extends StatefulWidget {
   @override
@@ -30,7 +31,16 @@ class LibraryPageState extends SecondaryPageViewState {
                     })),
           ],
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [])
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          FormTextField(
+            TextEditingController(),
+            Icons.search,
+            minLines: 1,
+            maxLines: 2,
+            labelText: 'Pesquisa de Livros',
+            bottomMargin: 30.0,
+          ),
+        ])
       ]),
     );
   }
