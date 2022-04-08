@@ -11,19 +11,27 @@ class LibraryPageState extends SecondaryPageViewState {
   @override
   Widget getBody(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 400),
       alignment: Alignment.center,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Biblioteca',
-            style:
-                Theme.of(context).textTheme.headline6.apply(fontSizeDelta: 7),
-          ),
-          // Material(child: ExamFilterMenu()),
-        ],
-      ),
+      child: Column(children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Biblioteca',
+              style:
+                  Theme.of(context).textTheme.headline6.apply(fontSizeDelta: 7),
+            ),
+            Material(
+                child: ElevatedButton(
+                    child: Text('Reservas'),
+                    onPressed: () {
+                      debugPrint('clicked reservas');
+                    })),
+          ],
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [])
+      ]),
     );
   }
 }
