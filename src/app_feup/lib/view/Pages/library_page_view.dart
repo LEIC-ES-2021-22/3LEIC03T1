@@ -31,22 +31,53 @@ class LibraryPageState extends SecondaryPageViewState {
                     })),
           ],
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(
-              child: FormTextField(
-            TextEditingController(),
-            Icons.search,
-            minLines: 1,
-            maxLines: 2,
-            labelText: 'Pesquisa de Livros',
-          )),
-          IconButton(
-            icon: Icon(Icons.tune, color: Theme.of(context).accentColor),
-            onPressed: () {
-              debugPrint('clicked icon');
-            },
-          )
-        ])
+        SizedBox(height: 15),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: TextFormField(
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  autofocus: false,
+                  controller: TextEditingController(),
+                  focusNode: null, // TODO
+                  onFieldSubmitted: (term) {
+                    // TODO
+                  },
+                  textInputAction: null, // TODO
+                  textAlign: TextAlign.left,
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.search),
+                      hintText: 'Penis',
+                      labelText: 'Procure',
+                      contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      enabledBorder: const UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 2))),
+                  validator: (String value) =>
+                      value.isEmpty ? 'Preenche este campo' : null,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                child: IconButton(
+                  icon: Icon(Icons.tune, color: Theme.of(context).accentColor),
+                  onPressed: () {
+                    debugPrint('clicked icon');
+                  },
+                  tooltip: 'Advanced Search',
+                  iconSize: 28,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                ),
+              )
+            ])
       ]),
     );
   }
