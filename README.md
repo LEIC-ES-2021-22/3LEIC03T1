@@ -14,10 +14,10 @@ You can find here detailed about the module, from a high-level vision to low-lev
   * [Use Case Model](./docs/requirements.md#User-caser-model)
   * [User stories](https://github.com/LEIC-ES-2021-22/3LEIC03T1/issues)
   * [Domain model](./docs/requirements.md#Domain-model)
-* [Architecture and Design]
-  * [Logical architecture]
-  * [Physical architecture]
-  * [Prototype]
+* [Architecture and Design](./docs/ArchitectureAndDesign.md)
+  * [Logical architecture](./docs/ArchitectureAndDesign.md#logical-architecture)
+  * [Physical architecture](./docs/ArchitectureAndDesign.md#physical-architecture)
+  * [Prototype](./docs/ArchitectureAndDesign.md#vertical-prototype)
 * [Implementation]
 * [Test]
 * [Configuration and change management]
