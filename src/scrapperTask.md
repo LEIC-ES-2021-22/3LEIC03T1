@@ -41,3 +41,8 @@ isso)
 
 provavelmente teremos de fazer uma funcao como a
 relogin para o catalogo
+
+
+## Objetivo Final.
+Enviar para o catalogo o nome do livro que pesquisamos URL
+https://catalogo.up.pt/F/?func=bor-info&request=Nome+Do+Livro
