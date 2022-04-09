@@ -22,6 +22,6 @@ As of now, our team has implemented a section for the library reservations, whic
 ![LibrarySidebar](../images/library_sidebar.png)
 
 #### Search Page:
-![SearchPage](../limages/ibrary_home.png)
+![SearchPage](../images/library_home.png)
 
 In order to do this, we extended the official UNI app with an extra page in the sidebar, leading to the home page of the project. We then created a new page using Flutter's widgets.
