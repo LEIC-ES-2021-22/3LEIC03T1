@@ -1,5 +1,11 @@
 # Scrapper Implementation Flow
 
+## Objetivo Inicial.
+Enviar para o catalogo o nome do livro que pesquisamos URL
+https://catalogo.up.pt/F/?func=bor-info&request=Nome+Do+Livro
+
+**em network_router.dart temos exemplos de requests a serem feitos.
+
 ## Passos para o parse:
 
 ### Controller
@@ -41,8 +47,3 @@ isso)
 
 provavelmente teremos de fazer uma funcao como a
 relogin para o catalogo
-
-
-## Objetivo Final.
-Enviar para o catalogo o nome do livro que pesquisamos URL
-https://catalogo.up.pt/F/?func=bor-info&request=Nome+Do+Livro
