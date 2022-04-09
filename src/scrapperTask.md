@@ -6,6 +6,19 @@ https://catalogo.up.pt/F/?func=bor-info&request=Nome+Do+Livro
 
 **em network_router.dart temos exemplos de requests a serem feitos.
 
+- Pesquisar por < !-- filename: short-a-body-->
+- Informação: 
+    - 1º td: número do livro na pesquisa (nao usamos, provavelmente)
+    - 2º td: Select row (nao usamos, provavelmente)
+    - 3º td: Autor
+    - 4º td: Título
+    - 5º td: Ano
+    - 6º td: Tipo de documento (eg. Livro, não usamos)
+    - 7º td: Exemplares ( não usamos )
+    - 8º td: Google Books com imagem, isbn, link google, 
+    - 9º td: Image
+    - 10º td: objeto digital
+
 ## Passos para o parse:
 
 ### Controller
