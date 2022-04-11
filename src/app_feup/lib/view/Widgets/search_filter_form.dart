@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tuple/tuple.dart';
-import 'package:uni/view/Widgets/form_text_field.dart';
 
 class SearchFilterForm extends StatefulWidget {
   @override
@@ -12,13 +11,13 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   static final _formKey = GlobalKey<FormState>();
 
   final Map<int, Tuple2<String, String>> sortByFields = {
-    0: Tuple2<String, String>('Título', 'Title'),
-    1: Tuple2<String, String>('Autor', 'Author'),
-    2: Tuple2<String, String>('Ano de lançamento', 'Year'),
+    0: Tuple2<String, String>('Ano de lançamento', 'Year'),
+    1: Tuple2<String, String>('Título', 'Title'),
+    2: Tuple2<String, String>('Autor', 'Author'),
   };
 
   final Map<int, Tuple2<String, String>> languages = {
-    0: Tuple2<String, String>('Todos', 'Any'),
+    0: Tuple2<String, String>('Todas', 'Any'),
     1: Tuple2<String, String>('Português', 'Portuguese'),
     2: Tuple2<String, String>('Inglês', 'English'),
     3: Tuple2<String, String>('Espanhol', 'Spanish'),
@@ -54,17 +53,19 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     11: Tuple2<String, String>('Norma', 'Regulation'),
   };
 
-  SearchFilter sortByFilter;
-  SearchFilter languageFilter;
-  SearchFilter countryFilter;
-  SearchFilter docTypeFilter;
+  DropdownFilter sortByFilter;
+  DropdownFilter languageFilter;
+  DropdownFilter countryFilter;
+  DropdownFilter docTypeFilter;
+
+  static final FocusNode yearNode = FocusNode();
   static final TextEditingController yearController = TextEditingController();
 
   _SearchFilterFormState() {
-    sortByFilter = SearchFilter(sortByFields, 'Ordenar por');
-    languageFilter = SearchFilter(languages, 'Linguagem');
-    countryFilter = SearchFilter(countries, 'País');
-    docTypeFilter = SearchFilter(documentTypes, 'Tipo de Documento');
+    sortByFilter = DropdownFilter(sortByFields, 'Ordenar por');
+    languageFilter = DropdownFilter(languages, 'Linguagem');
+    countryFilter = DropdownFilter(countries, 'País');
+    docTypeFilter = DropdownFilter(documentTypes, 'Tipo de Documento');
   }
 
   @override
@@ -100,21 +101,23 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(dropdownSelector(context, languageFilter));
     formWidgets.add(dropdownSelector(context, countryFilter));
     formWidgets.add(dropdownSelector(context, docTypeFilter));
-    formWidgets.add(FormTextField(
+    formWidgets.add(
+        filterTextField(context, 'Ano de lançamento', 'Todos', yearController));
+    /*formWidgets.add(FormTextField(
       // TODO This is shaky
       yearController,
-      Icons.date_range,
+      null,
       maxLines: 1,
       description: 'Ano de lançamento',
       hintText: 'Ano',
       bottomMargin: 15,
-    ));
+    ));*/
     return formWidgets;
   }
 
-  Widget dropdownSelector(BuildContext context, SearchFilter filter) {
+  Widget dropdownSelector(BuildContext context, DropdownFilter filter) {
     return Container(
-      margin: EdgeInsets.only(bottom: 15, top: 10),
+      margin: EdgeInsets.only(bottom: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -141,15 +144,47 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
       ),
     );
   }
+
+  Widget filterTextField(BuildContext context, String description,
+      String placeholder, TextEditingController controller) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            description,
+            style: Theme.of(context).textTheme.bodyText2,
+            textAlign: TextAlign.left,
+          ),
+          Row(children: <Widget>[
+            Expanded(
+                child: TextFormField(
+              style: Theme.of(context).textTheme.headline6,
+              maxLines: 1,
+              decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).accentColor),
+                ),
+                hintText: placeholder,
+                hintStyle: Theme.of(context).textTheme.subtitle1,
+              ),
+              controller: controller,
+            ))
+          ])
+        ],
+      ),
+    );
+  }
 }
 
-class SearchFilter {
+class DropdownFilter {
   final Map<int, Tuple2<String, String>> optionsMap;
   final List<DropdownMenuItem<int>> optionsList = [];
   String title;
   int selectedOption;
 
-  SearchFilter(this.optionsMap, this.title) {
+  DropdownFilter(this.optionsMap, this.title) {
     this.selectedOption = 0;
     this.loadOptionsList();
   }
