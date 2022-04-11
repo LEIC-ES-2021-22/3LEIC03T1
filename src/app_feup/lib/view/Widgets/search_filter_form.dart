@@ -102,7 +102,8 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(dropdownSelector(context, countryFilter));
     formWidgets.add(dropdownSelector(context, docTypeFilter));
     formWidgets.add(
-        filterTextField(context, 'Ano de lançamento', 'Todos', yearController));
+        filterTextField(
+        context, 'Ano de lançamento', 'Todos', yearController, true));
     /*formWidgets.add(FormTextField(
       // TODO This is shaky
       yearController,
@@ -145,8 +146,10 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     );
   }
 
+  // TODO Fix scrolling up when keyboard opens
   Widget filterTextField(BuildContext context, String description,
-      String placeholder, TextEditingController controller) {
+      String placeholder, TextEditingController controller,
+      [bool isNumber = false]) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       child: Column(
@@ -170,6 +173,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
                 hintStyle: Theme.of(context).textTheme.subtitle1,
               ),
               controller: controller,
+              keyboardType: isNumber ? TextInputType.number : null,
             ))
           ])
         ],
