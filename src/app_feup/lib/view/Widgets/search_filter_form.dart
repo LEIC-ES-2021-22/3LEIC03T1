@@ -64,7 +64,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     sortByFilter = SearchFilter(sortByFields, 'Ordenar por');
     languageFilter = SearchFilter(languages, 'Linguagem');
     countryFilter = SearchFilter(countries, 'País');
-    docTypeFilter = SearchFilter(documentTypes, 'Tipo');
+    docTypeFilter = SearchFilter(documentTypes, 'Tipo de Documento');
   }
 
   @override
@@ -101,19 +101,20 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(dropdownSelector(context, countryFilter));
     formWidgets.add(dropdownSelector(context, docTypeFilter));
     formWidgets.add(FormTextField(
+      // TODO This is shaky
       yearController,
       Icons.date_range,
       maxLines: 1,
       description: 'Ano de lançamento',
-      labelText: 'Ano',
-      bottomMargin: 30.0,
+      hintText: 'Ano',
+      bottomMargin: 15,
     ));
     return formWidgets;
   }
 
   Widget dropdownSelector(BuildContext context, SearchFilter filter) {
     return Container(
-      margin: EdgeInsets.only(bottom: 30, top: 20),
+      margin: EdgeInsets.only(bottom: 15, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -123,12 +124,6 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
             textAlign: TextAlign.left,
           ),
           Row(children: <Widget>[
-            Container(
-                margin: EdgeInsets.only(right: 15),
-                child: Icon(
-                  Icons.bug_report,
-                  color: Theme.of(context).accentColor,
-                )),
             Expanded(
                 child: DropdownButton(
               hint: Text(filter.title),
