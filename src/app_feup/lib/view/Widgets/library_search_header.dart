@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uni/view/Widgets/search_filter_form.dart';
 
 class LibrarySearchHeader extends StatefulWidget {
   @override
@@ -71,7 +72,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
       child: IconButton(
         icon: Icon(Icons.tune, color: Theme.of(context).accentColor),
         onPressed: () {
-          showDialog(context: context, builder: searchFiltersForm);
+          showDialog(context: context, builder: getSearchFiltersForm);
         },
         tooltip: 'Filtros de Pesquisa',
         iconSize: 28,
@@ -81,24 +82,8 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
     );
   }
 
-  Widget searchFiltersForm(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        'Filtros de Pesquisa',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-      ),
-      actions: [
-        TextButton(
-            child: Text('Cancelar'), onPressed: () => Navigator.pop(context)),
-        ElevatedButton(
-            child: Text('Confirmar'),
-            onPressed: () {
-              // TODO Update state with filters
-              Navigator.pop(context);
-            })
-      ],
-      content: Container(height: 300.0, width: 200.0, child: Text('Boas mano')),
-    );
+  Widget getSearchFiltersForm(BuildContext context) {
+    return SearchFilterForm();
   }
 
   InputDecoration searchBarInputDecoration(
