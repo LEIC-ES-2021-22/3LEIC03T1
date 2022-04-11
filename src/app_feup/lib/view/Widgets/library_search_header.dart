@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class LibrarySearchHeader extends StatelessWidget {
+class LibrarySearchHeader extends StatefulWidget {
+  @override
+  _LibrarySearchHeaderState createState() => _LibrarySearchHeaderState();
+}
+
+class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
+  static final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +49,7 @@ class LibrarySearchHeader extends StatelessWidget {
     return Flexible(
       child: TextFormField(
         style: TextStyle(color: Colors.white, fontSize: 20),
-        controller: TextEditingController(),
+        controller: searchController, // TODO Fix page refreshing on focus
         autofocus: false,
         focusNode: searchNode,
         onFieldSubmitted: (term) {
