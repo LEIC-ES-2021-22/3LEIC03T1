@@ -71,14 +71,33 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
       child: IconButton(
         icon: Icon(Icons.tune, color: Theme.of(context).accentColor),
         onPressed: () {
-          // TODO Filter menu
-          debugPrint('clicked filter icon');
+          showDialog(context: context, builder: searchFiltersForm);
         },
         tooltip: 'Filtros de Pesquisa',
         iconSize: 28,
         alignment: Alignment.center,
         padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
       ),
+    );
+  }
+
+  Widget searchFiltersForm(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'Filtros de Pesquisa',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+      ),
+      actions: [
+        TextButton(
+            child: Text('Cancelar'), onPressed: () => Navigator.pop(context)),
+        ElevatedButton(
+            child: Text('Confirmar'),
+            onPressed: () {
+              // TODO Update state with filters
+              Navigator.pop(context);
+            })
+      ],
+      content: Container(height: 300.0, width: 200.0, child: Text('Boas mano')),
     );
   }
 
