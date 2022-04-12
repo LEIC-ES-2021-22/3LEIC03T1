@@ -14,7 +14,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 400), // TODO Change padding
+      padding: EdgeInsets.all(20),
       alignment: Alignment.center,
       child: Column(children: <Widget>[
         Row(
