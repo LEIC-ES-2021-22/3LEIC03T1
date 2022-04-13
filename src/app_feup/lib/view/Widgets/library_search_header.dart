@@ -92,7 +92,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   InputDecoration searchBarInputDecoration(
       BuildContext context, String placeholder) {
     return InputDecoration(
-        icon: Icon(Icons.search),
+        icon: Icon(Icons.search, color: Colors.grey),
         hintText: placeholder,
         contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         border: const UnderlineInputBorder(
