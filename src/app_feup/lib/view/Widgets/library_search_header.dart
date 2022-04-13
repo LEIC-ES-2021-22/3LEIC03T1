@@ -10,6 +10,7 @@ class LibrarySearchHeader extends StatefulWidget {
 class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
   static final TextEditingController searchController = TextEditingController();
+  static final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +49,24 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
 
   Widget createSearchBar(BuildContext context) {
     return Flexible(
-      child: TextFormField(
-        style: TextStyle(color: Colors.white, fontSize: 20),
-        controller: searchController, // TODO Fix page refreshing on focus
-        autofocus: false,
-        focusNode: searchNode,
-        onFieldSubmitted: (term) {
-          searchNode.unfocus();
-          // TODO Search action
-        },
-        textInputAction: TextInputAction.done,
-        textAlign: TextAlign.left,
-        decoration: searchBarInputDecoration(context, 'Procure'),
-        validator: (String value) =>
-            value.isEmpty ? 'Preencha este campo' : null,
-      ),
-    );
+      child: 
+        Form(
+          key: _formkey,
+          child: TextFormField(
+            style: TextStyle(color: Colors.black, fontSize: 18),
+            controller: searchController, // TODO Fix page refreshing on focus
+            autofocus: false,
+            focusNode: searchNode,
+            onFieldSubmitted: (term) {
+              searchNode.unfocus();
+              // TODO Search action
+            },
+            textInputAction: TextInputAction.done,
+            textAlign: TextAlign.left,
+            decoration: searchBarInputDecoration(context, 'Procure'),
+        ),
+        )
+      ); 
   }
 
   Widget createSearchFilters(BuildContext context) {
@@ -96,6 +99,6 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             borderSide: BorderSide(color: Colors.black, width: 1)),
         focusedBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: Theme.of(context).accentColor, width: 2)));
+                BorderSide(color: Theme.of(context).accentColor, width: 1)));
   }
 }
