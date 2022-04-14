@@ -6,6 +6,7 @@ import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
+import 'package:uni/controller/parsers/parser_library.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/redux/action_creators.dart';
 import 'package:uni/redux/actions.dart';
@@ -50,6 +51,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
 
   final Completer<Null> userInfo = Completer(),
       exams = Completer(),
+      books = Completer(),
       schedule = Completer(),
       printBalance = Completer(),
       fees = Completer(),
@@ -69,6 +71,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       await AppSharedPreferences.getPersistentUserInfo();
   userInfo.future.then((value) {
     store.dispatch(getUserExams(exams, ParserExams(), userPersistentInfo));
+    store.dispatch(getLibraryBooks(books, ParserLibrary(), userPersistentInfo));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 
