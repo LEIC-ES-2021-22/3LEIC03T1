@@ -14,7 +14,8 @@ import 'package:uni/model/entities/trip.dart';
 import 'package:http/http.dart' as http;
 import 'package:query_params/query_params.dart';
 import 'package:synchronized/synchronized.dart';
-extension UriString on String{
+
+extension UriString on String {
   /// Converts a [String] to an [Uri].
   Uri toUri() => Uri.parse(this);
 }
@@ -28,7 +29,6 @@ class NetworkRouter {
   static Lock loginLock = Lock();
 
   static Function onReloginFail = () {};
-
 
   /// Creates an authenticated [Session] on the given [faculty] with the
   /// given username [user] and password [pass].
@@ -134,6 +134,22 @@ class NetworkRouter {
       return ucs;
     }
     return <CourseUnit>[];
+  }
+
+  static Future<http.Response> getLibraryBooks(String url) async {
+    Logger().i("Getting books response");
+    // TO DO this request is not working :(
+    final http.Response response = await httpClient.get(url.toUri());
+    Logger().i("Got books response");
+    if (response.statusCode == 200) {
+      return response;
+    } else if (response.statusCode == 403) {
+      // HTTP403 - Forbidden;
+      Logger().e('Library Books request failed');
+      return Future.error('Library Books request failed');
+    } else {
+      return Future.error('HTTP Error ${response.statusCode}');
+    }
   }
 
   /// Makes an authenticated GET request with the given [session] to the
