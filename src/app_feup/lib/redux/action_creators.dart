@@ -39,6 +39,8 @@ import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
 
+import 'package:html/parser.dart' show parse;
+
 import '../model/entities/bus_stop.dart';
 
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
@@ -203,11 +205,27 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 
 Future<List<Book>> extractBooks(
     Store<AppState> store, ParserLibrary parserLibrary) async {
-  final Response response = await NetworkRouter.getLibraryBooks(
+  final Response cookieResponse = await NetworkRouter.getCatalogCookie(
       'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns');
-  Logger().i("Parsing books");
-  Set<Book> libraryBooks = await parserLibrary.parseBooksFromHtml(response);
+  final String cookie = await parseCookie(cookieResponse);
+
+  final Response response = await NetworkRouter.getLibraryBooks(
+      'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns', cookie);
+
+  final Set<Book> libraryBooks =
+      await parserLibrary.parseBooksFromHtml(response);
   return libraryBooks.toList();
+}
+
+Future<String> parseCookie(Response response) async {
+  final document = parse(response.body);
+  final element = document.querySelector('[language="Javascript"]');
+  String cookie = element.text
+          .substring(element.text.indexOf('=') + 1, element.text.indexOf(';')) +
+      '"';
+
+  Logger().i('Cookie: ', cookie);
+  return cookie;
 }
 
 ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
@@ -217,14 +235,12 @@ ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
-      Logger().i("Extracting books");
       final List<Book> books = await extractBooks(store, parserLibrary);
 
-      Logger().i("updating dispatch");
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));
     } catch (e) {
-      Logger().e('Failed to get Books');
+      Logger().e(e.toString());
       store.dispatch(SetBooksStatusAction(RequestStatus.failed));
     }
 
@@ -282,7 +298,7 @@ ThunkAction<AppState> getUserExams(Completer<Null> action,
       store.dispatch(SetExamsStatusAction(RequestStatus.successful));
       store.dispatch(SetExamsAction(exams));
     } catch (e) {
-      Logger().e('Failed to get Exams');
+      Logger().e(e.toString());
       store.dispatch(SetExamsStatusAction(RequestStatus.failed));
     }
 
