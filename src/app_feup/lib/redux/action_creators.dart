@@ -40,6 +40,8 @@ import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
 
+import 'package:html/parser.dart' show parse;
+
 import '../model/entities/bus_stop.dart';
 
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
@@ -211,8 +213,7 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
   };
 }
 
-Future<List<Book>> extractBooks(
-    Store<AppState> store, LibraryInterface library,
+Future<List<Book>> extractBooks(Store<AppState> store, LibraryInterface library,
     String query, SearchFilters filters) async {
   final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
@@ -222,7 +223,6 @@ ThunkAction<AppState> getLibraryBooks(
     Completer<Null> action, LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
-
       // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
       if (searchQuery == null || searchQuery == '') {
