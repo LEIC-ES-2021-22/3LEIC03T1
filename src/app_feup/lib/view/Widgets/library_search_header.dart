@@ -10,11 +10,12 @@ class LibrarySearchHeader extends StatefulWidget {
 class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
   static final TextEditingController searchController = TextEditingController();
+  static final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 400), // TODO Change padding
+      padding: EdgeInsets.all(20),
       alignment: Alignment.center,
       child: Column(children: <Widget>[
         Row(
@@ -48,22 +49,24 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
 
   Widget createSearchBar(BuildContext context) {
     return Flexible(
-      child: TextFormField(
-        style: TextStyle(color: Colors.white, fontSize: 20),
-        controller: searchController, // TODO Fix page refreshing on focus
-        autofocus: false,
-        focusNode: searchNode,
-        onFieldSubmitted: (term) {
-          searchNode.unfocus();
-          // TODO Search action
-        },
-        textInputAction: TextInputAction.done,
-        textAlign: TextAlign.left,
-        decoration: searchBarInputDecoration(context, 'Procure'),
-        validator: (String value) =>
-            value.isEmpty ? 'Preencha este campo' : null,
-      ),
-    );
+      child: 
+        Form(
+          key: _formkey,
+          child: TextFormField(
+            style: TextStyle(color: Colors.black, fontSize: 18),
+            controller: searchController,
+            autofocus: false,
+            focusNode: searchNode,
+            onFieldSubmitted: (term) {
+              searchNode.unfocus();
+              // TODO Search action
+            },
+            textInputAction: TextInputAction.done,
+            textAlign: TextAlign.left,
+            decoration: searchBarInputDecoration(context, 'Procure'),
+        ),
+        )
+      ); 
   }
 
   Widget createSearchFilters(BuildContext context) {
@@ -89,13 +92,13 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   InputDecoration searchBarInputDecoration(
       BuildContext context, String placeholder) {
     return InputDecoration(
-        icon: Icon(Icons.search),
+        icon: Icon(Icons.search, color: Colors.grey),
         hintText: placeholder,
         contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         border: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.black, width: 1)),
         focusedBorder: OutlineInputBorder(
             borderSide:
-                BorderSide(color: Theme.of(context).accentColor, width: 2)));
+                BorderSide(color: Theme.of(context).accentColor, width: 1)));
   }
 }
