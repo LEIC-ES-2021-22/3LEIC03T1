@@ -4,7 +4,7 @@ const navPersonalArea = 'Área Pessoal';
 const navSchedule = 'Horário';
 const navExams = 'Mapa de Exames';
 const navStops = 'Autocarros';
-const library = 'Biblioteca';
+const navLibrary = 'Biblioteca';
 const navAbout = 'Sobre';
 const navBugReport = 'Bugs e Sugestões';
 const navLogOut = 'Terminar sessão';
@@ -25,3 +25,6 @@ const faculties = [
   'fpceup',
   'icbas'
 ];
+
+const referenceWidth = 360;
+const referenceHeight = 740;

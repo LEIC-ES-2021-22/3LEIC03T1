@@ -15,6 +15,7 @@ import 'package:uni/view/Pages/about_page_view.dart';
 import 'package:uni/view/Pages/bug_report_page_view.dart';
 import 'package:uni/view/Pages/bus_stop_next_arrivals_page.dart';
 import 'package:uni/view/Pages/exams_page_view.dart';
+import 'package:uni/view/Pages/library_page_view.dart';
 import 'package:uni/view/Pages/home_page_view.dart';
 import 'package:uni/view/Pages/logout_route.dart';
 import 'package:uni/view/Pages/splash_page_view.dart';
@@ -47,7 +48,7 @@ Future<void> main() async {
 }
 
 /// Manages the state of the app
-/// 
+///
 /// This class is necessary to track the app's state for
 /// the current execution
 class MyApp extends StatefulWidget {
@@ -94,6 +95,9 @@ class MyAppState extends State<MyApp> {
               case '/' + Constants.navStops:
                 return PageTransition.makePageTransition(
                     page: BusStopNextArrivalsPage(), settings: settings);
+              case '/' + Constants.navLibrary:
+                return PageTransition.makePageTransition(
+                    page: LibraryPage(), settings: settings);
               case '/' + Constants.navAbout:
                 return PageTransition.makePageTransition(
                     page: AboutPageView(), settings: settings);
