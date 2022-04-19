@@ -22,7 +22,7 @@ class ParserLibrary {
     final Set<Book> booksList = Set();
 
     // get the book section (<tr valign=baseline>)
-    document.querySelectorAll('[valign=baseline]').forEach((Element element) {
+    document.querySelectorAll('tr[valign=baseline]').forEach((Element element) {
       final String author =
           element.querySelector('td:nth-child($authorInfoIdx)').text;
       // check this title
@@ -30,7 +30,6 @@ class ParserLibrary {
           element.querySelector('td:nth-child($titleInfoIdx)').text;
       final String date =
           element.querySelector('td:nth-child($yearInfoIdx)').text;
-      final DateTime datetime = DateFormat('YYYY').parse(date);
       final String documentType =
           element.querySelector('td:nth-child($documentTypeIdx)').text;
       final String imagePath =
@@ -47,8 +46,8 @@ class ParserLibrary {
               ? element.querySelector('td:nth-child($digitalInfoIdx)').text
               : '';
 
-      final Book book = Book(author, title, datetime, imagePath,
-          digitalAvailable, digitalInfo, documentType);
+      final Book book = Book(author, title, date, imagePath, digitalAvailable,
+          digitalInfo, documentType);
       booksList.add(book);
     });
 
