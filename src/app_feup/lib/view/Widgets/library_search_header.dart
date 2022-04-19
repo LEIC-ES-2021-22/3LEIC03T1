@@ -54,7 +54,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
           key: _formkey,
           child: TextFormField(
             style: TextStyle(color: Colors.black, fontSize: 18),
-            controller: searchController, // TODO Fix page refreshing on focus
+            controller: searchController,
             autofocus: false,
             focusNode: searchNode,
             onFieldSubmitted: (term) {
