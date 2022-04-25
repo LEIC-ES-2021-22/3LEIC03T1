@@ -19,7 +19,7 @@ class Book {
   List<String> themes;
 
   Book(
-      this.title,
+      {this.title,
       this.author,
       this.editor,
       this.releaseYear,
@@ -33,5 +33,5 @@ class Book {
       this.imageURL,
       this.documentType,
       this.isbnCode,
-      this.themes);
+      this.themes});
 }
