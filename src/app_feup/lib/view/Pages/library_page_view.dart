@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
+import 'package:uni/view/Widgets/book_row.dart';
 import 'package:uni/view/Widgets/library_search_header.dart';
 import 'package:uni/view/Widgets/row_container.dart';
 
@@ -76,7 +77,7 @@ class LibrarySearch extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
       child: RowContainer(
         color: Theme.of(context).backgroundColor,
-        child: Text("boas mano"),
+        child: BookRow(book: book, type: BookRowType.searchResult),
       ),
     );
   }
