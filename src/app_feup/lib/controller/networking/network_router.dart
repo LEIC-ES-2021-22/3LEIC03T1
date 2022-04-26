@@ -160,7 +160,7 @@ class NetworkRouter {
     final http.Response response = await (httpClient != null
         ? httpClient.get(url.toUri(), headers: headers)
         : http.get(url.toUri(), headers: headers));
-
+    
     if (response.statusCode == 200) {
       return response;
     } else if (response.statusCode == 403) {
