@@ -37,6 +37,11 @@ class Book {
       this.isbnCode,
       this.themes});
 
+  String getUnitsText() {
+    if (unitsAvailable == 1) return '1 unidade';
+    return '$unitsAvailable unidades';
+  }
+
   @override
   String toString() {
     return '''$title - $author - $editor - $releaseYear - $language - $country - \

@@ -4,9 +4,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
-import 'package:uni/view/Widgets/book_row.dart';
+import 'package:uni/view/Widgets/book_container.dart';
 import 'package:uni/view/Widgets/library_search_header.dart';
-import 'package:uni/view/Widgets/row_container.dart';
 
 class LibraryPage extends StatefulWidget {
   @override
@@ -82,21 +81,10 @@ class LibrarySearch extends StatelessWidget {
     columns.add(LibrarySearchHeader());
 
     for (int i = 0; i < books.length; ++i) {
-      columns.add(this.createBookCard(context, books[i]));
+      columns.add(
+          BookContainer(book: books[i], type: BookContainerType.searchResult));
     }
 
     return columns;
-  }
-
-  Widget createBookCard(context, book) {
-    final keyValue = '${book.toString()}-book';
-    return Container(
-      key: Key(keyValue),
-      margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
-      child: RowContainer(
-        color: Theme.of(context).backgroundColor,
-        child: BookRow(book: book, type: BookRowType.searchResult),
-      ),
-    );
   }
 }
