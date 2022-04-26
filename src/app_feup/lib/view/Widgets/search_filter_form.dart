@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/utils/methods.dart';
 
 class SearchFilterForm extends StatefulWidget {
   @override
@@ -86,8 +87,8 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
               })
         ],
         content: Container(
-          height: 350.0,
-          width: 200.0,
+          height: vs(350.0, context),
+          width: hs(250.0, context),
           child: Form(
               key: _formKey,
               child: ListView(children: getFormWidgets(context))),

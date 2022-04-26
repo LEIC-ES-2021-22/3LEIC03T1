@@ -25,3 +25,6 @@ const faculties = [
   'fpceup',
   'icbas'
 ];
+
+const referenceWidth = 360;
+const referenceHeight = 740;
