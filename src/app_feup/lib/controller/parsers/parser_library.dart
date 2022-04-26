@@ -30,10 +30,11 @@ class ParserLibrary {
 
       final String author = rows.elementAt(authorInfoIdx).text;
       Logger().i('Author: ', author);
+
       // check this title
       final String titleText = rows.elementAt(titleInfoIdx).text;
-      // + 5 in order to remove spaces
-      final String title = titleText.substring(titleText.lastIndexOf('>') + 5);
+      final String title =
+          titleText.substring(titleText.indexOf('</script>')).trim();
       Logger().i('Title: ', title);
 
       final String yearText = rows.elementAt(yearInfoIdx).text;
