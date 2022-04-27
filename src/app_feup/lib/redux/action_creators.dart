@@ -205,9 +205,9 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 
 Future<List<Book>> extractBooks(
     Store<AppState> store, ParserLibrary parserLibrary) async {
-  final Response cookieResponse = await NetworkRouter.getCatalogCookie(
-      'https://catalogo.up.pt/F');
-  
+  final Response cookieResponse =
+      await NetworkRouter.getCatalogCookie('https://catalogo.up.pt/F');
+
   final String cookie = await parseCookie(cookieResponse);
 
   final Response response = await NetworkRouter.getLibraryBooks(
@@ -222,7 +222,7 @@ Future<String> parseCookie(Response response) async {
   final document = parse(response.body);
   final element = document.querySelector('[language="Javascript"]');
   final String cookie = element.text
-          .substring(element.text.indexOf('=') + 3, element.text.indexOf(';'));
+      .substring(element.text.indexOf('=') + 3, element.text.indexOf(';'));
 
   return cookie;
 }

@@ -14,7 +14,6 @@ final int titleInfoIdx = 3;
 final int yearInfoIdx = 4;
 final int documentTypeIdx = 5;
 final int imagePathIdx = 7;
-final int digitalAvailableIdx = 8;
 final int digitalInfoIdx = 9;
 
 class ParserLibrary {
@@ -23,50 +22,43 @@ class ParserLibrary {
 
     final Set<Book> booksList = Set();
 
-    Logger().i('HTML: ', response.body);
     // get the book section (<tr valign=baseline>)
     document.querySelectorAll('[valign=baseline]').forEach((Element element) {
       final rows = element.querySelectorAll('td');
 
       final String author = rows.elementAt(authorInfoIdx).text;
-      Logger().i('Author: ', author);
 
       final String titleText = rows.elementAt(titleInfoIdx).innerHtml;
       final String title = titleText
           .substring(titleText.indexOf('</script>') + '</script>'.length)
           .trim();
-      Logger().i('Title: ', title);
 
       final String year = rows.elementAt(yearInfoIdx).text.trim();
-      Logger().i('year: ', year);
 
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
-      Logger().i('documentType: ', documentType);
 
-      /*
-      final String imagePath = rows.elementAt(imagePathIdx).text != null
-          ? rows.elementAt(imagePathIdx).text
+      // TODO we can't get the image Path from their code since its an extern library
+      // that is placing the image code from the isbn. But we can get the book
+      // isbn (if they have it, when they have no image they dont have isbn) here
+      final String imagePath = rows.elementAt(imagePathIdx).innerHtml != null
+          ? rows.elementAt(imagePathIdx).innerHtml
           : '';
-      Logger().i('imagePath: ', imagePath);
-      */
-
-      // check the return of this.
-      final bool digitalAvailable =
-          rows.elementAt(digitalAvailableIdx).text != null ? true : false;
-      Logger().i('DigitalAvailable: ', digitalAvailable);
 
       final String digitalInfoHtml =
           // when has url they write url
           rows.elementAt(digitalInfoIdx).text.trim() == 'url'
               ? rows.elementAt(digitalInfoIdx).innerHtml
               : '';
+
+      // check the return of this.
+      final bool digitalAvailable = digitalInfoHtml != '' ? true : false;
+
       final String digitalInfo = digitalInfoHtml != ''
           ? digitalInfoHtml.substring(
               digitalInfoHtml.indexOf('<img src="') + '<img src="'.length,
               digitalInfoHtml.indexOf('border="0" alt=') -
                   2) // remove the quotation marks
           : null;
-      Logger().i('DigitalInfo: ', digitalInfo);
 
       final Book book = Book(author, title, year, '' /*TO DO imagePath*/,
           digitalAvailable, digitalInfo, documentType);
