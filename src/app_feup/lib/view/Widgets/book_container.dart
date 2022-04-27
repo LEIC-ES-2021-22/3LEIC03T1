@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/utils/methods.dart';
+import 'package:uni/view/Pages/book_details_page_view.dart';
 import 'package:uni/view/Widgets/row_container.dart';
 
 enum BookContainerType { searchResult, reservation }
@@ -20,26 +21,30 @@ class BookContainer extends StatelessWidget {
         key: Key(keyValue),
         margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
         child: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          child: RowContainer(
-              color: Theme.of(context).backgroundColor,
-              child: Container(
-                  padding: EdgeInsets.all(12.0),
-                  child: IntrinsicHeight(
-                      child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Image.network(
-                        book.imageURL,
-                        width: hs(70, context),
-                        height: vs(105, context),
-                        fit: BoxFit.fill,
-                      ),
-                      buildBookContainerBody(context)
-                    ],
-                  )))),
-        ));
+            elevation: 4,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            child: InkWell(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => BookDetails())),
+              enableFeedback: true,
+              child: RowContainer(
+                  color: Theme.of(context).backgroundColor,
+                  child: Container(
+                      padding: EdgeInsets.all(12.0),
+                      child: IntrinsicHeight(
+                          child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Image.network(
+                            book.imageURL,
+                            width: hs(70, context),
+                            height: vs(105, context),
+                            fit: BoxFit.fill,
+                          ),
+                          buildBookContainerBody(context)
+                        ],
+                      )))),
+            )));
   }
 
   Widget buildBookContainerBody(BuildContext context) {
