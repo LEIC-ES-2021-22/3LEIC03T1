@@ -31,37 +31,45 @@ class ParserLibrary {
       final String author = rows.elementAt(authorInfoIdx).text;
       Logger().i('Author: ', author);
 
-      // check this title
-      final String titleText = rows.elementAt(titleInfoIdx).text;
-      final String title =
-          titleText.substring(titleText.indexOf('</script>')).trim();
+      final String titleText = rows.elementAt(titleInfoIdx).innerHtml;
+      final String title = titleText
+          .substring(titleText.indexOf('</script>') + '</script>'.length)
+          .trim();
       Logger().i('Title: ', title);
 
-      final String yearText = rows.elementAt(yearInfoIdx).text;
-      // remove white space
-      final String year = yearText.substring(0, yearText.length - 1);
+      final String year = rows.elementAt(yearInfoIdx).text.trim();
       Logger().i('year: ', year);
 
-      final String documentType = rows.elementAt(documentTypeIdx).text;
+      final String documentType = rows.elementAt(documentTypeIdx).text.trim();
       Logger().i('documentType: ', documentType);
 
+      /*
       final String imagePath = rows.elementAt(imagePathIdx).text != null
           ? rows.elementAt(imagePathIdx).text
           : '';
       Logger().i('imagePath: ', imagePath);
+      */
 
       // check the return of this.
       final bool digitalAvailable =
           rows.elementAt(digitalAvailableIdx).text != null ? true : false;
       Logger().i('DigitalAvailable: ', digitalAvailable);
 
-      final String digitalInfo = rows.elementAt(digitalInfoIdx).text != null
-          ? element.querySelector('td:nth-child($digitalInfoIdx)').text
-          : '';
+      final String digitalInfoHtml =
+          // when has url they write url
+          rows.elementAt(digitalInfoIdx).text.trim() == 'url'
+              ? rows.elementAt(digitalInfoIdx).innerHtml
+              : '';
+      final String digitalInfo = digitalInfoHtml != ''
+          ? digitalInfoHtml.substring(
+              digitalInfoHtml.indexOf('<img src="') + '<img src="'.length,
+              digitalInfoHtml.indexOf('border="0" alt=') -
+                  2) // remove the quotation marks
+          : null;
       Logger().i('DigitalInfo: ', digitalInfo);
 
-      final Book book = Book(author, title, year, imagePath, digitalAvailable,
-          digitalInfo, documentType);
+      final Book book = Book(author, title, year, '' /*TO DO imagePath*/,
+          digitalAvailable, digitalInfo, documentType);
 
       booksList.add(book);
     });
