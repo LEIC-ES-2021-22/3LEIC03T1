@@ -17,26 +17,29 @@ class BookContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final keyValue = '${book.toString()}-book';
     return Container(
-      key: Key(keyValue),
-      margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
-      child: RowContainer(
-          color: Theme.of(context).backgroundColor,
-          child: Container(
-              padding: EdgeInsets.all(12.0),
-              child: IntrinsicHeight(
-                  child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Image.network(
-                    book.imageURL,
-                    width: hs(70, context),
-                    height: vs(105, context),
-                    fit: BoxFit.fill,
-                  ),
-                  buildBookContainerBody(context)
-                ],
-              )))),
-    );
+        key: Key(keyValue),
+        margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          child: RowContainer(
+              color: Theme.of(context).backgroundColor,
+              child: Container(
+                  padding: EdgeInsets.all(12.0),
+                  child: IntrinsicHeight(
+                      child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Image.network(
+                        book.imageURL,
+                        width: hs(70, context),
+                        height: vs(105, context),
+                        fit: BoxFit.fill,
+                      ),
+                      buildBookContainerBody(context)
+                    ],
+                  )))),
+        ));
   }
 
   Widget buildBookContainerBody(BuildContext context) {
@@ -61,7 +64,7 @@ class BookContainer extends StatelessWidget {
                         .apply(fontSizeDelta: -2)),
                 Expanded(
                     child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                       Container(
                         alignment: Alignment.bottomLeft,
@@ -69,7 +72,7 @@ class BookContainer extends StatelessWidget {
                         child: Text(
                           book.getUnitsText(),
                           style: book.unitsAvailable > 1
-                            ? Theme.of(context).textTheme.bodyText2
+                              ? Theme.of(context).textTheme.bodyText2
                               : Theme.of(context)
                                   .textTheme
                                   .bodyText2
