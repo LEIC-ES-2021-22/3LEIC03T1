@@ -52,43 +52,49 @@ class BookContainer extends StatelessWidget {
                                       .textTheme
                                       .subtitle2
                                       .apply(fontSizeDelta: -2)),
-                                  Expanded(
+                              Expanded(
                                   child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                     Container(
-                                alignment: Alignment.bottomLeft,
-                                margin: EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  book.getUnitsText(),
-                                  style: book.unitsAvailable > 1
-                                      ? Theme.of(context).textTheme.bodyText2
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyText2
-                                          .apply(color: Colors.red[700]),
-                                ),
-                              ),
-                                    Container(
-                                      alignment: Alignment.bottomRight,
-                                      child: Row(
-                                        children: [
-                                          book.hasPhysicalVersion
-                                              ? Icon(Icons.menu_book)
-                                              : Container(),
-                                          SizedBox(width: 3),
-                                          book.hasDigitalVersion
-                                              ? Icon(Icons.file_download)
-                                              : Container() // TODO Do this in another function without containers
-                                        ],
+                                      alignment: Alignment.bottomLeft,
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Text(
+                                        book.getUnitsText(),
+                                        style: book.unitsAvailable > 1
+                                            ? Theme.of(context)
+                                                .textTheme
+                                                .bodyText2
+                                            : Theme.of(context)
+                                                .textTheme
+                                                .bodyText2
+                                                .apply(color: Colors.red[700]),
                                       ),
-                                    )
+                                    ),
+                                    buildBookTypesContainer(context)
                                   ]))
                             ],
                           ))),
                 ],
               )))),
+    );
+  }
+
+  Widget buildBookTypesContainer(BuildContext context) {
+    final List<Widget> iconList = [];
+    if (book.hasPhysicalVersion) {
+      iconList.add(Icon(Icons.menu_book));
+      if (book.hasDigitalVersion) iconList.add(SizedBox(width: 3));
+    }
+
+    if (book.hasDigitalVersion) iconList.add(Icon(Icons.file_download));
+
+    return Container(
+      alignment: Alignment.bottomRight,
+      child: Row(
+        children: iconList,
+      ),
     );
   }
 }
