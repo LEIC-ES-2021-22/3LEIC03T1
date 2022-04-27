@@ -5,6 +5,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:uni/controller/library_interface/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
 
 //import 'package:web_scraper/web_scraper.dart';
@@ -16,7 +17,8 @@ final int documentTypeIdx = 5;
 final int imagePathIdx = 7;
 final int digitalInfoIdx = 9;
 
-class ParserLibrary {
+class ParserLibrary implements ParserLibraryInterface {
+  @override
   Future<Set<Book>> parseBooksFromHtml(http.Response response) async {
     final document = parse(response.body);
 

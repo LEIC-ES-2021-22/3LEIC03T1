@@ -4,9 +4,9 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
+import 'package:uni/controller/library_interface/library.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
-import 'package:uni/controller/parsers/parser_library.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/redux/action_creators.dart';
 import 'package:uni/redux/actions.dart';
@@ -71,7 +71,10 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       await AppSharedPreferences.getPersistentUserInfo();
   userInfo.future.then((value) {
     store.dispatch(getUserExams(exams, ParserExams(), userPersistentInfo));
-    store.dispatch(getLibraryBooks(books, ParserLibrary(), userPersistentInfo));
+    // Library is the implementation of the interface
+
+    // TODO get the cookie for catalog website after we login
+    store.dispatch(getLibraryBooks(books, Library(), userPersistentInfo));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 
