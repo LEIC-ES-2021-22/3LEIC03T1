@@ -5,6 +5,8 @@ import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/controller/library_interface/library_interface.dart';
+import 'package:uni/controller/library_interface/parser_library.dart';
 import 'package:uni/controller/load_info.dart';
 import 'package:uni/controller/load_static/terms_and_conditions.dart';
 import 'package:uni/controller/local_storage/app_bus_stop_database.dart';
@@ -19,7 +21,6 @@ import 'package:uni/controller/local_storage/app_restaurant_database.dart';
 import 'package:uni/controller/networking/network_router.dart'
     show NetworkRouter;
 import 'package:uni/controller/parsers/parser_courses.dart';
-import 'package:uni/controller/parsers/parser_library.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
 import 'package:uni/controller/parsers/parser_fees.dart';
 import 'package:uni/controller/parsers/parser_print_balance.dart';
@@ -204,17 +205,10 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 }
 
 Future<List<Book>> extractBooks(
-    Store<AppState> store, ParserLibrary parserLibrary) async {
-  final Response cookieResponse =
-      await NetworkRouter.getCatalogCookie('https://catalogo.up.pt/F');
+    Store<AppState> store, LibraryInterface library, String url) async {
+  // TODO after login get the cookie from store and pass it to getLibraryBooks
+  final Set<Book> libraryBooks = await library.getLibraryBooks(url);
 
-  final String cookie = await parseCookie(cookieResponse);
-
-  final Response response = await NetworkRouter.getLibraryBooks(
-      'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns', cookie);
-
-  final Set<Book> libraryBooks =
-      await parserLibrary.parseBooksFromHtml(response);
   return libraryBooks.toList();
 }
 
@@ -228,13 +222,19 @@ Future<String> parseCookie(Response response) async {
 }
 
 ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
-    ParserLibrary parserLibrary, Tuple2<String, String> userPersistentInfo) {
+    LibraryInterface library, Tuple2<String, String> userPersistentInfo) {
   return (Store<AppState> store) async {
     try {
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
-      final List<Book> books = await extractBooks(store, parserLibrary);
+      // TODO get this url from the search field
+      // this function will probably go out of here because we are settings
+      // the state and we don't want that, we just want to get the books
+      // TODO after login place the cookie in this store so we can
+      // use it inside of extract books
+      final List<Book> books =
+          await extractBooks(store, library, 'Design Patterns');
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));

@@ -136,42 +136,6 @@ class NetworkRouter {
     return <CourseUnit>[];
   }
 
-  static Future<http.Response> getCatalogCookie(String url) async {
-    final http.Response response = await (httpClient != null
-        ? httpClient.get(url.toUri())
-        : http.get(url.toUri()));
-
-    if (response.statusCode == 200) {
-      return response;
-    } else if (response.statusCode == 403) {
-      // HTTP403 - Forbidden;
-      Logger().e('Library Books request failed');
-      return Future.error('Library Books request failed');
-    } else {
-      return Future.error('HTTP Error ${response.statusCode}');
-    }
-  }
-
-  static Future<http.Response> getLibraryBooks(
-      String url, String cookie) async {
-    final Map<String, String> headers = Map<String, String>();
-    headers['cookie'] = cookie;
-
-    final http.Response response = await (httpClient != null
-        ? httpClient.get(url.toUri(), headers: headers)
-        : http.get(url.toUri(), headers: headers));
-    
-    if (response.statusCode == 200) {
-      return response;
-    } else if (response.statusCode == 403) {
-      // HTTP403 - Forbidden;
-      Logger().e('Library Books request failed');
-      return Future.error('Library Books request failed');
-    } else {
-      return Future.error('HTTP Error ${response.statusCode}');
-    }
-  }
-
   /// Makes an authenticated GET request with the given [session] to the
   /// resource located at [url] with the given [query] parameters.
   static Future<http.Response> getWithCookies(
