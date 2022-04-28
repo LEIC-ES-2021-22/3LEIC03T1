@@ -70,7 +70,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
     return null;
   } else if (!store.state.content['session'].authenticated &&
       store.state.content['session'].persistentSession) {
-    await (loadReloginInfo(store), catalogLoadRe);
+    await loadReloginInfo(store);
   }
 
   final Completer<Null> userInfo = Completer(),
