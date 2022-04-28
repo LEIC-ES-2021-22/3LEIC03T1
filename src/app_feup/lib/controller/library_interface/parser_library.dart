@@ -42,8 +42,6 @@ class ParserLibrary implements ParserLibraryInterface {
               rows.elementAt(bookDetailsIdx).text.length -
               2); // remove ; and "
 
-      Logger().i('Book Details: ' + bookDetailsLink);
-
       final String author = rows.elementAt(authorInfoIdx).text;
 
       final String titleText = rows.elementAt(titleInfoIdx).innerHtml;
@@ -88,16 +86,11 @@ class ParserLibrary implements ParserLibraryInterface {
       int availableUnits = 0;
       int totalUnits = 0;
       if (units != '') {
-        units = units.substring(units.indexOf('FBAUP(') + 'FBAUP('.length);
+        units = units.substring(units.indexOf('(') + '('.length);
         availableUnits = int.parse(units.substring(0, units.indexOf('/')));
         totalUnits = int.parse(
             units.substring(units.indexOf('/') + 1, units.length - 1));
       }
-      // TODO parse this units with substring in order to get the total and available units
-      // in case it has <br> then its because it doesn't have any
-      Logger().i('Units: ', units);
-      Logger().i('Available units: ', availableUnits);
-      Logger().i('Total units: ', totalUnits);
 
       final Book book = Book(
           author,
