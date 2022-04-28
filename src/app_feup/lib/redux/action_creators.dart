@@ -107,6 +107,39 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
   };
 }
 
+// ignore: lines_longer_than_80_chars
+ThunkAction<AppState> cataloglogin(username, password, faculties, persistentSession,
+    usernameController, passwordController) {
+  return (Store<AppState> store) async {
+    try {
+      store.dispatch(SetLoginStatusAction(RequestStatus.busy));
+
+      /// TODO: support for multiple faculties. Issue: #445
+      final Session session = await NetworkRouter.catalogLogin(
+          username, password, faculties[0], persistentSession);
+      store.dispatch(SaveLoginDataAction(session));
+      if (session.authenticated) {
+        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
+        await loadUserInfoToState(store);
+
+        /// Faculties chosen in the dropdown
+        store.dispatch(SetUserFaculties(faculties));
+        if (persistentSession) {
+          AppSharedPreferences.savePersistentUserInfo(
+              username, password, faculties);
+        }
+        usernameController.clear();
+        passwordController.clear();
+        await acceptTermsAndConditions();
+      } else {
+        store.dispatch(SetLoginStatusAction(RequestStatus.failed));
+      }
+    } catch (e) {
+      store.dispatch(SetLoginStatusAction(RequestStatus.failed));
+    }
+  };
+}
+
 ThunkAction<AppState> getUserInfo(Completer<Null> action) {
   return (Store<AppState> store) async {
     try {
