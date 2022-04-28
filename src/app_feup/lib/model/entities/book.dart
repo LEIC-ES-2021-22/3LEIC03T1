@@ -10,14 +10,17 @@ class Book {
 
   // ignore: lines_longer_than_80_chars
   Book(
-      String author,
-      String title,
-      String releaseYear,
-      String imagePath,
-      bool digitalAvailable,
-      String digitalLink,
-      String documentType,
-      String isbn) {
+    String author,
+    String title,
+    String releaseYear,
+    String imagePath,
+    bool digitalAvailable,
+    String digitalLink,
+    String documentType,
+    String isbn,
+    int totalUnits,
+    int availableUnits,
+  ) {
     this.author = author;
     this.title = title;
     this.releaseYear = releaseYear;
