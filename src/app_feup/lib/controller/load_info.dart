@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
 import 'package:uni/controller/library_interface/library.dart';
@@ -29,6 +30,7 @@ Future loadReloginInfo(Store<AppState> store) async {
 
     /// TODO: support for multiple faculties. Issue: #445
     store.dispatch(reLogin(userName, password, faculties[0], action: action));
+    //store.dispatch(cataloglogin(userName, password, faculties[0], persistentSession, usernameController, passwordController))
     return action.future;
   }
   return Future.error('No credentials stored');
@@ -61,6 +63,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       restaurants = Completer();
 
   store.dispatch(getUserInfo(userInfo));
+  Logger().i(userInfo.toString());
   store.dispatch(getUserPrintBalance(printBalance));
   store.dispatch(getUserFees(fees));
   store.dispatch(getUserCoursesState(coursesStates));

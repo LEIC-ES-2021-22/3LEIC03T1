@@ -58,8 +58,8 @@ class NetworkRouter {
       String user, String pass, String faculty, bool persistentSession) async {
     final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
     final http.Response response = await http.post(url.toUri(), body: {
-      'username': user,
-      'password': pass
+      'j_username': user,
+      'j_password': pass
     }).timeout(const Duration(seconds: loginRequestTimeout));
     if (response.statusCode == 200) {
       final Session session = Session.fromLogin(response);
