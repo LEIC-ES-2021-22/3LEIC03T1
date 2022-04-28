@@ -205,9 +205,9 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 }
 
 Future<List<Book>> extractBooks(
-    Store<AppState> store, LibraryInterface library, String url) async {
+    Store<AppState> store, LibraryInterface library, String query) async {
   // TODO after login get the cookie from store and pass it to getLibraryBooks
-  final Set<Book> libraryBooks = await library.getLibraryBooks(url);
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query);
 
   return libraryBooks.toList();
 }
@@ -234,7 +234,7 @@ ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
       // TODO after login place the cookie in this store so we can
       // use it inside of extract books
       final List<Book> books =
-          await extractBooks(store, library, 'Design Patterns');
+          await extractBooks(store, library, 'Interaction Design');
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));

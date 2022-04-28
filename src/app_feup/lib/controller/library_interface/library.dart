@@ -14,17 +14,19 @@ extension UriString on String {
   Uri toUri() => Uri.parse(this);
 }
 
+final String testUrl =
+    'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
+
+final String baseUrl = 'https://catalogo.up.pt/F';
+String baseSearchUrl(String query) =>
+    'https://catalogo.up.pt/F/?func=find-b&request=$query';
+
 class Library implements LibraryInterface {
   // TODO delete after testing
-  static final testUrl =
-      'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
-
-  static final baseUrl = 'https://catalogo.up.pt/F';
-  static final baseSearchUrl = 'https://catalogo.up.pt/F/?func=find-b&request=';
 
   // TODO after get cookie from login receive it on this function and use it
   @override
-  Future<Set<Book>> getLibraryBooks(String url) async {
+  Future<Set<Book>> getLibraryBooks(String query) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
     // cookie just works if we get it from the base URL for some reason.
@@ -33,7 +35,7 @@ class Library implements LibraryInterface {
     final String cookie = await parseCookie(cookieResponse);
 
     final Response response =
-        await getHtml(baseSearchUrl + url, cookie: cookie);
+        await getHtml(baseSearchUrl(query), cookie: cookie);
 
     final Set<Book> libraryBooks =
         await parserLibrary.parseBooksFromHtml(response);

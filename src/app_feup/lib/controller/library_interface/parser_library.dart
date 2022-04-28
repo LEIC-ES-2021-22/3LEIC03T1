@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:uni/controller/library_interface/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
@@ -16,6 +15,9 @@ final int yearInfoIdx = 4;
 final int documentTypeIdx = 5;
 final int imagePathIdx = 7;
 final int digitalInfoIdx = 9;
+
+String gBookUrl(String isbn) =>
+    'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
 
 class ParserLibrary implements ParserLibraryInterface {
   @override
@@ -39,12 +41,22 @@ class ParserLibrary implements ParserLibraryInterface {
 
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
 
-      // TODO we can't get the image Path from their code since its an extern library
-      // that is placing the image code from the isbn. But we can get the book
-      // isbn (if they have it, when they have no image they dont have isbn) here
-      final String imagePath = rows.elementAt(imagePathIdx).innerHtml != null
+      // TODO get the isbn
+      final String imageHtml = rows.elementAt(imagePathIdx).innerHtml != null
           ? rows.elementAt(imagePathIdx).innerHtml
           : '';
+
+      String bookIsbn = imageHtml != ''
+          ? imageHtml
+              .substring(
+                  imageHtml.indexOf('var isbnaleph=') + 'var isbnaleph='.length,
+                  imageHtml.indexOf('if (isbnaleph == "<BR>")'))
+              .trim()
+          : false;
+
+      bookIsbn = bookIsbn.substring(1, bookIsbn.length - 2); // remove " and ;
+
+      bookIsbn = bookIsbn == '<BR>' ? '' : bookIsbn;
 
       final String digitalInfoHtml =
           // when has url they write url
@@ -62,8 +74,15 @@ class ParserLibrary implements ParserLibraryInterface {
                   2) // remove the quotation marks
           : null;
 
-      final Book book = Book(author, title, year, '' /*TO DO imagePath*/,
-          digitalAvailable, digitalInfo, documentType);
+      final Book book = Book(
+          author,
+          title,
+          year,
+          bookIsbn == '' ? '' : gBookUrl(bookIsbn),
+          digitalAvailable,
+          digitalInfo,
+          documentType,
+          bookIsbn);
 
       booksList.add(book);
     });
