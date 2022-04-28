@@ -44,6 +44,7 @@ import 'package:html/parser.dart' show parse;
 
 import '../model/entities/bus_stop.dart';
 
+//create a reLogin for catalog with our login.
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
   /// TODO: support for multiple faculties. Issue: #445
   return (Store<AppState> store) async {
