@@ -30,11 +30,33 @@ Future loadReloginInfo(Store<AppState> store) async {
 
     /// TODO: support for multiple faculties. Issue: #445
     store.dispatch(reLogin(userName, password, faculties[0], action: action));
-    //store.dispatch(cataloglogin(userName, password, faculties[0], persistentSession, usernameController, passwordController))
+    // ignore: lines_longer_than_80_chars
+    store.dispatch(catalogReLogin(userName, password, faculties[0], action: action));
     return action.future;
   }
   return Future.error('No credentials stored');
 }
+
+/*Future catalogLoadReloginInfo(Store<AppState> store) async {
+  final Tuple2<String, String> userPersistentCredentials =
+      await AppSharedPreferences.getPersistentUserInfo();
+  final List<String> userPersistentFacs =
+      await AppSharedPreferences.getUserFaculties();
+  final String userName = userPersistentCredentials.item1;
+  final String password = userPersistentCredentials.item2;
+  final List<String> faculties =
+      userPersistentFacs.isEmpty ? userPersistentFacs : ['feup'];
+
+  if (userName != '' && password != '') {
+    final action = Completer();
+
+    /// TODO: support for multiple faculties. Issue: #445
+    // ignore: lines_longer_than_80_chars
+    store.dispatch(catalogReLogin(userName, password, faculties[0], action: action));
+    return action.future;
+  }
+  return Future.error('No credentials stored');
+}*/
 
 Future loadUserInfoToState(store) async {
   loadLocalUserInfoToState(store);
@@ -48,7 +70,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
     return null;
   } else if (!store.state.content['session'].authenticated &&
       store.state.content['session'].persistentSession) {
-    await loadReloginInfo(store);
+    await (loadReloginInfo(store), catalogLoadRe);
   }
 
   final Completer<Null> userInfo = Completer(),

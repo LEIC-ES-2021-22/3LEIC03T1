@@ -90,6 +90,25 @@ class NetworkRouter {
     });
   }
 
+    /// Determines if a  catalog re-login with the [session] is possible.
+  static Future<bool> catalogReLogin(Session session) {
+    return loginLock.synchronized(() async {
+      if (!session.persistentSession) {
+        return false;
+      }
+
+      if (session.loginRequest != null) {
+        return session.loginRequest;
+      } else {
+        // ignore: lines_longer_than_80_chars
+        return session.loginRequest = catalogLoginFromSession(session).then((_) {
+          session.loginRequest = null;
+        });
+      }
+    });
+  }
+
+
   /// Re-authenticates the user [session].
   static Future<bool> loginFromSession(Session session) async {
     Logger().i('Trying to login...');
@@ -98,6 +117,28 @@ class NetworkRouter {
     final http.Response response = await http.post(url.toUri(), body: {
       'pv_login': session.studentNumber,
       'pv_password': await AppSharedPreferences.getUserPassword(),
+    }).timeout(const Duration(seconds: loginRequestTimeout));
+    final responseBody = json.decode(response.body);
+    if (response.statusCode == 200 && responseBody['authenticated']) {
+      session.authenticated = true;
+      session.studentNumber = responseBody['codigo'];
+      session.type = responseBody['tipo'];
+      session.cookies = NetworkRouter.extractCookies(response.headers);
+      Logger().i('Re-login successful');
+      return true;
+    } else {
+      Logger().e('Re-login failed');
+      return false;
+    }
+  }
+
+    /// Re-authenticates the catalog the user [session].
+  static Future<bool> catalogLoginFromSession(Session session) async {
+    Logger().i('Trying to login...');
+    final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
+    final http.Response response = await http.post(url.toUri(), body: {
+      'j_username': session.studentNumber,
+      'j_password': await AppSharedPreferences.getUserPassword(),
     }).timeout(const Duration(seconds: loginRequestTimeout));
     final responseBody = json.decode(response.body);
     if (response.statusCode == 200 && responseBody['authenticated']) {
