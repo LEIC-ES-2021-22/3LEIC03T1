@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
@@ -32,6 +33,27 @@ Future loadReloginInfo(Store<AppState> store) async {
   }
   return Future.error('No credentials stored');
 }
+
+// Future catalogLoadReloginInfo(Store<AppState> store) async {
+//   final Tuple2<String, String> userPersistentCredentials =
+//       await AppSharedPreferences.getPersistentUserInfo();
+//   final List<String> userPersistentFacs =
+//       await AppSharedPreferences.getUserFaculties();
+//   final String userName = userPersistentCredentials.item1;
+//   final String password = userPersistentCredentials.item2;
+//   final List<String> faculties =
+//       userPersistentFacs.isEmpty ? userPersistentFacs : ['feup'];
+
+//   if (userName != '' && password != '') {
+//     final action = Completer();
+
+//     /// TODO: support for multiple faculties. Issue: #445
+//     // ignore: lines_longer_than_80_chars
+//     store.dispatch(catalogReLogin(userName, password, faculties[0], action: action));
+//     return action.future;
+//   }
+//   return Future.error('No credentials stored');
+// }
 
 Future loadUserInfoToState(store) async {
   loadLocalUserInfoToState(store);

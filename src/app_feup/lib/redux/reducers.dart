@@ -3,11 +3,17 @@ import 'package:uni/model/app_state.dart';
 
 import 'actions.dart';
 
+
+
 AppState appReducers(AppState state, dynamic action) {
   if (action is SaveLoginDataAction) {
     return login(state, action);
+  } else if (action is SetCatalogLoginStatusAction) {
+    return setCatalogLoginStatus(state, action);
   } else if (action is SetLoginStatusAction) {
     return setLoginStatus(state, action);
+  } else if (action is SaveCatalogLoginDataAction) {
+    return catalogLogin(state, action);
   } else if (action is SetExamsAction) {
     return setExams(state, action);
   } else if (action is SetExamsStatusAction) {
@@ -83,6 +89,18 @@ AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   Logger().i('setting login status: ' + action.status.toString());
   return state.cloneAndUpdateValue('loginStatus', action.status);
 }
+
+AppState catalogLogin(AppState state, SaveCatalogLoginDataAction action){
+  Logger().i('setting catalog state: ' + action.session.toString());
+  return state.cloneAndUpdateValue('catalog session', action.session);
+}
+
+// ignore: lines_longer_than_80_chars
+AppState setCatalogLoginStatus(AppState state, SetCatalogLoginStatusAction action) {
+  Logger().i('setting Catalog login status: ' + action.status.toString());
+  return state.cloneAndUpdateValue('catalogLoginStatus', action.status);
+}
+
 
 AppState setBooks(AppState state, SetBooksAction action) {
   Logger().i('setting books: ' + action.books.length.toString());
