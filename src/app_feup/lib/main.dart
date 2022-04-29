@@ -97,7 +97,9 @@ class MyAppState extends State<MyApp> {
                     page: BusStopNextArrivalsPage(), settings: settings);
               case '/' + Constants.navLibrary:
                 return PageTransition.makePageTransition(
-                    page: LibraryPage(), settings: settings);
+                    page: LibraryPage(),
+                    settings: settings,
+                    maintainState: false);
               case '/' + Constants.navAbout:
                 return PageTransition.makePageTransition(
                     page: AboutPageView(), settings: settings);
