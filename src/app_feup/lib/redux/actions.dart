@@ -16,10 +16,10 @@ class SaveLoginDataAction {
   SaveLoginDataAction(this.session);
 }
 
-// class SaveCatalogLoginDataAction {
-//   Session session;
-//   SaveCatalogLoginDataAction(this.session);
-// }
+class SaveCatalogLoginDataAction {
+  Session session;
+  SaveCatalogLoginDataAction(this.session);
+}
 
 
 class SetLoginStatusAction {
@@ -27,10 +27,10 @@ class SetLoginStatusAction {
   SetLoginStatusAction(this.status);
 }
 
-// class SetCatalogLoginStatusAction {
-//   RequestStatus status;
-//   SetCatalogLoginStatusAction(this.status);
-// }
+class SetCatalogLoginStatusAction {
+  RequestStatus status;
+  SetCatalogLoginStatusAction(this.status);
+}
 
 class SetExamsAction {
   List<Exam> exams;

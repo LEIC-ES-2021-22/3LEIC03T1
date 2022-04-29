@@ -44,7 +44,7 @@ import 'package:html/parser.dart' show parse;
 
 import '../model/entities/bus_stop.dart';
 
-//create a reLogin for catalog with our login.
+//TODO create a reLogin for catalog with our login.
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
   /// TODO: support for multiple faculties. Issue: #445
   return (Store<AppState> store) async {
@@ -109,69 +109,71 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
 }
 
 // // ignore: lines_longer_than_80_chars
-// ThunkAction<AppState> cataloglogin(username, password, faculties, persistentSession,
-//     usernameController, passwordController) {
-//   return (Store<AppState> store) async {
-//     try {
-//       store.dispatch(SetLoginStatusAction(RequestStatus.busy));
+ThunkAction<AppState> cataloglogin(username, password, faculties, persistentSession,
+    usernameController, passwordController) {
+  return (Store<AppState> store) async {
+    try {
+      Logger().i('Inside action_creator catalog login ');
+      store.dispatch(SetLoginStatusAction(RequestStatus.busy));
 
-//       /// TODO: support for multiple faculties. Issue: #445
-//       final Session session = await NetworkRouter.catalogLogin(
-//           username, password, faculties[0], persistentSession);
-//       store.dispatch(SaveCatalogLoginDataAction(session));
-//       if (session.authenticated) {
-//         store.dispatch(SetCatalogLoginStatusAction(RequestStatus.successful));
-//         await loadUserInfoToState(store);
+      /// TODO: support for multiple faculties. Issue: #445
+      final Session session = await NetworkRouter.catalogLogin(
+          username, password, faculties[0], persistentSession);
+      store.dispatch(SaveCatalogLoginDataAction(session));
+      if (session.authenticated) {
+        store.dispatch(SetCatalogLoginStatusAction(RequestStatus.successful));
+        await loadUserInfoToState(store);
 
-//         /// Faculties chosen in the dropdown
-//         store.dispatch(SetUserFaculties(faculties));
-//         if (persistentSession) {
-//           AppSharedPreferences.savePersistentUserInfo(
-//               username, password, faculties);
-//         }
-//         usernameController.clear();
-//         passwordController.clear();
-//         await acceptTermsAndConditions();
-//       } else {
-//         store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
-//       }
-//     } catch (e) {
-//       store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
-//     }
-//   };
-// }
+        /// Faculties chosen in the dropdown
+        store.dispatch(SetUserFaculties(faculties));
+        if (persistentSession) {
+          AppSharedPreferences.savePersistentUserInfo(
+              username, password, faculties);
+        }
+        usernameController.clear();
+        passwordController.clear();
+        await acceptTermsAndConditions();
+      } else {
+        store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
+      }
+    } catch (e) {
+      store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
+    }
+  };
+}
 
-// // ignore: lines_longer_than_80_chars
-// ThunkAction<AppState> catalogReLogin(username, password, faculty, {Completer action}) {
-//   /// TODO: support for multiple faculties. Issue: #445
-//   return (Store<AppState> store) async {
-//     try {
-//       loadLocalUserInfoToState(store);
-//       store.dispatch(SetCatalogLoginStatusAction(RequestStatus.busy));
-//       final Session session =
-//           await NetworkRouter.catalogLogin(username, password, faculty, true);
-//       store.dispatch(SaveCatalogLoginDataAction(session));
-//       if (session.authenticated) {
-//         await loadRemoteUserInfoToState(store);
-//         store.dispatch(SetCatalogLoginStatusAction(RequestStatus.successful));
-//         action?.complete();
-//       } else {
-//         store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
-//         action?.completeError(RequestStatus.failed);
-//       }
-//     } catch (e) {
-//       final Session renewSession =
-//           Session(studentNumber: username, authenticated: false);
-//       renewSession.persistentSession = true;
-//       renewSession.faculty = faculty;
+// ignore: lines_longer_than_80_chars
+ThunkAction<AppState> catalogReLogin(username, password, faculty, {Completer action}) {
+  /// TODO: support for multiple faculties. Issue: #445
+  return (Store<AppState> store) async {
+    try {
+      Logger().i('Inside action_creator catalog re login ');
+      loadLocalUserInfoToState(store);
+      store.dispatch(SetCatalogLoginStatusAction(RequestStatus.busy));
+      final Session session =
+          await NetworkRouter.catalogLogin(username, password, faculty, true);
+      store.dispatch(SaveCatalogLoginDataAction(session));
+      if (session.authenticated) {
+        await loadRemoteUserInfoToState(store);
+        store.dispatch(SetCatalogLoginStatusAction(RequestStatus.successful));
+        action?.complete();
+      } else {
+        store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
+        action?.completeError(RequestStatus.failed);
+      }
+    } catch (e) {
+      final Session renewSession =
+          Session(studentNumber: username, authenticated: false);
+      renewSession.persistentSession = true;
+      renewSession.faculty = faculty;
 
-//       action?.completeError(RequestStatus.failed);
+      action?.completeError(RequestStatus.failed);
 
-//       store.dispatch(SaveCatalogLoginDataAction(renewSession));
-//       store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
-//     }
-//   };
-// }
+      store.dispatch(SaveCatalogLoginDataAction(renewSession));
+      store.dispatch(SetCatalogLoginStatusAction(RequestStatus.failed));
+    }
+  };
+}
 
 
 ThunkAction<AppState> getUserInfo(Completer<Null> action) {
