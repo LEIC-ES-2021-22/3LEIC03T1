@@ -3,6 +3,10 @@ import 'package:uni/model/app_state.dart';
 
 import 'actions.dart';
 
+// else if (action is SetCatalogLoginStatusAction) {
+//     return setCatalogLoginStatus(state, action);
+//   }
+
 AppState appReducers(AppState state, dynamic action) {
   if (action is SaveLoginDataAction) {
     return login(state, action);
@@ -81,6 +85,18 @@ AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   Logger().i('setting login status: ' + action.status.toString());
   return state.cloneAndUpdateValue('loginStatus', action.status);
 }
+
+// AppState catalogLogin(AppState state, SaveCatalogLoginDataAction action){
+//   Logger().i('setting state: ' + action.session.toString());
+//   return state.cloneAndUpdateValue('catalog session', action.session);
+// }
+
+// // ignore: lines_longer_than_80_chars
+// AppState setCatalogLoginStatus(AppState state, SetCatalogLoginStatusAction action) {
+//   Logger().i('setting Catalog login status: ' + action.status.toString());
+//   return state.cloneAndUpdateValue('catalogLoginStatus', action.status);
+// }
+
 
 AppState setBooks(AppState state, SetBooksAction action) {
   Logger().i('setting books: ' + action.books.length.toString());

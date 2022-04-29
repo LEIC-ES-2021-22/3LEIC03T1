@@ -43,6 +43,7 @@ class NetworkRouter {
     if (response.statusCode == 200) {
       final Session session = Session.fromLogin(response);
       session.persistentSession = persistentSession;
+      print('Token '+ jsonDecode(response.body)['token']);
       Logger().i('Login successful');
       return session;
     } else {
@@ -52,25 +53,25 @@ class NetworkRouter {
   }
 
   // ignore: lines_longer_than_80_chars
-  /// Creates an authenticated [Session] on the Catalog on for a given [faculty] with the
-  /// given username [user] and password [pass].
-  static Future<Session> catalogLogin(
-      String user, String pass, String faculty, bool persistentSession) async {
-    final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
-    final http.Response response = await http.post(url.toUri(), body: {
-      'j_username': user,
-      'j_password': pass
-    }).timeout(const Duration(seconds: loginRequestTimeout));
-    if (response.statusCode == 200) {
-      final Session session = Session.fromLogin(response);
-      session.persistentSession = persistentSession;
-      Logger().i('Login Catalog successful');
-      return session;
-    } else {
-      Logger().e('Login Catalog failed');
-      return Session(authenticated: false);
-    }
-  }
+  // /// Creates an authenticated [Session] on the Catalog on for a given [faculty] with the
+  // /// given username [user] and password [pass].
+  // static Future<Session> catalogLogin(
+  //     String user, String pass, String faculty, bool persistentSession) async {
+  //   final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
+  //   final http.Response response = await http.post(url.toUri(), body: {
+  //     'j_username': user,
+  //     'j_password': pass
+  //   }).timeout(const Duration(seconds: loginRequestTimeout));
+  //   if (response.statusCode == 200) {
+  //     final Session session = Session.fromLogin(response);
+  //     session.persistentSession = persistentSession;
+  //     Logger().i('Login Catalog successful');
+  //     return session;
+  //   } else {
+  //     Logger().e('Login Catalog failed');
+  //     return Session(authenticated: false);
+  //   }
+  // }
   
 
   /// Determines if a re-login with the [session] is possible.
@@ -90,23 +91,23 @@ class NetworkRouter {
     });
   }
 
-    /// Determines if a  catalog re-login with the [session] is possible.
-  static Future<bool> catalogReLogin(Session session) {
-    return loginLock.synchronized(() async {
-      if (!session.persistentSession) {
-        return false;
-      }
+  //   /// Determines if a  catalog re-login with the [session] is possible.
+  // static Future<bool> catalogReLogin(Session session) {
+  //   return loginLock.synchronized(() async {
+  //     if (!session.persistentSession) {
+  //       return false;
+  //     }
 
-      if (session.loginRequest != null) {
-        return session.loginRequest;
-      } else {
-        // ignore: lines_longer_than_80_chars
-        return session.loginRequest = catalogLoginFromSession(session).then((_) {
-          session.loginRequest = null;
-        });
-      }
-    });
-  }
+  //     if (session.loginRequest != null) {
+  //       return session.loginRequest;
+  //     } else {
+  //       // ignore: lines_longer_than_80_chars
+  //       return session.loginRequest = catalogLoginFromSession(session).then((_) {
+  //         session.loginRequest = null;
+  //       });
+  //     }
+  //   });
+  // }
 
 
   /// Re-authenticates the user [session].
@@ -133,26 +134,26 @@ class NetworkRouter {
   }
 
     /// Re-authenticates the catalog the user [session].
-  static Future<bool> catalogLoginFromSession(Session session) async {
-    Logger().i('Trying to login...');
-    final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
-    final http.Response response = await http.post(url.toUri(), body: {
-      'j_username': session.studentNumber,
-      'j_password': await AppSharedPreferences.getUserPassword(),
-    }).timeout(const Duration(seconds: loginRequestTimeout));
-    final responseBody = json.decode(response.body);
-    if (response.statusCode == 200 && responseBody['authenticated']) {
-      session.authenticated = true;
-      session.studentNumber = responseBody['codigo'];
-      session.type = responseBody['tipo'];
-      session.cookies = NetworkRouter.extractCookies(response.headers);
-      Logger().i('Re-login successful');
-      return true;
-    } else {
-      Logger().e('Re-login failed');
-      return false;
-    }
-  }
+  // static Future<bool> catalogLoginFromSession(Session session) async {
+  //   Logger().i('Trying to login...');
+  //   final String url = 'https://catalogo.up.pt:443/pds?func=load-login&institute=EUP50&calling_system=aleph&url=https://catalogo.up.pt:443/F/?func=BOR-INFO%22%3EEngenharia';
+  //   final http.Response response = await http.post(url.toUri(), body: {
+  //     'j_username': session.studentNumber,
+  //     'j_password': await AppSharedPreferences.getUserPassword(),
+  //   }).timeout(const Duration(seconds: loginRequestTimeout));
+  //   final responseBody = json.decode(response.body);
+  //   if (response.statusCode == 200 && responseBody['authenticated']) {
+  //     session.authenticated = true;
+  //     session.studentNumber = responseBody['codigo'];
+  //     session.type = responseBody['tipo'];
+  //     session.cookies = NetworkRouter.extractCookies(response.headers);
+  //     Logger().i('Re-login successful');
+  //     return true;
+  //   } else {
+  //     Logger().e('Re-login failed');
+  //     return false;
+  //   }
+  // }
 
   /// Extracts the cookies present in [headers].
   static String extractCookies(dynamic headers) {
