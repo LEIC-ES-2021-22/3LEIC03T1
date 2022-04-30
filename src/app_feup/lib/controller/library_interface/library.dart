@@ -18,12 +18,14 @@ final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
 final String baseUrl = 'https://catalogo.up.pt/F';
+
+// TODO found out that find_code=WRD means "search for words" and find_code=WAU
+// its "search for author" sometimes the default changes to WAU or other one
+// and we can't search think about placing it in the query $query&find_code=WRD
 String baseSearchUrl(String query) =>
-    'https://catalogo.up.pt/F/?func=find-b&request=$query';
+    'https://catalogo.up.pt/F/?func=find-b&request=$query&find_code=WRD';
 
 class Library implements LibraryInterface {
-  // TODO delete after testing
-
   // TODO after get cookie from login receive it on this function and use it
   @override
   Future<Set<Book>> getLibraryBooks(String query) async {

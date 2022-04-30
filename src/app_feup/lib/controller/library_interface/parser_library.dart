@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
@@ -16,8 +15,11 @@ final int titleInfoIdx = 3;
 final int yearInfoIdx = 4;
 final int documentTypeIdx = 5;
 final int unitsIdx = 6;
-final int imagePathIdx = 7;
+final int gImgPathIdx = 7;
+final int catalogImgPathIdx = 8;
 final int digitalInfoIdx = 9;
+
+String catalogBookUrl(String book) => 'https://catalogo.up.pt$book';
 
 String gBookUrl(String isbn) =>
     'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
@@ -34,6 +36,8 @@ class ParserLibrary implements ParserLibraryInterface {
       final rows = element.querySelectorAll('td');
 
       final String bookDetailsHtml = rows.elementAt(bookDetailsIdx).innerHtml;
+      // TODO check this link and then get the information of the book
+      // by scrapping the page
       final String bookDetailsLink = bookDetailsHtml.substring(
           bookDetailsHtml.indexOf('<a HREF=') +
               '<a HREF='.length +
@@ -53,9 +57,19 @@ class ParserLibrary implements ParserLibraryInterface {
 
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
 
-      final String imageHtml = rows.elementAt(imagePathIdx).innerHtml != null
-          ? rows.elementAt(imagePathIdx).innerHtml
+      // getting the img from catalog
+      final String imageHtml = rows.elementAt(gImgPathIdx) != null
+          ? rows.elementAt(gImgPathIdx).innerHtml
           : '';
+
+      final String catalogImage =
+          rows.elementAt(catalogImgPathIdx).children.isNotEmpty
+              ? rows
+                  .elementAt(catalogImgPathIdx)
+                  .firstChild // <a> with image inside
+                  .firstChild // <img with src
+                  .attributes['src']
+              : '';
 
       String bookIsbn = imageHtml != ''
           ? imageHtml
@@ -92,17 +106,16 @@ class ParserLibrary implements ParserLibraryInterface {
             units.substring(units.indexOf('/') + 1, units.length - 1));
       }
 
-      final Book book = Book(
-          author,
-          title,
-          year,
-          bookIsbn == '' ? '' : gBookUrl(bookIsbn),
-          digitalAvailable,
-          digitalLink,
-          documentType,
-          bookIsbn,
-          totalUnits,
-          availableUnits);
+      String bookImage = '';
+
+      if (catalogImage != '') {
+        bookImage = catalogBookUrl(catalogImage);
+      } else if (bookIsbn != '') {
+        bookImage = gBookUrl(bookIsbn);
+      }
+
+      final Book book = Book(author, title, year, bookImage, digitalAvailable,
+          digitalLink, documentType, bookIsbn, totalUnits, availableUnits);
 
       booksList.add(book);
     });
