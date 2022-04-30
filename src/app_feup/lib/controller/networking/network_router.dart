@@ -62,6 +62,7 @@ class NetworkRouter {
       'j_username': user,
       'j_password': pass
     }).timeout(const Duration(seconds: loginRequestTimeout));
+    Logger().i(response.body);
     if (response.statusCode == 200) {
       final Session session = Session.fromLogin(response);
       session.persistentSession = persistentSession;

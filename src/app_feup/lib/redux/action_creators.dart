@@ -52,7 +52,7 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
       loadLocalUserInfoToState(store);
       store.dispatch(SetLoginStatusAction(RequestStatus.busy));
       final Session session =
-          await NetworkRouter.login(username, password, faculty, true);
+          await NetworkRouter.catalogLogin(username, password, faculty, true);
       store.dispatch(SaveLoginDataAction(session));
       if (session.authenticated) {
         await loadRemoteUserInfoToState(store);
