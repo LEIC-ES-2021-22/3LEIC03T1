@@ -87,9 +87,9 @@ class ParserLibrary implements ParserLibraryInterface {
               ? rows.elementAt(digitalInfoIdx).innerHtml
               : '';
 
-      final bool digitalAvailable = digitalInfoHtml != '' ? true : false;
+      final bool hasDigitalVersion = digitalInfoHtml != '' ? true : false;
 
-      final String digitalLink = digitalInfoHtml != ''
+      final String digitalURL = digitalInfoHtml != ''
           ? digitalInfoHtml.substring(
               digitalInfoHtml.indexOf('<img src="') + '<img src="'.length,
               digitalInfoHtml.indexOf('border="0" alt=') -
@@ -97,25 +97,37 @@ class ParserLibrary implements ParserLibraryInterface {
           : null;
 
       String units = rows.elementAt(unitsIdx).text.trim();
-      int availableUnits = 0;
+      int unitsAvailable = 0;
       int totalUnits = 0;
       if (units != '') {
         units = units.substring(units.indexOf('(') + '('.length);
-        availableUnits = int.parse(units.substring(0, units.indexOf('/')));
-        totalUnits = int.parse(
+        totalUnits = int.parse(units.substring(0, units.indexOf('/')));
+        unitsAvailable = int.parse(
             units.substring(units.indexOf('/') + 1, units.length - 1));
       }
 
-      String bookImage = '';
+      String bookImageUrl = '';
 
       if (catalogImage != '') {
-        bookImage = catalogBookUrl(catalogImage);
+        bookImageUrl = catalogBookUrl(catalogImage);
       } else if (bookIsbn != '') {
-        bookImage = gBookUrl(bookIsbn);
+        bookImageUrl = gBookUrl(bookIsbn);
       }
 
-      final Book book = Book(author, title, year, bookImage, digitalAvailable,
-          digitalLink, documentType, bookIsbn, totalUnits, availableUnits);
+      // TODO editor, language, country, themes
+      final Book book = Book(
+        title: title,
+        author: author,
+        releaseYear: year,
+        unitsAvailable: unitsAvailable,
+        totalUnits: totalUnits,
+        hasPhysicalVersion: unitsAvailable > 0 ? true : false,
+        hasDigitalVersion: hasDigitalVersion,
+        digitalURL: digitalURL,
+        imageURL: bookImageUrl,
+        documentType: documentType,
+        isbnCode: bookIsbn,
+      );
 
       booksList.add(book);
     });
