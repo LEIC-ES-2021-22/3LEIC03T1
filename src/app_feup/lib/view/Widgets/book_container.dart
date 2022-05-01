@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
@@ -29,13 +31,19 @@ class BookContainer extends StatelessWidget {
                   child: IntrinsicHeight(
                       child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Image.network(
-                        book.imageURL,
-                        width: hs(70, context),
-                        height: vs(105, context),
-                        fit: BoxFit.fill,
-                      ),
+                    children: [
+                      book.imageURL == null
+                          ? Image.asset('assets/images/book_placeholder.png',
+                              width: hs(70, context),
+                              height: vs(105, context),
+                              fit: BoxFit.fill)
+                          // TODO: Sould we use FileImage like general_page_view?
+                          : Image.network(
+                              book.imageURL,
+                              width: hs(70, context),
+                              height: vs(105, context),
+                              fit: BoxFit.fill,
+                            ),
                       buildBookContainerBody(context)
                     ],
                   )))),
