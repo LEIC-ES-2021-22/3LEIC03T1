@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/controller/networking/network_router.dart';
 
 /// Stores information about a user session.
@@ -22,6 +23,7 @@ class Session {
   // TODO: Is this descriptive enough?
   /// Creates a new instance from an HTTP response containing a JSON document.
   static Session fromLogin(dynamic response) {
+    Logger().i('Creating session from login');
     final responseBody = json.decode(response.body);
     if (responseBody['authenticated']) {
       return Session(

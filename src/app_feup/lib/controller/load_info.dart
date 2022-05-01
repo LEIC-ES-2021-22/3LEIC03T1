@@ -35,26 +35,26 @@ Future loadReloginInfo(Store<AppState> store) async {
   return Future.error('No credentials stored');
 }
 
-Future catalogLoadReloginInfo(Store<AppState> store) async {
-  final Tuple2<String, String> userPersistentCredentials =
-      await AppSharedPreferences.getPersistentUserInfo();
-  final List<String> userPersistentFacs =
-      await AppSharedPreferences.getUserFaculties();
-  final String userName = userPersistentCredentials.item1;
-  final String password = userPersistentCredentials.item2;
-  final List<String> faculties =
-      userPersistentFacs.isEmpty ? userPersistentFacs : ['feup'];
+// Future catalogLoadReloginInfo(Store<AppState> store) async {
+//   final Tuple2<String, String> userPersistentCredentials =
+//       await AppSharedPreferences.getPersistentUserInfo();
+//   final List<String> userPersistentFacs =
+//       await AppSharedPreferences.getUserFaculties();
+//   final String userName = userPersistentCredentials.item1;
+//   final String password = userPersistentCredentials.item2;
+//   final List<String> faculties =
+//       userPersistentFacs.isEmpty ? userPersistentFacs : ['feup'];
 
-  if (userName != '' && password != '') {
-    final action = Completer();
+//   if (userName != '' && password != '') {
+//     final action = Completer();
 
-    /// TODO: support for multiple faculties. Issue: #445
-    // ignore: lines_longer_than_80_chars
-    store.dispatch(catalogReLogin(userName, password, faculties[0], action: action));
-    return action.future;
-  }
-  return Future.error('No credentials stored');
-}
+//     /// TODO: support for multiple faculties. Issue: #445
+//     // ignore: lines_longer_than_80_chars
+//     store.dispatch(catalogReLogin(userName, password, faculties[0], action: action));
+//     return action.future;
+//   }
+//   return Future.error('No credentials stored');
+// }
 
 Future loadUserInfoToState(store) async {
   loadLocalUserInfoToState(store);
@@ -69,7 +69,6 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
   } else if (!store.state.content['session'].authenticated &&
       store.state.content['session'].persistentSession) {
     await loadReloginInfo(store);
-    await catalogLoadReloginInfo(store);
   }
 
   final Completer<Null> userInfo = Completer(),
@@ -84,7 +83,6 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       restaurants = Completer();
 
   store.dispatch(getUserInfo(userInfo));
-  Logger().i(userInfo.toString());
   store.dispatch(getUserPrintBalance(printBalance));
   store.dispatch(getUserFees(fees));
   store.dispatch(getUserCoursesState(coursesStates));
