@@ -79,16 +79,19 @@ class Library implements LibraryInterface {
     final Tuple2<String, String> userPersistentInfo =
         await AppSharedPreferences.getPersistentUserInfo();
     Logger().i('Inside network catalog login ');
-    final String url = 'https://catalogo.up.pt:/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO"%3B>%3BEngenharia';
+    final String url =
+        'https://catalogo.up.pt:/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO"%3B>%3BEngenharia';
+    
+    // Start searching for the right url
+    // Code from https://api.flutter.dev/flutter/dart-io/HttpClientRequest/followRedirects.html
     final client = HttpClient();
     var uri = Uri.parse(url);
     var request = await client.getUrl(uri);
-    //Logger().i(request.followRedirects);
     request.followRedirects = false;
     var response = await request.close();
-    //Logger().i(response.statusCode);
     String location = '';
-    while (response.statusCode != 200) {
+
+    while (response.isRedirect) {
       response.drain();
       location = response.headers.value(HttpHeaders.locationHeader);
       //Logger().i(location);
@@ -96,22 +99,37 @@ class Library implements LibraryInterface {
         uri = uri.resolve(location);
         request = await client.getUrl(uri);
         // Set the body or headers as desired.
+        // could try to simplify this by parsing the body here
+        //
         request.followRedirects = false;
         response = await request.close();
         //Logger().i(response.statusCode);
       }
     }
-    String finalUrl = 'https://wayf.up.pt'+location;
+    // Trying a different way to send a post request
+    // Took from https://api.flutter.dev/flutter/dart-io/HttpClientRequest/followRedirects.html
+    String finalUrl = 'https://wayf.up.pt' + location;
+    final req = Request(
+        'POST', Uri.parse(finalUrl))
+      ..headers.addAll({'Content-Type': 'application/x-www-form-urlencoded'})
+      // ignore: lines_longer_than_80_chars
+      ..bodyFields = {'username': userPersistentInfo.item1+'@fe.up.pt', 'password': userPersistentInfo.item2};
+
+    final res = await req.send();
+    print(req.headers);
+    print(res.statusCode);
+    print(res.headers); 
     // ignore: avoid_print
-    print('Exiting getting final url '+ finalUrl);
-    print('user: ' +userPersistentInfo.item1);
-    final http.Response res = await http.post(finalUrl.toUri(), body: {
-      'j_username': userPersistentInfo.item1+'@fe.up.pt',
-      'j_password': userPersistentInfo.item2
+    print('Exiting getting final url ' + finalUrl);
+    print('user: ' + userPersistentInfo.item1);
+
+    // I dont really know if it's logged, because the body that is returned is the same as the Moodle login.
+    // Therefore i dont know if this is working. Besides the Status Code being 200
+    final http.Response res2 = await http.post(finalUrl.toUri(), body: {
+      'username': userPersistentInfo.item1 + '@feu.up.pt',
+      'password': userPersistentInfo.item2
     }).timeout(const Duration(seconds: loginRequestTimeout));
-    Logger().i('Body of post', res.body);
-    Logger().i('Status code :' ,res.statusCode);
+    Logger().i('Body of post', res2.body);
+    Logger().i('Status code :', res2.statusCode);
   }
-
-
 }
