@@ -13,9 +13,11 @@ class BookDetails extends StatefulWidget {
 final Book mockedBook = Book(
   title: 'Programming - principles and practice using C++',
   author: 'Stroustrup, Bjarne',
+  themes: ['Programação', 'C++'],
   unitsAvailable: 5,
   hasDigitalVersion: true,
   hasPhysicalVersion: true,
+  releaseYear: '2008',
   imageURL:
       'https://books.google.com/books/content?id=hxOpAwAAQBAJ&printsec=frontcover&img=1&zoom=5',
 );
@@ -131,17 +133,111 @@ class LibrarySearch extends StatelessWidget {
                 width: 20,
               ),
               ElevatedButton(
-                  onPressed: () {
-                    //TODO: Download Action here
-                  },
-                  child: Icon(
-                    Icons.download_sharp,
+                onPressed: () {
+                  //TODO: Download Action here
+                },
+                child: Icon(
+                  Icons.download_sharp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(30, 260, 0, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: this.createBookThemes(context, book),
                   ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "Ano: ${book.releaseYear}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Editor: ${book.editor}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "ISBN: ${book.isbnCode}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 120,
+              ),
+              Icon(
+                Icons.language,
+                color: Colors.black,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                "${book.language}",
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  List<Widget> createBookThemes(BuildContext context, Book book) {
+    final List<Widget> themes = <Widget>[];
+
+    book.themes = ['Programação', 'C++'];
+
+    themes.add(Text(
+      "Temas",
+      style: const TextStyle(
+        fontSize: 18,
+      ),
+    ));
+
+    themes.add(SizedBox(
+      height: 18,
+    ));
+
+    if (book.themes != null) {
+      for (int i = 0; i < book.themes.length; ++i) {
+        themes.add(
+          Text('\u2022  ${book.themes[i]}'),
+        );
+        themes.add(
+          SizedBox(
+            height: 8,
+          ),
+        );
+      }
+    } else {
+      themes.add(Text("Não há temas"));
+    }
+
+    return themes;
   }
 }
