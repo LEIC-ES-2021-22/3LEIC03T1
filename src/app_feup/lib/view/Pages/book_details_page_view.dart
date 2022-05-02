@@ -80,7 +80,7 @@ class LibrarySearch extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 70, 0, 0),
+          padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -99,19 +99,44 @@ class LibrarySearch extends StatelessWidget {
                       Text(
                         book.title,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.0
-                        ),
+                            fontWeight: FontWeight.bold, fontSize: 17.0),
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        book.author
+                      Text(book.author),
+                      SizedBox(
+                        height: 15,
                       ),
+                      Text(
+                          "${book.unitsAvailable} / ${book.totalUnits} unidades disponíveis"),
                     ],
                   ),
                 ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(180, 180, 0, 0),
+          child: Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  //TODO: Reserve Action here
+                },
+                child: Text("RESERVAR"),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    //TODO: Download Action here
+                  },
+                  child: Icon(
+                    Icons.download_sharp,
+                  ),
               ),
             ],
           ),
