@@ -140,6 +140,6 @@ flutter:
 
 # This is needed to use flutter_gherkin with the current dependencies
 dependency_overrides:
-  crypto: ^3.0.1
+  crypto: 3.0.1
   args: ^2.0.0
   archive: ^3.0.0-nullsafety.0
