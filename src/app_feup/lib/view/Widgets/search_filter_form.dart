@@ -59,7 +59,6 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   DropdownFilter countryFilter;
   DropdownFilter docTypeFilter;
 
-  static final FocusNode yearNode = FocusNode();
   static final TextEditingController yearController = TextEditingController();
 
   _SearchFilterFormState() {
