@@ -4,8 +4,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
-import 'package:uni/view/Widgets/book_container.dart';
-import 'package:uni/view/Widgets/library_search_header.dart';
 
 class BookDetails extends StatefulWidget {
   @override
@@ -43,8 +41,36 @@ class LibrarySearch extends StatelessWidget {
   final Book book;
 
   LibrarySearch({Key key, @required this.book}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text(book.title));
+    return Container(
+      height: 200,
+      width: MediaQuery.of(context).size.width,
+      color: Colors.black12,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 30,
+                    color: Colors.black,
+
+                  ),
+                ),
+              ),
+              Text(book.title)
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
