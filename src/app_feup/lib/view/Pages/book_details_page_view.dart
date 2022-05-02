@@ -44,33 +44,79 @@ class LibrarySearch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      width: MediaQuery.of(context).size.width,
-      color: Colors.black12,
-      child: Column(
-        children: [
-          Row(
+    return Stack(
+      children: [
+        Container(
+          height: 200.0,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.black12,
+          child: Column(
             children: [
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 30,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Detalhes do Livro",
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 70, 0, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(
+                book.imageURL,
+                width: 100,
+                height: 150,
+                fit: BoxFit.fill,
+              ),
+              Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                    color: Colors.black,
-
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        book.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17.0
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        book.author
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Text(book.title)
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
