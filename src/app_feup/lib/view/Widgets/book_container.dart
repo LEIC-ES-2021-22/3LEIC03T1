@@ -35,7 +35,7 @@ class BookContainer extends StatelessWidget {
                               width: hs(70, context),
                               height: vs(105, context),
                               fit: BoxFit.fill)
-                          // TODO: Sould we use FileImage like general_page_view?
+                    // TODO: Sould we use FileImage like general_page_view?
                           : Image.network(
                               book.imageURL,
                               width: hs(70, context),
