@@ -24,8 +24,12 @@ class BookContainer extends StatelessWidget {
             elevation: 4,
             borderRadius: BorderRadius.all(Radius.circular(10)),
             child: InkWell(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => BookDetails())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookDetails(),
+                ),
+              ),
               enableFeedback: true,
               child: RowContainer(
                   color: Theme.of(context).backgroundColor,
