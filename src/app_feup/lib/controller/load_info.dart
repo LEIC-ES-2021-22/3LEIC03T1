@@ -71,7 +71,6 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       await AppSharedPreferences.getPersistentUserInfo();
   userInfo.future.then((value) {
     store.dispatch(getUserExams(exams, ParserExams(), userPersistentInfo));
-    // Library is the implementation of the interface
 
     // TODO get the cookie for catalog website after we login
     store.dispatch(getLibraryBooks(books, Library(), userPersistentInfo));

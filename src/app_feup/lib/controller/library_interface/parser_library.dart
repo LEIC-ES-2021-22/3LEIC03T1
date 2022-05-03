@@ -1,13 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'package:logger/logger.dart';
+import 'package:uni/controller/library_interface/library.dart';
 import 'package:uni/controller/library_interface/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
-
-//import 'package:web_scraper/web_scraper.dart';
 
 final int bookDetailsIdx = 0;
 final int authorInfoIdx = 2;
@@ -19,32 +19,81 @@ final int gImgPathIdx = 7;
 final int catalogImgPathIdx = 8;
 final int digitalInfoIdx = 9;
 
+final int languageIdx = 4;
+final int localIdx = 5;
+final int editorIdx = 6;
+final int themesIdx = 12;
+
 String catalogBookUrl(String book) => 'https://catalogo.up.pt$book';
 
 String gBookUrl(String isbn) =>
     'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
 
 class ParserLibrary implements ParserLibraryInterface {
+  Future<Map<String, List<String>>> parseBookDetailsHtml(
+      http.Response response) async {
+    final document = parse(utf8.decode(response.bodyBytes));
+
+    final Map<String, List<String>> bookDetails = {
+      'editor': [''],
+      'language': [''],
+      'local': [''],
+      'themes': []
+    };
+
+    // get all the information tags
+    final List<Element> elements = document.querySelectorAll('[class=td1]');
+    int idx = 0;
+    while (idx < elements.length) {
+      // first <td> has the information name, like language, Editor, year ...
+      // Second <td> has it's value, the language, year, editor's name ...
+      final Element element = elements.elementAt(idx);
+
+      String elemInfo = element.text.trim().toLowerCase();
+
+      String info = elements.elementAt(idx + 1).text.trim();
+
+      if (elemInfo == 'língua') {
+        bookDetails['language'] = [info];
+      } else if (elemInfo == 'local') {
+        bookDetails['local'] = [info];
+      } else if (elemInfo == 'editor') {
+        bookDetails['editor'] = [info];
+      } else if (elemInfo == 'assunto(s)') {
+        // it has at least 1 theme
+        bookDetails['themes'] = [elements.elementAt(idx + 1).text.trim()];
+
+        // get next theme
+        int currIdx = idx + 2;
+        elemInfo = elements.elementAt(currIdx).text.trim();
+
+        while (elemInfo == '') {
+          info = elements.elementAt(currIdx + 1).text.trim();
+          // get the theme and add it to the list
+          bookDetails['themes'].add(info);
+          currIdx += 2;
+          elemInfo = elements.elementAt(currIdx).text.trim();
+        }
+      }
+
+      idx += 2;
+    }
+    return bookDetails;
+  }
+
   @override
-  Future<Set<Book>> parseBooksFromHtml(http.Response response) async {
+  Future<Set<Book>> parseBooks(http.Response response,
+      {String cookie = null}) async {
     final document = parse(response.body);
 
     final Set<Book> booksList = Set();
 
     // get the book section (<tr valign=baseline>)
-    document.querySelectorAll('[valign=baseline]').forEach((Element element) {
-      final rows = element.querySelectorAll('td');
+    final List<Element> elements =
+        document.querySelectorAll('[valign=baseline]');
 
-      final String bookDetailsHtml = rows.elementAt(bookDetailsIdx).innerHtml;
-      // TODO check this link and then get the information of the book
-      // by scrapping the page
-      final String bookDetailsLink = bookDetailsHtml.substring(
-          bookDetailsHtml.indexOf('<a HREF=') +
-              '<a HREF='.length +
-              2, // remove = and "
-          bookDetailsHtml.indexOf('</a>') -
-              rows.elementAt(bookDetailsIdx).text.length -
-              2); // remove ; and "
+    for (Element element in elements) {
+      final rows = element.querySelectorAll('td');
 
       final String author = rows.elementAt(authorInfoIdx).text;
 
@@ -61,7 +110,6 @@ class ParserLibrary implements ParserLibraryInterface {
       final String imageHtml = rows.elementAt(gImgPathIdx) != null
           ? rows.elementAt(gImgPathIdx).innerHtml
           : '';
-
       final String catalogImage =
           rows.elementAt(catalogImgPathIdx).children.isNotEmpty
               ? rows
@@ -81,6 +129,13 @@ class ParserLibrary implements ParserLibraryInterface {
 
       bookIsbn = bookIsbn.substring(1, bookIsbn.length - 2); // remove " and ;
       bookIsbn = bookIsbn == '<BR>' ? '' : bookIsbn;
+
+      String bookImageUrl = '';
+      if (catalogImage != '') {
+        bookImageUrl = catalogBookUrl(catalogImage);
+      } else if (bookIsbn != '') {
+        bookImageUrl = gBookUrl(bookIsbn);
+      }
 
       final String digitalInfoHtml =
           rows.elementAt(digitalInfoIdx).text.trim() == 'url'
@@ -106,19 +161,29 @@ class ParserLibrary implements ParserLibraryInterface {
             units.substring(units.indexOf('/') + 1, units.length - 1));
       }
 
-      String bookImageUrl = '';
+      final String bookDetailsHtml = rows.elementAt(bookDetailsIdx).innerHtml;
+      final String bookDetailsLink = bookDetailsHtml
+          .substring(
+              bookDetailsHtml.indexOf('<a HREF=') +
+                  '<a HREF='.length +
+                  2, // remove = and "
+              bookDetailsHtml.indexOf('</a>') -
+                  rows.elementAt(bookDetailsIdx).text.length -
+                  2)
+          .replaceAll('amp;', ''); // remove ; " and &amp;
 
-      if (catalogImage != '') {
-        bookImageUrl = catalogBookUrl(catalogImage);
-      } else if (bookIsbn != '') {
-        bookImageUrl = gBookUrl(bookIsbn);
-      }
+      final http.Response bdResponse =
+          await Library.getHtml(bookDetailsLink, cookie: cookie);
+      final Map<String, List> bookDetails =
+          await parseBookDetailsHtml(bdResponse);
 
-      // TODO editor, language, country, themes
       final Book book = Book(
         title: title,
         author: author,
+        editor: bookDetails['editor'].elementAt(0),
         releaseYear: year,
+        language: bookDetails['language'].elementAt(0),
+        country: bookDetails['local'].elementAt(0),
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
         hasPhysicalVersion: unitsAvailable > 0 ? true : false,
@@ -127,11 +192,11 @@ class ParserLibrary implements ParserLibraryInterface {
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
+        themes: bookDetails['themes'],
       );
 
       booksList.add(book);
-    });
-
+    }
     return booksList;
   }
 }

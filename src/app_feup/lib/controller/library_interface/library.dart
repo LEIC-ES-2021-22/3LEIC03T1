@@ -37,15 +37,17 @@ class Library implements LibraryInterface {
     final String cookie = await parseCookie(cookieResponse);
 
     final Response response =
-        await getHtml(baseSearchUrl(query), cookie: cookie);
+        await Library.getHtml(baseSearchUrl(query), cookie: cookie);
 
     final Set<Book> libraryBooks =
-        await parserLibrary.parseBooksFromHtml(response);
+        await parserLibrary.parseBooks(response, cookie: cookie);
 
+    Logger().i('Books: ', libraryBooks.toString());
     return libraryBooks;
   }
 
-  Future<http.Response> getHtml(String url, {String cookie = null}) async {
+  static Future<http.Response> getHtml(String url,
+      {String cookie = null}) async {
     final Map<String, String> headers = Map<String, String>();
     if (cookie != null) headers['cookie'] = cookie;
 

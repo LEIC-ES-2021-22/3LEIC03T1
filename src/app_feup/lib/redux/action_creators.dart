@@ -234,7 +234,7 @@ ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
       // TODO after login place the cookie in this store so we can
       // use it inside of extract books
       final List<Book> books =
-          await extractBooks(store, library, 'Interaction Design');
+          await extractBooks(store, library, 'Design Patterns');
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));
