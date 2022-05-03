@@ -30,6 +30,10 @@ String gBookUrl(String isbn) =>
     'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
 
 class ParserLibrary implements ParserLibraryInterface {
+  /**
+   * Parses the html received in response and gets the details of a book
+   * from it
+   */
   Future<Map<String, List<String>>> parseBookDetailsHtml(
       http.Response response) async {
     final document = parse(utf8.decode(response.bodyBytes));

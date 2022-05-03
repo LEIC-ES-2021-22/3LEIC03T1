@@ -229,8 +229,6 @@ ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
       // TODO get this url from the search field
-      // this function will probably go out of here because we are setting
-      // the state and we don't want that, we just want to get the books
       // TODO after login place the cookie in this store so we can
       // use it inside of extract books
       final List<Book> books =
