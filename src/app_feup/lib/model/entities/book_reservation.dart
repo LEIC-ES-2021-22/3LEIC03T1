@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 
 class BookReservation {
@@ -52,11 +55,45 @@ class BookReservation {
   String getDateIndicator() {
     switch (this.status) {
       case ReservationStatus.pending:
-        return this.acquisitionDate.toString() +
+      case ReservationStatus.finished:
+        final DateFormat formatter = DateFormat('dd-MM-yyyy');
+        return formatter.format(this.acquisitionDate) +
             ' - ' +
-            this.returnDate.toString();
+            formatter.format(this.returnDate);
+      case ReservationStatus.readyForCollection:
+      case ReservationStatus.collected:
+        final int remainingDays =
+            this.returnDate.difference(DateTime.now()).inDays;
+
+        if (remainingDays == 1) return 'Falta 1 dia';
+        return 'Faltam $remainingDays dias';
+      case ReservationStatus.delayed:
+        final int delayedDays =
+            DateTime.now().difference(this.returnDate).inDays;
+
+        if (delayedDays == 1) return '1 dia em atraso';
+        return '$delayedDays dias em atraso';
     }
     return '';
+  }
+
+  Color getStatusColor() {
+    switch (this.status) {
+      case ReservationStatus.pending:
+      case ReservationStatus.finished:
+        return Colors.grey[600];
+      case ReservationStatus.readyForCollection:
+      case ReservationStatus.collected:
+        final int remainingDays =
+            this.returnDate.difference(DateTime.now()).inDays;
+
+        if (remainingDays <= 3) return Colors.yellow[500];
+        return Colors.green[500];
+      case ReservationStatus.delayed:
+        return Colors.red[700];
+    }
+
+    return Colors.grey[500];
   }
 
   @override

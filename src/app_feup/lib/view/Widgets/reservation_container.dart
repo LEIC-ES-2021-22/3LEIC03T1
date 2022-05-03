@@ -25,7 +25,7 @@ class ReservationContainer extends LibraryContainer {
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 10),
                 Text(reservation.getDateIndicator(),
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
@@ -41,12 +41,10 @@ class ReservationContainer extends LibraryContainer {
                         margin: EdgeInsets.only(bottom: 5),
                         child: Text(
                           toString(reservation.status),
-                          style: book.unitsAvailable > 1
-                              ? Theme.of(context).textTheme.bodyText2
-                              : Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  .apply(color: Colors.red[700]),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              .apply(color: reservation.getStatusColor()),
                         ),
                       ),
                       buildBookTypesContainer(context)
