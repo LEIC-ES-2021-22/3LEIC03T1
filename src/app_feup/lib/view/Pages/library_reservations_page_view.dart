@@ -8,6 +8,7 @@ import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Widgets/book_container.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
 import 'package:uni/view/Widgets/library_search_header.dart';
+import 'package:uni/view/Widgets/reservation_container.dart';
 
 class LibraryReservations extends StatefulWidget {
   @override
@@ -97,10 +98,9 @@ class LibraryReservationsBody extends StatelessWidget {
     final List<Widget> columns = <Widget>[];
     columns.add(LibraryReservationsHeader());
 
-    /* for (int i = 0; i < reservations.length; ++i) {
-      columns.add(BookContainer(
-          book: reservations[i], type: BookContainerType.searchResult));
-    } */
+    for (int i = 0; i < reservations.length; ++i) {
+      columns.add(ReservationContainer(reservation: reservations[i]));
+    }
 
     return columns;
   }
