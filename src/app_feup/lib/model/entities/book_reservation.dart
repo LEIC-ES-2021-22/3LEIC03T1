@@ -1,12 +1,14 @@
-import 'package:collection/collection.dart';
-
 class BookReservation {
   String title;
   String author;
-  String editor;
-  String releaseYear;
+
   String language;
   String country;
+
+  int reservationNumber;
+  DateTime acquisitionDate;
+  DateTime returnDate;
+  String pickupLocation;
 
   int unitsAvailable;
   int totalUnits;
@@ -18,24 +20,25 @@ class BookReservation {
   String imageURL;
   String documentType;
   String isbnCode;
-  List<String> themes;
 
-  BookReservation(
-      {this.title,
-      this.author,
-      this.editor,
-      this.releaseYear,
-      this.language,
-      this.country,
-      this.unitsAvailable,
-      this.totalUnits,
-      this.hasPhysicalVersion,
-      this.hasDigitalVersion,
-      this.digitalURL,
-      this.imageURL,
-      this.documentType,
-      this.isbnCode,
-      this.themes});
+  BookReservation({
+    this.title,
+    this.author,
+    this.language,
+    this.country,
+    this.reservationNumber,
+    this.acquisitionDate,
+    this.returnDate,
+    this.pickupLocation,
+    this.unitsAvailable,
+    this.totalUnits,
+    this.hasPhysicalVersion,
+    this.hasDigitalVersion,
+    this.digitalURL,
+    this.imageURL,
+    this.documentType,
+    this.isbnCode,
+  });
 
   String getUnitsText() {
     if (unitsAvailable == 1) return '1 unidade';
@@ -44,9 +47,10 @@ class BookReservation {
 
   @override
   String toString() {
-    return '''$title - $author - $editor - $releaseYear - $language - $country - \
+    return '''$title - $author - $language - $country - \
+      $reservationNumber - $acquisitionDate - $returnDate - $pickupLocation - \
       $unitsAvailable - $totalUnits - $hasPhysicalVersion - $hasDigitalVersion - \
-      $digitalURL - $imageURL - $documentType - $isbnCode - $themes''';
+      $digitalURL - $imageURL - $documentType - $isbnCode''';
   }
 
   @override
@@ -56,11 +60,12 @@ class BookReservation {
           runtimeType == other.runtimeType &&
           title == other.title &&
           author == other.author &&
-          editor == other.editor &&
-          ListEquality().equals(themes, other.themes) &&
-          releaseYear == other.releaseYear &&
           language == other.language &&
           country == other.country &&
+          reservationNumber == other.reservationNumber &&
+          acquisitionDate == other.acquisitionDate &&
+          returnDate == other.returnDate &&
+          pickupLocation == other.pickupLocation &&
           unitsAvailable == other.unitsAvailable &&
           totalUnits == other.totalUnits &&
           hasPhysicalVersion == other.hasPhysicalVersion &&
@@ -74,11 +79,12 @@ class BookReservation {
   int get hashCode =>
       title.hashCode ^
       author.hashCode ^
-      editor.hashCode ^
-      ListEquality().hash(themes) ^
-      releaseYear.hashCode ^
       language.hashCode ^
       country.hashCode ^
+      reservationNumber.hashCode ^
+      acquisitionDate.hashCode ^
+      returnDate.hashCode ^
+      pickupLocation.hashCode ^
       unitsAvailable.hashCode ^
       totalUnits.hashCode ^
       hasPhysicalVersion.hashCode ^

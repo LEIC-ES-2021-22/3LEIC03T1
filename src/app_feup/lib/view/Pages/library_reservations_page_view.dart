@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Widgets/book_container.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
@@ -13,28 +14,40 @@ class LibraryReservations extends StatefulWidget {
   State<StatefulWidget> createState() => LibraryReservationsState();
 }
 
-final List<Book> mockedBooks = [
-  Book(
+final List<BookReservation> mockedReservations = [
+  BookReservation(
     title: 'Programming - principles and practice using C++',
     author: 'Stroustrup, Bjarne',
+    reservationNumber: 1,
+    acquisitionDate: DateTime.now(),
+    returnDate: DateTime.now().add(Duration(days: 14)),
+    pickupLocation: 'FEUP',
     unitsAvailable: 5,
     hasDigitalVersion: true,
     hasPhysicalVersion: true,
     imageURL:
         'https://books.google.com/books/content?id=hxOpAwAAQBAJ&printsec=frontcover&img=1&zoom=5',
   ),
-  Book(
+  BookReservation(
     title: 'Modern condensed matter physics',
     author: 'Girvin, Steven M.',
+    reservationNumber: 2,
+    acquisitionDate: DateTime.now(),
+    returnDate: DateTime.now().add(Duration(days: 7)),
+    pickupLocation: 'FCUP',
     unitsAvailable: 3,
     hasDigitalVersion: false,
     hasPhysicalVersion: true,
     imageURL:
         'https://books.google.com/books/content?id=YYKFDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl',
   ),
-  Book(
+  BookReservation(
     title: 'Os 4 elementos',
     author: 'Pereira, Paulo',
+    reservationNumber: 3,
+    acquisitionDate: DateTime.now(),
+    returnDate: DateTime.now().add(Duration(hours: 12)),
+    pickupLocation: 'FMUP',
     unitsAvailable: 1,
     hasDigitalVersion: true,
     hasPhysicalVersion: false,
@@ -50,20 +63,22 @@ class LibraryReservationsState extends SecondaryPageViewState {
       converter: (store) {
         // TODO Connect with search
         // CHANGE THIS
-        final List<Book> books = store.state.content['searchBooks'];
-        return books;
+        final List<BookReservation> reservations =
+            store.state.content['reservations'];
+        return reservations;
       },
-      builder: (context, books) {
-        return LibraryReservationsBody(books: mockedBooks);
+      builder: (context, reservations) {
+        return LibraryReservationsBody(reservations: mockedReservations);
       },
     );
   }
 }
 
 class LibraryReservationsBody extends StatelessWidget {
-  final List<Book> books;
+  final List<BookReservation> reservations;
 
-  LibraryReservationsBody({Key key, @required this.books}) : super(key: key);
+  LibraryReservationsBody({Key key, @required this.reservations})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -71,7 +86,7 @@ class LibraryReservationsBody extends StatelessWidget {
         Container(
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            children: this.createReservationsFeed(context, books),
+            children: this.createReservationsFeed(context, reservations),
           ),
         )
       ],
