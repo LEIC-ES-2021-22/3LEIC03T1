@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/book_reservation.dart';
+import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/library_container.dart';
 
 class ReservationContainer extends LibraryContainer {
@@ -25,7 +26,7 @@ class ReservationContainer extends LibraryContainer {
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
                 SizedBox(height: 5),
-                Text(book.author,
+                Text(reservation.getDateIndicator(),
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme
@@ -39,7 +40,7 @@ class ReservationContainer extends LibraryContainer {
                         alignment: Alignment.bottomLeft,
                         margin: EdgeInsets.only(bottom: 5),
                         child: Text(
-                          book.getUnitsText(),
+                          toString(reservation.status),
                           style: book.unitsAvailable > 1
                               ? Theme.of(context).textTheme.bodyText2
                               : Theme.of(context)

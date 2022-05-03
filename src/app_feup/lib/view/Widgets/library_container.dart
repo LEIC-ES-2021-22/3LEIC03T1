@@ -14,7 +14,7 @@ abstract class LibraryContainer extends StatelessWidget {
     final keyValue = '${book.toString()}-book';
     return Container(
         key: Key(keyValue),
-        margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
+        margin: EdgeInsets.fromLTRB(12, 4, 12, 4),
         child: Material(
           elevation: 4,
           borderRadius: BorderRadius.all(Radius.circular(10)),

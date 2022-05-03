@@ -1,3 +1,5 @@
+import 'package:uni/model/utils/reservation_status.dart';
+
 class BookReservation {
   String title;
   String author;
@@ -9,6 +11,7 @@ class BookReservation {
   DateTime acquisitionDate;
   DateTime returnDate;
   String pickupLocation;
+  ReservationStatus status;
 
   int unitsAvailable;
   int totalUnits;
@@ -30,6 +33,7 @@ class BookReservation {
     this.acquisitionDate,
     this.returnDate,
     this.pickupLocation,
+    this.status,
     this.unitsAvailable,
     this.totalUnits,
     this.hasPhysicalVersion,
@@ -43,6 +47,16 @@ class BookReservation {
   String getUnitsText() {
     if (unitsAvailable == 1) return '1 unidade';
     return '$unitsAvailable unidades';
+  }
+
+  String getDateIndicator() {
+    switch (this.status) {
+      case ReservationStatus.pending:
+        return this.acquisitionDate.toString() +
+            ' - ' +
+            this.returnDate.toString();
+    }
+    return '';
   }
 
   @override

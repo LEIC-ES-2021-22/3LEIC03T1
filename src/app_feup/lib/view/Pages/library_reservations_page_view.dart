@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/book_reservation.dart';
+import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Widgets/book_container.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
@@ -23,6 +24,7 @@ final List<BookReservation> mockedReservations = [
     acquisitionDate: DateTime.now(),
     returnDate: DateTime.now().add(Duration(days: 14)),
     pickupLocation: 'FEUP',
+    status: ReservationStatus.pending,
     unitsAvailable: 5,
     hasDigitalVersion: true,
     hasPhysicalVersion: true,
@@ -36,6 +38,7 @@ final List<BookReservation> mockedReservations = [
     acquisitionDate: DateTime.now(),
     returnDate: DateTime.now().add(Duration(days: 7)),
     pickupLocation: 'FCUP',
+    status: ReservationStatus.delayed,
     unitsAvailable: 3,
     hasDigitalVersion: false,
     hasPhysicalVersion: true,
@@ -49,6 +52,7 @@ final List<BookReservation> mockedReservations = [
     acquisitionDate: DateTime.now(),
     returnDate: DateTime.now().add(Duration(hours: 12)),
     pickupLocation: 'FMUP',
+    status: ReservationStatus.readyForCollection,
     unitsAvailable: 1,
     hasDigitalVersion: true,
     hasPhysicalVersion: false,
