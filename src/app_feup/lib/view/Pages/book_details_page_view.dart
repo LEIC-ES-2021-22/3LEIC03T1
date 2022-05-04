@@ -6,23 +6,17 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 
 class BookDetails extends StatefulWidget {
+  BookDetails({Key key, @required this.book}) : super(key: key);
+  final Book book;
+
   @override
-  State<StatefulWidget> createState() => BookDetailsState();
+  State<StatefulWidget> createState() => BookDetailsState(book: book);
 }
 
-final Book mockedBook = Book(
-  title: 'Programming - principles and practice using C++',
-  author: 'Stroustrup, Bjarne',
-  themes: ['Programação', 'C++'],
-  unitsAvailable: 5,
-  hasDigitalVersion: true,
-  hasPhysicalVersion: true,
-  releaseYear: '2008',
-  imageURL:
-      'https://books.google.com/books/content?id=hxOpAwAAQBAJ&printsec=frontcover&img=1&zoom=5',
-);
-
 class BookDetailsState extends SecondaryPageViewState {
+  BookDetailsState({@required this.book});
+  final Book book;
+
   @override
   Widget getBody(BuildContext context) {
     return StoreConnector<AppState, Book>(
@@ -33,19 +27,28 @@ class BookDetailsState extends SecondaryPageViewState {
         return book;
       },
       builder: (context, book) {
-        return LibrarySearch(book: mockedBook);
+        return BookDetailsWidget(book: this.book);
       },
     );
   }
 }
 
-class LibrarySearch extends StatelessWidget {
+class BookDetailsWidget extends StatelessWidget {
+  BookDetailsWidget({Key key, @required this.book}) : super(key: key);
   final Book book;
-
-  LibrarySearch({Key key, @required this.book}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    if (this.book.releaseYear == null)
+      this.book.releaseYear = "unknown";
+    if (this.book.editor == null)
+      this.book.editor = "unknown";
+    if (this.book.isbnCode == null)
+      this.book.isbnCode = "unknown";
+    if (this.book.language == null)
+      this.book.language = "unknown";
+
     return Stack(
       children: [
         Container(
@@ -86,33 +89,21 @@ class LibrarySearch extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(
-                book.imageURL,
-                width: 100,
-                height: 150,
-                fit: BoxFit.fill,
+              Hero(
+                  tag: this.book.title,
+                  child: Image.network(
+                    this.book.imageURL,
+                    width: 100,
+                    height: 150,
+                    fit: BoxFit.fill,
+                  ),
               ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        book.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 17.0),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(book.author),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                          "${book.unitsAvailable} / ${book.totalUnits} unidades disponíveis"),
-                    ],
+                    children: this.createBookHeaderInfo(context, this.book),
                   ),
                 ),
               ),
@@ -153,31 +144,31 @@ class LibrarySearch extends StatelessWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.createBookThemes(context, book),
+                    children: this.createBookThemes(context, this.book),
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 45,
                   ),
                   Text(
-                    "Ano: ${book.releaseYear}",
+                    "Ano: ${this.book.releaseYear}",
                     style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Text(
-                    "Editor: ${book.editor}",
+                    "Editor: ${this.book.editor}",
                     style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Text(
-                    "ISBN: ${book.isbnCode}",
+                    "ISBN: ${this.book.isbnCode}",
                     style: const TextStyle(
                       fontSize: 18,
                     ),
@@ -185,7 +176,7 @@ class LibrarySearch extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                width: 120,
+                width: 90,
               ),
               Icon(
                 Icons.language,
@@ -195,7 +186,7 @@ class LibrarySearch extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                "${book.language}",
+                "${this.book.language}",
                 style: const TextStyle(
                   fontSize: 18,
                 ),
@@ -209,8 +200,6 @@ class LibrarySearch extends StatelessWidget {
 
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
-
-    book.themes = ['Programação', 'C++'];
 
     themes.add(Text(
       "Temas",
@@ -239,5 +228,32 @@ class LibrarySearch extends StatelessWidget {
     }
 
     return themes;
+  }
+
+  createBookHeaderInfo(BuildContext context, Book book) {
+    final List<Widget> header_info = <Widget>[];
+
+    header_info.add(
+        Text(
+          book.title,
+          style: const TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 17.0),
+    )
+    );
+    header_info.add(SizedBox(height: 10));
+    header_info.add(Text(book.author));
+    header_info.add(SizedBox(height: 15));
+
+    if (book.unitsAvailable != null && book.totalUnits != null) {
+      if (book.unitsAvailable == 1)
+        header_info.add(Text("${book.unitsAvailable} / ${book.totalUnits} unidade disponível"));
+      else if (book.unitsAvailable > 1)
+          header_info.add(Text("${book.unitsAvailable} / ${book.totalUnits} unidades disponíveis"));
+      else
+        header_info.add(Text("Nenhuma unidade disponível"));
+    }
+
+
+    return header_info;
   }
 }

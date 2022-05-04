@@ -27,7 +27,7 @@ class BookContainer extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => BookDetails(),
+                  builder: (context) => BookDetails(book: this.book),
                 ),
               ),
               enableFeedback: true,
@@ -39,11 +39,14 @@ class BookContainer extends StatelessWidget {
                           child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Image.network(
-                            book.imageURL,
-                            width: hs(70, context),
-                            height: vs(105, context),
-                            fit: BoxFit.fill,
+                          Hero(
+                              tag: book.title,
+                              child: Image.network(
+                                book.imageURL,
+                                width: hs(70, context),
+                                height: vs(105, context),
+                                fit: BoxFit.fill,
+                              ),
                           ),
                           buildBookContainerBody(context)
                         ],
