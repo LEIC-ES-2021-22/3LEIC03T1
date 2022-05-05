@@ -34,14 +34,14 @@ class ParserLibrary implements ParserLibraryInterface {
    * Parses the html received in response and gets the details of a book
    * from it
    */
-  Future<Map<String, List<String>>> parseBookDetailsHtml(
+  Future<Map<String, dynamic>> parseBookDetailsHtml(
       http.Response response) async {
     final document = parse(utf8.decode(response.bodyBytes));
 
-    final Map<String, List<String>> bookDetails = {
-      'editor': [''],
-      'language': [''],
-      'local': [''],
+    final Map<String, dynamic> bookDetails = {
+      'editor': '',
+      'language': '',
+      'local': '',
       'themes': []
     };
 
@@ -50,7 +50,7 @@ class ParserLibrary implements ParserLibraryInterface {
     int idx = 0;
     while (idx < elements.length) {
       // first <td> has the information name, like language, Editor, year ...
-      // Second <td> has it's value, the language, year, editor's name ...
+      // Second <td> has its value, the language, year, editor's name ...
       final Element element = elements.elementAt(idx);
 
       String elemInfo = element.text.trim().toLowerCase();
@@ -58,11 +58,11 @@ class ParserLibrary implements ParserLibraryInterface {
       String info = elements.elementAt(idx + 1).text.trim();
 
       if (elemInfo == 'língua') {
-        bookDetails['language'] = [info];
+        bookDetails['language'] = info;
       } else if (elemInfo == 'local') {
-        bookDetails['local'] = [info];
+        bookDetails['local'] = info;
       } else if (elemInfo == 'editor') {
-        bookDetails['editor'] = [info];
+        bookDetails['editor'] = info;
       } else if (elemInfo == 'assunto(s)') {
         // it has at least 1 theme
         bookDetails['themes'] = [elements.elementAt(idx + 1).text.trim()];
@@ -119,7 +119,7 @@ class ParserLibrary implements ParserLibraryInterface {
               ? rows
                   .elementAt(catalogImgPathIdx)
                   .firstChild // <a> with image inside
-                  .firstChild // <img with src
+                  .firstChild // <img> with src
                   .attributes['src']
               : '';
 
@@ -147,8 +147,7 @@ class ParserLibrary implements ParserLibraryInterface {
               : '';
 
       final bool hasDigitalVersion = digitalInfoHtml != '' ? true : false;
-
-      final String digitalURL = digitalInfoHtml != ''
+      final String digitalURL = hasDigitalVersion
           ? digitalInfoHtml.substring(
               digitalInfoHtml.indexOf('<img src="') + '<img src="'.length,
               digitalInfoHtml.indexOf('border="0" alt=') -
@@ -178,16 +177,18 @@ class ParserLibrary implements ParserLibraryInterface {
 
       final http.Response bdResponse =
           await Library.getHtml(bookDetailsLink, cookie: cookie);
-      final Map<String, List> bookDetails =
+      final Map<String, dynamic> bookDetailsMap =
           await parseBookDetailsHtml(bdResponse);
+
+      final BookDetails bookDetails = BookDetails.fromJson(bookDetailsMap);
 
       final Book book = Book(
         title: title,
         author: author,
-        editor: bookDetails['editor'].elementAt(0),
+        editor: bookDetails.editor,
         releaseYear: year,
-        language: bookDetails['language'].elementAt(0),
-        country: bookDetails['local'].elementAt(0),
+        language: bookDetails.language,
+        country: bookDetails.local,
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
         hasPhysicalVersion: unitsAvailable > 0 ? true : false,
@@ -196,7 +197,7 @@ class ParserLibrary implements ParserLibraryInterface {
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
-        themes: bookDetails['themes'],
+        themes: bookDetails.themes,
       );
 
       booksList.add(book);

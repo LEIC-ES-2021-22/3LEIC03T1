@@ -1,5 +1,28 @@
 import 'package:collection/collection.dart';
 
+class BookDetails {
+  final String editor;
+  final String language;
+  final String local;
+  final List<String> themes;
+
+  BookDetails({
+    this.editor,
+    this.language,
+    this.local,
+    this.themes,
+  });
+
+  factory BookDetails.fromJson(Map<String, dynamic> parsedJson) {
+    return BookDetails(
+      editor: parsedJson['editor'],
+      language: parsedJson['language'],
+      local: parsedJson['local'],
+      themes: List<String>.from(parsedJson['themes']),
+    );
+  }
+}
+
 class Book {
   String title;
   String author;

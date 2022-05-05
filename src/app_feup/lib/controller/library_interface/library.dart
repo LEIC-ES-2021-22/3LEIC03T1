@@ -14,9 +14,6 @@ extension UriString on String {
   Uri toUri() => Uri.parse(this);
 }
 
-final String testUrl =
-    'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
-
 final String baseUrl = 'https://catalogo.up.pt/F';
 
 // TODO receive this WRD from the search filter
@@ -29,7 +26,7 @@ class Library implements LibraryInterface {
   Future<Set<Book>> getLibraryBooks(String query) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
-    // cookie just works if we get it from the base URL for some reason.
+    // cookie only works if we get it from the base URL
     final Response cookieResponse = await getHtml(baseUrl);
 
     final String cookie = await parseCookie(cookieResponse);
@@ -55,8 +52,9 @@ class Library implements LibraryInterface {
       return response;
     } else if (response.statusCode == 403) {
       // HTTP403 - Forbidden;
-      Logger().e('Library Books request failed');
-      return Future.error('Library Books request failed');
+      Logger().e('Library Books request failed. Request was forbidden');
+      return Future.error(
+          'Library Books request failed. Request was forbidden');
     } else {
       return Future.error('HTTP Error ${response.statusCode}');
     }
