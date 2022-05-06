@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tuple/tuple.dart';
-import 'package:uni/controller/library_interface/library_interface.dart';
-import 'package:uni/controller/library_interface/parser_library.dart';
+import 'package:uni/controller/library/library_interface.dart';
 import 'package:uni/controller/load_info.dart';
 import 'package:uni/controller/load_static/terms_and_conditions.dart';
 import 'package:uni/controller/local_storage/app_bus_stop_database.dart';
@@ -39,8 +37,6 @@ import 'package:uni/model/entities/restaurant.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
-
-import 'package:html/parser.dart' show parse;
 
 import '../model/entities/bus_stop.dart';
 
@@ -210,15 +206,6 @@ Future<List<Book>> extractBooks(
   final Set<Book> libraryBooks = await library.getLibraryBooks(query);
 
   return libraryBooks.toList();
-}
-
-Future<String> parseCookie(Response response) async {
-  final document = parse(response.body);
-  final element = document.querySelector('[language="Javascript"]');
-  final String cookie = element.text
-      .substring(element.text.indexOf('=') + 3, element.text.indexOf(';'));
-
-  return cookie;
 }
 
 ThunkAction<AppState> getLibraryBooks(Completer<Null> action,

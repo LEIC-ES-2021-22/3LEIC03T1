@@ -89,7 +89,7 @@ AppState setBooks(AppState state, SetBooksAction action) {
 
 AppState setBooksStatus(AppState state, SetBooksStatusAction action) {
   Logger().i('setting books status: ' + action.status.toString());
-  return state.cloneAndUpdateValue('booksStatus', action.status);
+  return state.cloneAndUpdateValue('searchBooksStatus', action.status);
 }
 
 AppState setExams(AppState state, SetExamsAction action) {

@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'package:logger/logger.dart';
-import 'package:uni/controller/library_interface/library.dart';
-import 'package:uni/controller/library_interface/parser_library_interface.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
 
 final int bookDetailsIdx = 0;
@@ -15,7 +15,7 @@ final int titleInfoIdx = 3;
 final int yearInfoIdx = 4;
 final int documentTypeIdx = 5;
 final int unitsIdx = 6;
-final int gImgPathIdx = 7;
+final int isbnIdx = 7;
 final int catalogImgPathIdx = 8;
 final int digitalInfoIdx = 9;
 
@@ -86,7 +86,7 @@ class ParserLibrary implements ParserLibraryInterface {
   }
 
   @override
-  Future<Set<Book>> parseBooks(http.Response response,
+  Future<Set<Book>> parseBooksFeed(http.Response response,
       {String cookie = null}) async {
     final document = parse(response.body);
 
@@ -111,9 +111,7 @@ class ParserLibrary implements ParserLibraryInterface {
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
 
       // getting the img from catalog
-      final String imageHtml = rows.elementAt(gImgPathIdx) != null
-          ? rows.elementAt(gImgPathIdx).innerHtml
-          : '';
+      final String isbnHtml = rows.elementAt(isbnIdx).innerHtml;
       final String catalogImage =
           rows.elementAt(catalogImgPathIdx).children.isNotEmpty
               ? rows
@@ -123,13 +121,11 @@ class ParserLibrary implements ParserLibraryInterface {
                   .attributes['src']
               : '';
 
-      String bookIsbn = imageHtml != ''
-          ? imageHtml
-              .substring(
-                  imageHtml.indexOf('var isbnaleph=') + 'var isbnaleph='.length,
-                  imageHtml.indexOf('if (isbnaleph == "<BR>")'))
-              .trim()
-          : false;
+      String bookIsbn = isbnHtml
+          .substring(
+              isbnHtml.indexOf('var isbnaleph=') + 'var isbnaleph='.length,
+              isbnHtml.indexOf('if (isbnaleph == "<BR>")'))
+          .trim();
 
       bookIsbn = bookIsbn.substring(1, bookIsbn.length - 2); // remove " and ;
       bookIsbn = bookIsbn == '<BR>' ? '' : bookIsbn;
@@ -143,16 +139,25 @@ class ParserLibrary implements ParserLibraryInterface {
 
       final String digitalInfoHtml =
           rows.elementAt(digitalInfoIdx).text.trim() == 'url'
-              ? rows.elementAt(digitalInfoIdx).innerHtml
+              ? rows
+                  .elementAt(digitalInfoIdx)
+                  .firstChild // <table>
+                  .firstChild // <tbody>
+                  .firstChild // <tr>
+                  .firstChild // <td>
+                  .firstChild // <a>
+                  .attributes['href']
               : '';
 
-      final bool hasDigitalVersion = digitalInfoHtml != '' ? true : false;
+      final bool hasDigitalVersion = digitalInfoHtml != '';
       final String digitalURL = hasDigitalVersion
           ? digitalInfoHtml.substring(
-              digitalInfoHtml.indexOf('<img src="') + '<img src="'.length,
-              digitalInfoHtml.indexOf('border="0" alt=') -
-                  2) // remove the quotation marks
-          : null;
+              digitalInfoHtml.indexOf('javascript:open_window') +
+                  'javascript:open_window'.length +
+                  2, // remove ("
+              digitalInfoHtml.length - 3 // remove ");
+              )
+          : '';
 
       String units = rows.elementAt(unitsIdx).text.trim();
       int unitsAvailable = 0;
@@ -180,15 +185,13 @@ class ParserLibrary implements ParserLibraryInterface {
       final Map<String, dynamic> bookDetailsMap =
           await parseBookDetailsHtml(bdResponse);
 
-      final BookDetails bookDetails = BookDetails.fromJson(bookDetailsMap);
-
       final Book book = Book(
         title: title,
         author: author,
-        editor: bookDetails.editor,
+        editor: bookDetailsMap['editor'],
         releaseYear: year,
-        language: bookDetails.language,
-        country: bookDetails.local,
+        language: bookDetailsMap['language'],
+        country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
         hasPhysicalVersion: totalUnits > 0 ? true : false,
@@ -197,7 +200,7 @@ class ParserLibrary implements ParserLibraryInterface {
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
-        themes: bookDetails.themes,
+        themes: List<String>.from(bookDetailsMap['themes']),
       );
 
       booksList.add(book);

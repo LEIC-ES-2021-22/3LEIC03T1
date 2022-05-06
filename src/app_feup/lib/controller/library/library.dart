@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:logger/logger.dart';
-import 'package:uni/controller/library_interface/library_interface.dart';
-import 'package:uni/controller/library_interface/parser_library.dart';
-import 'package:uni/controller/library_interface/parser_library_interface.dart';
+import 'package:uni/controller/library/library_interface.dart';
+import 'package:uni/controller/library/parser_library.dart';
+import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,7 +35,7 @@ class Library implements LibraryInterface {
         await Library.getHtml(baseSearchUrl(query), cookie: cookie);
 
     final Set<Book> libraryBooks =
-        await parserLibrary.parseBooks(response, cookie: cookie);
+        await parserLibrary.parseBooksFeed(response, cookie: cookie);
 
     return libraryBooks;
   }

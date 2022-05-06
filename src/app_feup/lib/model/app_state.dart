@@ -37,7 +37,7 @@ class AppState {
       'coursesStateStatus': RequestStatus.none,
       'lastUserInfoUpdateTime': null,
       'searchBooks': <Book>[],
-      'booksStatus': RequestStatus.none,
+      'searchBooksStatus': RequestStatus.none,
     };
   }
 

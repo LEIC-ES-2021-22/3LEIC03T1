@@ -4,7 +4,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
-import 'package:uni/controller/library_interface/library.dart';
+import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
 import 'package:uni/model/app_state.dart';
@@ -51,7 +51,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
 
   final Completer<Null> userInfo = Completer(),
       exams = Completer(),
-      books = Completer(),
+      searchBooks = Completer(),
       schedule = Completer(),
       printBalance = Completer(),
       fees = Completer(),
@@ -76,7 +76,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
     // remove this function from here and add it to search button action.
     // this function also has to add the books in the store instead
     // of replacing it
-    store.dispatch(getLibraryBooks(books, Library(), userPersistentInfo));
+    store.dispatch(getLibraryBooks(searchBooks, Library(), userPersistentInfo));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 
