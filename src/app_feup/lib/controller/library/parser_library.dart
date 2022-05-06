@@ -194,7 +194,7 @@ class ParserLibrary implements ParserLibraryInterface {
         country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
-        hasPhysicalVersion: totalUnits > 0 ? true : false,
+        hasPhysicalVersion: totalUnits > 0 || unitsAvailable > 0 ? true : false,
         hasDigitalVersion: hasDigitalVersion,
         digitalURL: digitalURL,
         imageURL: bookImageUrl,
