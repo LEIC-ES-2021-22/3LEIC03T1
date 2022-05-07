@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
-import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
-import 'package:uni/view/Widgets/book_container.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
-import 'package:uni/view/Widgets/library_search_header.dart';
 import 'package:uni/view/Widgets/reservation_container.dart';
 
 class LibraryReservations extends StatefulWidget {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:uni/view/Pages/library_reservations_page_view.dart';
 
 class LibraryReservationsHeader extends StatelessWidget {
   @override

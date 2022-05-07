@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 
 class BookReservation {
