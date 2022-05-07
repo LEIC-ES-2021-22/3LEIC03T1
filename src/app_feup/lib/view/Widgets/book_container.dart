@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:uni/view/Widgets/library_container.dart';
+import 'package:uni/view/Widgets/generic_library_container.dart';
 
 class BookContainer extends GenericLibraryContainer {
   BookContainer({Key key, @required book}) : super(key: key, book: book);
