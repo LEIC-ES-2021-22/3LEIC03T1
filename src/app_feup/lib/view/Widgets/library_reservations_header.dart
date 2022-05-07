@@ -19,6 +19,7 @@ class LibraryReservationsHeader extends StatelessWidget {
             Material(
                 child: ElevatedButton(
                     child: Text('Catálogo'),
+                    key: Key('catalogButton'),
                     onPressed: () {
                       // CHANGE THIS TO NAVIGATE TO LIBRARY PAGE
                       Navigator.pop(context);

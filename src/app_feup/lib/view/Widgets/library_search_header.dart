@@ -30,6 +30,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             Material(
                 child: ElevatedButton(
                     child: Text('Reservas'),
+                    key: Key('reservationsButton'),
                     onPressed: () {
                       Navigator.push(
                           context,
