@@ -56,7 +56,7 @@ class BookReservation {
     switch (this.status) {
       case ReservationStatus.pending:
       case ReservationStatus.finished:
-        final DateFormat formatter = DateFormat('dd-MM-yyyy');
+        final DateFormat formatter = DateFormat('dd/MM/yyyy');
         return formatter.format(this.acquisitionDate) +
             ' - ' +
             formatter.format(this.returnDate);
