@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/view/Widgets/library_container.dart';
 
-class BookContainer extends LibraryContainer {
+class BookContainer extends GenericLibraryContainer {
   BookContainer({Key key, @required book}) : super(key: key, book: book);
 
   @override
@@ -47,5 +47,22 @@ class BookContainer extends LibraryContainer {
                     ]))
               ],
             )));
+  }
+
+    Widget buildBookTypesContainer(BuildContext context) {
+    final List<Widget> iconList = [];
+    if (book.hasPhysicalVersion) {
+      iconList.add(Icon(Icons.menu_book));
+      if (book.hasDigitalVersion) iconList.add(SizedBox(width: 3));
+    }
+
+    if (book.hasDigitalVersion) iconList.add(Icon(Icons.file_download));
+
+    return Container(
+      alignment: Alignment.bottomRight,
+      child: Row(
+        children: iconList,
+      ),
+    );
   }
 }

@@ -4,10 +4,10 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/utils/methods.dart';
 import 'package:uni/view/Widgets/row_container.dart';
 
-abstract class LibraryContainer extends StatelessWidget {
+abstract class GenericLibraryContainer extends StatelessWidget {
   final Book book;
 
-  LibraryContainer({Key key, @required this.book}) : super(key: key);
+  GenericLibraryContainer({Key key, @required this.book}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,24 +44,5 @@ abstract class LibraryContainer extends StatelessWidget {
         ));
   }
 
-  Widget buildLibraryContainerBody(BuildContext context) {
-    return Container();
-  }
-
-  Widget buildBookTypesContainer(BuildContext context) {
-    final List<Widget> iconList = [];
-    if (book.hasPhysicalVersion) {
-      iconList.add(Icon(Icons.menu_book));
-      if (book.hasDigitalVersion) iconList.add(SizedBox(width: 3));
-    }
-
-    if (book.hasDigitalVersion) iconList.add(Icon(Icons.file_download));
-
-    return Container(
-      alignment: Alignment.bottomRight,
-      child: Row(
-        children: iconList,
-      ),
-    );
-  }
+  Widget buildLibraryContainerBody(BuildContext context);
 }

@@ -5,7 +5,7 @@ import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/library_container.dart';
 
-class ReservationContainer extends LibraryContainer {
+class ReservationContainer extends GenericLibraryContainer {
   final BookReservation reservation;
 
   ReservationContainer({Key key, @required this.reservation})
