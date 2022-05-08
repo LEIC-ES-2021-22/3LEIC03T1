@@ -59,7 +59,6 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   DropdownFilter countryFilter;
   DropdownFilter docTypeFilter;
 
-  static final FocusNode yearNode = FocusNode();
   static final TextEditingController yearController = TextEditingController();
 
   _SearchFilterFormState() {
@@ -105,15 +104,6 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(
         filterTextField(
         context, 'Ano de lançamento', 'Todos', yearController, true));
-    /*formWidgets.add(FormTextField(
-      // TODO This is shaky
-      yearController,
-      null,
-      maxLines: 1,
-      description: 'Ano de lançamento',
-      hintText: 'Ano',
-      bottomMargin: 15,
-    ));*/
     return formWidgets;
   }
 

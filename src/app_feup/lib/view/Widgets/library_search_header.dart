@@ -49,24 +49,24 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
 
   Widget createSearchBar(BuildContext context) {
     return Flexible(
-      child: 
-        Form(
-          key: _formkey,
-          child: TextFormField(
-            style: TextStyle(color: Colors.black, fontSize: 18),
-            controller: searchController,
-            autofocus: false,
-            focusNode: searchNode,
-            onFieldSubmitted: (term) {
-              searchNode.unfocus();
-              // TODO Search action
-            },
-            textInputAction: TextInputAction.done,
-            textAlign: TextAlign.left,
-            decoration: searchBarInputDecoration(context, 'Procure'),
-        ),
-        )
-      ); 
+        child: Form(
+      key: _formkey,
+      child: TextFormField(
+        style: TextStyle(color: Colors.black, fontSize: 18),
+        controller: searchController,
+        autofocus: false,
+        focusNode: searchNode,
+        onFieldSubmitted: (term) {
+          searchNode.unfocus();
+          // TODO Search action
+        },
+        textInputAction: TextInputAction.done,
+        textAlign: TextAlign.left,
+        decoration: searchBarInputDecoration(context, 'Procure'),
+        // Key for flutter_gherkin
+        key: Key('searchBar'),
+      ),
+    ));
   }
 
   Widget createSearchFilters(BuildContext context) {
@@ -92,7 +92,8 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   InputDecoration searchBarInputDecoration(
       BuildContext context, String placeholder) {
     return InputDecoration(
-        icon: Icon(Icons.search, color: Colors.grey),
+        // Key for flutter_gherkin
+        icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
         hintText: placeholder,
         contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         border: const UnderlineInputBorder(
