@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uni/view/Pages/library_page_view.dart';
 
 class LibraryReservationsHeader extends StatelessWidget {
   @override
@@ -21,8 +22,10 @@ class LibraryReservationsHeader extends StatelessWidget {
                     child: Text('Catálogo'),
                     key: Key('catalogButton'),
                     onPressed: () {
-                      // CHANGE THIS TO NAVIGATE TO LIBRARY PAGE
-                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LibraryPage()));
                     })),
           ],
         ),

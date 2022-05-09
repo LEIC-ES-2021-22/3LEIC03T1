@@ -46,11 +46,6 @@ class BookReservation {
     this.isbnCode,
   });
 
-  String getUnitsText() {
-    if (unitsAvailable == 1) return '1 unidade';
-    return '$unitsAvailable unidades';
-  }
-
   String getDateIndicator() {
     switch (this.status) {
       case ReservationStatus.pending:

@@ -32,7 +32,7 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
                     child: Text('Reservas'),
                     key: Key('reservationsButton'),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => LibraryReservations()));
