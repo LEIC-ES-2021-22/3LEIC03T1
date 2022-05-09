@@ -12,6 +12,10 @@ AppState appReducers(AppState state, dynamic action) {
     return setExams(state, action);
   } else if (action is SetExamsStatusAction) {
     return setExamsStatus(state, action);
+  } else if (action is SetBooksAction) {
+    return setBooks(state, action);
+  } else if (action is SetBooksStatusAction) {
+    return setBooksStatus(state, action);
   } else if (action is SetScheduleStatusAction) {
     return setScheduleStatus(state, action);
   } else if (action is SetScheduleAction) {
@@ -62,7 +66,7 @@ AppState appReducers(AppState state, dynamic action) {
     return setExamFilter(state, action);
   } else if (action is SetUserFaculties) {
     return setUserFaculties(state, action);
-  } else if(action is SetRestaurantsAction){
+  } else if (action is SetRestaurantsAction) {
     return setRestaurantsAction(state, action);
   }
   return state;
@@ -78,19 +82,29 @@ AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   return state.cloneAndUpdateValue('loginStatus', action.status);
 }
 
+AppState setBooks(AppState state, SetBooksAction action) {
+  Logger().i('setting books: ' + action.books.length.toString());
+  return state.cloneAndUpdateValue('searchBooks', action.books);
+}
+
+AppState setBooksStatus(AppState state, SetBooksStatusAction action) {
+  Logger().i('setting books status: ' + action.status.toString());
+  return state.cloneAndUpdateValue('searchBooksStatus', action.status);
+}
+
 AppState setExams(AppState state, SetExamsAction action) {
   Logger().i('setting exams: ' + action.exams.length.toString());
   return state.cloneAndUpdateValue('exams', action.exams);
 }
 
-AppState setRestaurantsAction(AppState state, SetRestaurantsAction action) {
-  Logger().i('setting restaurants: ' + action.restaurants.length.toString());
-  return state.cloneAndUpdateValue('restaurants', action.restaurants);
-}
-
 AppState setExamsStatus(AppState state, SetExamsStatusAction action) {
   Logger().i('setting exams status: ' + action.status.toString());
   return state.cloneAndUpdateValue('examsStatus', action.status);
+}
+
+AppState setRestaurantsAction(AppState state, SetRestaurantsAction action) {
+  Logger().i('setting restaurants: ' + action.restaurants.length.toString());
+  return state.cloneAndUpdateValue('restaurants', action.restaurants);
 }
 
 AppState setSchedule(AppState state, SetScheduleAction action) {
