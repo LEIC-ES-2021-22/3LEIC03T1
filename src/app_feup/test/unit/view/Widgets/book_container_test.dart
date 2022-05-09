@@ -43,8 +43,7 @@ void main() {
     testWidgets('Book basic information appears in the container',
         (WidgetTester tester) async {
       final widget = makeTestableWidget(
-          child: BookContainer(
-              book: basicBook, type: BookContainerType.searchResult));
+          child: BookContainer(book: basicBook));
       await tester.pumpWidget(widget);
 
       expect(find.text(basicBook.title), findsOneWidget);
@@ -58,8 +57,7 @@ void main() {
     testWidgets('Book placeholder is used when the image is not provided',
         (WidgetTester tester) async {
       final widget = makeTestableWidget(
-          child: BookContainer(
-              book: basicBook, type: BookContainerType.searchResult));
+          child: BookContainer(book: basicBook));
       await tester.pumpWidget(widget);
 
       // TODO: How to verify image path?
@@ -70,8 +68,7 @@ void main() {
         'Only digital version indicator appears when physical not specified',
         (WidgetTester tester) async {
       final widget = makeTestableWidget(
-          child: BookContainer(
-              book: digitalBook, type: BookContainerType.searchResult));
+          child: BookContainer(book: digitalBook));
       await tester.pumpWidget(widget);
 
       expect(find.byIcon(Icons.file_download), findsOneWidget);
@@ -82,8 +79,7 @@ void main() {
         'Only physical version indicator appears when digital not specified',
         (WidgetTester tester) async {
       final widget = makeTestableWidget(
-          child: BookContainer(
-              book: physicalBook, type: BookContainerType.searchResult));
+          child: BookContainer(book: physicalBook));
       await tester.pumpWidget(widget);
 
       expect(find.byIcon(Icons.menu_book), findsOneWidget);
@@ -93,8 +89,7 @@ void main() {
     testWidgets('No indicators appear when no version is available',
         (WidgetTester tester) async {
       final widget = makeTestableWidget(
-          child: BookContainer(
-              book: unavailableBook, type: BookContainerType.searchResult));
+          child: BookContainer(book: unavailableBook));
       await tester.pumpWidget(widget);
 
       expect(find.byIcon(Icons.menu_book), findsNothing);

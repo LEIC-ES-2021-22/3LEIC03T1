@@ -81,8 +81,7 @@ class LibrarySearch extends StatelessWidget {
     columns.add(LibrarySearchHeader());
 
     for (int i = 0; i < books.length; ++i) {
-      columns.add(
-          BookContainer(book: books[i], type: BookContainerType.searchResult));
+      columns.add(BookContainer(book: books[i]));
     }
 
     return columns;

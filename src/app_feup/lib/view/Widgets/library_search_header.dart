@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uni/view/Pages/library_reservations_page_view.dart';
 import 'package:uni/view/Widgets/search_filter_form.dart';
 
 class LibrarySearchHeader extends StatefulWidget {
@@ -29,8 +30,12 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             Material(
                 child: ElevatedButton(
                     child: Text('Reservas'),
+                    key: Key('reservationsButton'),
                     onPressed: () {
-                      debugPrint('clicked reservations');
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LibraryReservations()));
                     })),
           ],
         ),
