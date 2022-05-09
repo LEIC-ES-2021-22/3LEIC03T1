@@ -16,6 +16,8 @@ import 'package:uni/model/entities/search_filters.dart';
 
 import 'package:cookie_jar/cookie_jar.dart';
 
+import 'package:cookie_jar/cookie_jar.dart';
+
 extension UriString on String {
   /// Converts a [String] to an [Uri].
   Uri toUri() => Uri.parse(this);
@@ -185,7 +187,6 @@ class Library implements LibraryInterface {
       document = html.parse(finalResponse.body);
 
       var afterLoginLocation = document.querySelector('body > noscript').text;
-
       afterLoginLocation = afterLoginLocation.substring(
           afterLoginLocation.indexOf('<a href="') + '<a href="'.length,
           afterLoginLocation.indexOf('">Click here to continue'));
@@ -195,7 +196,6 @@ class Library implements LibraryInterface {
           .last;
 
       // get the pds handle cookie
-
       final sentCookies = await cookies.loadForRequest(lastResponseLocation);
       this.pdsCookie = sentCookies.elementAt(sentCookies.length - 1);
     } else if (title == 'Information Release') {
