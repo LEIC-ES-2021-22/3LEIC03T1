@@ -84,19 +84,26 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(180, 180, 0, 0),
-          child: Row(
+          padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
+          child: Row (
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                minimumSize: Size(90, 45)
+                ),
                 onPressed: () {
                   //TODO: Reserve Action here
                 },
                 child: Text("RESERVAR"),
               ),
-              SizedBox(
-                width: 20,
-              ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(50, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                  ),
+                ),
                 onPressed: () {
                   //TODO: Download Action here
                 },
