@@ -32,13 +32,13 @@ class BookDetailsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if (this.book.releaseYear == null)
-      this.book.releaseYear = "unknown";
+      this.book.releaseYear = "desconhecido";
     if (this.book.editor == null)
-      this.book.editor = "unknown";
+      this.book.editor = "desconhecido";
     if (this.book.isbnCode == null)
-      this.book.isbnCode = "unknown";
+      this.book.isbnCode = "desconhecido";
     if (this.book.language == null)
-      this.book.language = "unknown";
+      this.book.language = "desconhecido";
 
     return Stack(
       children: [
@@ -87,31 +87,7 @@ class BookDetailsWidget extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
           child: Row (
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                minimumSize: Size(90, 45)
-                ),
-                onPressed: () {
-                  //TODO: Reserve Action here
-                },
-                child: Text("RESERVAR"),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(50, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                  ),
-                ),
-                onPressed: () {
-                  //TODO: Download Action here
-                },
-                child: Icon(
-                  Icons.download_sharp,
-                ),
-              ),
-            ],
+            children: bookActionButtons(context, this.book),
           ),
         ),
         Padding(
@@ -226,16 +202,65 @@ class BookDetailsWidget extends StatelessWidget {
     header_info.add(Text(book.author));
     header_info.add(SizedBox(height: 15));
 
-    if (book.unitsAvailable != null && book.totalUnits != null) {
-      if (book.unitsAvailable == 1)
-        header_info.add(Text("${book.unitsAvailable} / ${book.totalUnits} unidade disponível"));
-      else if (book.unitsAvailable > 1)
-          header_info.add(Text("${book.unitsAvailable} / ${book.totalUnits} unidades disponíveis"));
-      else
-        header_info.add(Text("Nenhuma unidade disponível"));
+    if (book.unitsAvailable != null) {
+      if (book.unitsAvailable == 1) {
+        header_info.add(Text(
+            '${book.unitsAvailable} unidade disponível',
+            style: TextStyle(color: Colors.red[700]),
+        ));
+      } else if (book.unitsAvailable > 1) {
+        header_info.add(Text(
+              '${book.unitsAvailable} unidades disponíveis',
+              style: TextStyle(color: Colors.black),
+          ));
+      } else {
+        header_info.add(Text(
+          'Nenhuma unidade disponível',
+          style: TextStyle(color: Colors.red[900]),
+        ));
+      }
+    }
+    return header_info;
+  }
+
+  bookActionButtons(BuildContext context, Book book) {
+
+    final List<Widget> buttons = <Widget>[];
+
+    if (book.unitsAvailable > 0) {
+      buttons.add(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                minimumSize: Size(90, 45)
+            ),
+            onPressed: () {
+              //TODO: Reserve Action here
+            },
+            child: Text("RESERVAR"),
+          )
+      );
     }
 
+    if (book.hasDigitalVersion) {
+      buttons.add(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size(50, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(25.0),
+              ),
+            ),
+            onPressed: () {
+              //TODO: Download Action here
+            },
+            child: Icon(
+              Icons.download_sharp,
+            ),
+          )
+      );
+    }
 
-    return header_info;
+    return buttons;
+
   }
 }
