@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
+import 'package:uni/view/Pages/unnamed_page_view.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -13,23 +14,13 @@ class BookDetails extends StatefulWidget {
   State<StatefulWidget> createState() => BookDetailsState(book: book);
 }
 
-class BookDetailsState extends SecondaryPageViewState {
+class BookDetailsState extends UnnamedPageView {
   BookDetailsState({@required this.book});
   final Book book;
 
   @override
   Widget getBody(BuildContext context) {
-    return StoreConnector<AppState, Book>(
-      converter: (store) {
-        // TODO Connect with search
-        // CHANGE THIS
-        final Book book = store.state.content['searchBooks'];
-        return book;
-      },
-      builder: (context, book) {
-        return BookDetailsWidget(book: this.book);
-      },
-    );
+    return BookDetailsWidget(book: this.book);
   }
 }
 
@@ -55,33 +46,15 @@ class BookDetailsWidget extends StatelessWidget {
           height: 200.0,
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.arrow_back,
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "Detalhes do Livro",
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
-                ],
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
+            child: Text(
+              "Detalhes do Livro",
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 20.0,
               ),
-            ],
+            ),
           ),
         ),
         Padding(
@@ -135,8 +108,9 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 260, 0, 0),
+          padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
@@ -175,21 +149,22 @@ class BookDetailsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                width: 90,
-              ),
-              Icon(
-                Icons.language,
-                color: Colors.black,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                "${this.book.language}",
-                style: const TextStyle(
-                  fontSize: 18,
-                ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.language,
+                    color: Colors.black,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "${this.book.language}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
