@@ -202,15 +202,21 @@ class BookDetailsWidget extends StatelessWidget {
     header_info.add(Text(book.author));
     header_info.add(SizedBox(height: 15));
 
+
+    var totalUnits = '';
+    if (book.totalUnits != null) {
+      totalUnits = '/ ${book.totalUnits}';
+    }
+
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
         header_info.add(Text(
-            '${book.unitsAvailable} unidade disponível',
+            '${book.unitsAvailable} ${totalUnits} unidade disponível',
             style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
         header_info.add(Text(
-              '${book.unitsAvailable} unidades disponíveis',
+              '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
               style: TextStyle(color: Colors.black),
           ));
       } else {
