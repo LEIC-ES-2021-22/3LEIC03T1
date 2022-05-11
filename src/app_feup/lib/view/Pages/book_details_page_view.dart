@@ -234,7 +234,7 @@ class BookDetailsWidget extends StatelessWidget {
                 minimumSize: Size(90, 45)
             ),
             onPressed: () {
-              //TODO: Reserve Action here
+              openBookReservationDialog(context, this.book);
             },
             child: Text("RESERVAR"),
           )
@@ -263,4 +263,20 @@ class BookDetailsWidget extends StatelessWidget {
     return buttons;
 
   }
+
+  Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Book Reservation'),
+        content: TextField(
+          decoration: InputDecoration(hintText: 'Testing'),
+        ),
+        actions: [
+          TextButton(
+            child: Text('SUBMIT'),
+            onPressed: () {},
+          )
+        ],
+      ),
+  );
 }
