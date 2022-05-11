@@ -20,7 +20,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
 
   @override
   void initState() {
-    dateinput.text = ""; //set the initial value of text field
+    dateinput.text = "Escolha uma data"; //set the initial value of text field
     super.initState();
   }
 
@@ -35,31 +35,37 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Data Inicial"
+                  "Data Inicial"
               ),
-              TextField(
+              TextFormField(
                 controller: dateinput,
                 //editing controller of this TextField
                 decoration: InputDecoration(
-                    icon: Icon(Icons.calendar_today), //icon of text field
-                    labelText: "Enter Date" //label text of field
-                    ),
+                    icon: Icon(Icons.calendar_today, color: Colors.grey), //icon of text field
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1)
+                  )
+                ),
                 readOnly: true,
                 //set it true, so that user will not able to edit text
                 onTap: () async {
                   DateTime pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
+                      firstDate: DateTime.now(),
                       //DateTime.now() - not to allow to choose before today.
-                      lastDate: DateTime(2101)
+                      lastDate: DateTime(DateTime.now().year + 1)
                   );
 
                   if (pickedDate != null) {
-                    print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                    String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-                    print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                    print(
+                        pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(
+                        pickedDate);
+                    print(
+                        formattedDate); //formatted date output using intl package =>  2021-03-16
                     //you can implement different kind of Date Format here according to your requirement
+
 
                     setState(() {
                       dateinput.text =
@@ -69,7 +75,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
                     print("Date is not selected");
                   }
                 },
-              )
+              ),
             ],
           )),
       actions: [
