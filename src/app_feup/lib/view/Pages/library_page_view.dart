@@ -17,6 +17,7 @@ final List<Book> mockedBooks = [
     title: 'Programming - principles and practice using C++',
     author: 'Stroustrup, Bjarne',
     unitsAvailable: 5,
+    totalUnits: 7,
     hasDigitalVersion: true,
     hasPhysicalVersion: true,
     imageURL:
