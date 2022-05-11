@@ -6,6 +6,7 @@ import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
+import 'package:uni/view/Widgets/book_reservation_dialog.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -241,7 +242,7 @@ class BookDetailsWidget extends StatelessWidget {
                 minimumSize: Size(90, 45)
             ),
             onPressed: () {
-              openBookReservationDialog(context, this.book);
+              openBookReservationDialog(context, book);
             },
             child: Text("RESERVAR"),
           )
@@ -266,52 +267,12 @@ class BookDetailsWidget extends StatelessWidget {
           )
       );
     }
-
     return buttons;
-
   }
 
+
   Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Book Reservation'),
-        content: TextField(
-          //controller: dateinput, //editing controller of this TextField
-          decoration: InputDecoration(
-              icon: Icon(Icons.calendar_today), //icon of text field
-              labelText: "Enter Date" //label text of field
-          ),
-          readOnly: true,  //set it true, so that user will not able to edit text
-          onTap: () async {
-            DateTime pickedDate = await showDatePicker(
-                context: context, initialDate: DateTime.now(),
-                firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
-                lastDate: DateTime(2101)
-            );
-
-            if(pickedDate != null ){
-              print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
-              String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-              print(formattedDate); //formatted date output using intl package =>  2021-03-16
-              //you can implement different kind of Date Format here according to your requirement
-
-              /*setState(() {
-                dateinput.text = formattedDate; //set output date to TextField value.
-              });*/
-            }else{
-              print("Date is not selected");
-            }
-          },
-        ),
-        actions: [
-          TextButton(
-            child: Text('SUBMIT'),
-            onPressed: () {
-              //TODO: Book Reservation Logic
-              Navigator.of(context).pop();
-            },
-          )
-        ],
-      ),
+    context: context,
+    builder: (context) => bookReservationDialog(book: this.book)
   );
 }
