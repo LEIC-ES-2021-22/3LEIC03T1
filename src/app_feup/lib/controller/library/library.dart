@@ -165,6 +165,7 @@ class Library implements LibraryInterface {
 
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final sentCookies = await cookies.loadForRequest(request.url);
+    Logger().i("Cookies sent", sentCookies);
 
     if (sentCookies.isNotEmpty) {
       final cookieHeader =
@@ -231,6 +232,8 @@ class Library implements LibraryInterface {
     final url = Uri.parse(link);
     final responses = await _getUrlWithRedirects(url);
 
+    Logger().i('Cookies:', await cookies.loadForRequest(url));
+
     if (responses.length <= 1) {
       // For federated authentication to be sucessful,
       // there needs to be at least a redirect, at the start, from the
@@ -256,12 +259,14 @@ class Library implements LibraryInterface {
     var document = html.parse(lastResponse.body);
     var title = document.querySelector('head > title')?.text;
 
-    Logger().i('Document: ', lastResponse.body);
     // if the title is exactly this, its because appeared to
     // click continue button
     if (title == 'Web Login Service - Loading Session Information') {
       final finalResponse =
           await this.getContinueRequest(document, lastResponseLocation);
+
+      Logger().i(
+          'Cookies cont:', await cookies.loadForRequest(lastResponseLocation));
 
       document = html.parse(finalResponse.body);
       title = document.querySelector('head > title')?.text;
@@ -298,8 +303,6 @@ class Library implements LibraryInterface {
       var loginResponse =
           await http.Response.fromStream(await send(loginRequest));
 
-      Logger().i('Login Response: ', loginResponse.body);
-
       lastResponse = loginResponse;
       lastResponseLocation = loginRequest.url;
 
@@ -317,24 +320,38 @@ class Library implements LibraryInterface {
         final loginResponses =
             await _getUrlWithRedirects(loginRequest.url.resolve(location));
 
+        final sentCookies =
+            await cookies.loadForRequest(loginRequest.url.resolve(location));
+        Logger().i('Cookies redirect: ', sentCookies);
+
         lastResponse = loginResponse = loginResponses.last;
         lastResponseLocation = lastResponse.request.url;
       }
 
-      /*var finalResponse =
+      document = html.parse(lastResponse.body);
+      Logger().i("Document after login -> ", lastResponse.body);
+      // TODO IS failling here
+      var finalResponse =
           await this.getContinueRequest(document, lastResponseLocation);
 
-      lastResponse = finalResponse;
-      // TODO Check this lastResponseLocation
-      lastResponseLocation = finalResponse.headers['referer'].toUri();
+      Logger().i('Cookies Continue: ',
+          await cookies.loadForRequest(lastResponseLocation));
 
-      Logger().i('Document2: ', finalResponse.body);
+      Logger().i("Last Continue response", finalResponse.body);
+
+      // PART MISSING TO DO
+      lastResponse = finalResponse;
 
       if (finalResponse.statusCode == 302) {
         final location = finalResponse.headers['location'];
         finalResponse =
             (await _getUrlWithRedirects(lastResponseLocation.resolve(location)))
                 .last;
+
+        Logger().i(
+            'Cookies redirect 2: ',
+            await cookies
+                .loadForRequest(lastResponseLocation.resolve(location)));
       }
 
       if (finalResponse.statusCode != 200) {
@@ -342,26 +359,28 @@ class Library implements LibraryInterface {
       }
 
       document = html.parse(finalResponse.body);
-      title = document.querySelector('head > title')?.text;*/
 
-      if (title == 'Web Login Service') {
-        throw ArgumentError('The provided username and password are invalid');
-      }
+      var afterLoginLocation = document.querySelector('body > noscript').text;
+      afterLoginLocation = afterLoginLocation.substring(
+          afterLoginLocation.indexOf('<a href="') + '<a href="'.length,
+          afterLoginLocation.indexOf('">Click here to continue'));
 
-      Logger().i('Last Response location: ', lastResponseLocation);
+      Logger().i("AfterLoginLocation", afterLoginLocation);
+
+      Logger()
+          .i("FIUDHAIUFHASFA", "https://catalogo.up.pt" + afterLoginLocation);
+
+      finalResponse = (await _getUrlWithRedirects(
+              Uri.parse("https://catalogo.up.pt" + afterLoginLocation)))
+          .last;
+      Logger().i("finalResponse afterLoginLocation", finalResponse.body);
     } else if (title == 'Information Release') {
       throw StateError('An information release was requested');
     }
-
-    /*final String u = 'https://catalogo.up.pt/F';
-
-    final ui = Uri.parse(u);
-    final sentCookies = await cookies.loadForRequest(ui);
-    Logger().i('Cookie Jar: ', sentCookies);*/
   }
 
   /**
-   * Performs the continue actio when wayf redirects us to 
+   * Performs the continue action when wayf redirects us to 
    * "no Javascript allowed so click continue button" by getting the
    * form hidden fields and performing the form action
    * @returns the response to the form action 
@@ -379,24 +398,17 @@ class Library implements LibraryInterface {
       final name = element.attributes['name'];
       final value = element.attributes['value'];
 
-      formData[name] = value ?? 'false';
+      formData[name] = value ?? '';
     }
-
-    Logger().i('Last document: ', document.body.innerHtml);
-    Logger().i('url:', locationUrl.resolve(formAction));
 
     final finalRequest =
         http.Request(formMethod, locationUrl.resolve(formAction));
 
     finalRequest.bodyFields = formData;
-
-    Logger().i('FinalRequest:', finalRequest.body);
+    // TODO failling in line 386, see why
 
     var finalResponse =
         await http.Response.fromStream(await send(finalRequest));
-
-    Logger().i('FinalResponse:', finalResponse.body);
-
     if (finalResponse.statusCode == 302) {
       final location = finalResponse.headers['location'];
       finalResponse =
