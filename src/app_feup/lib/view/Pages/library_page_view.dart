@@ -47,12 +47,11 @@ class LibraryPageState extends SecondaryPageViewState {
   Widget getBody(BuildContext context) {
     return StoreConnector<AppState, List<dynamic>>(
       converter: (store) {
-        // TODO Connect with search
         final List<Book> books = store.state.content['searchBooks'];
         return books;
       },
       builder: (context, books) {
-        return LibrarySearch(books: mockedBooks);
+        return LibrarySearch(books: books);
       },
     );
   }

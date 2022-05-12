@@ -73,10 +73,8 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
     store.dispatch(getUserExams(exams, ParserExams(), userPersistentInfo));
 
     // TODO get the cookie for catalog website after we login
-    // remove this function from here and add it to search button action.
-    // this function also has to add the books in the store instead
-    // of replacing it
-    store.dispatch(getLibraryBooks(searchBooks, Library(), userPersistentInfo));
+    // TODO Novidades do dia/mês
+    store.dispatch(getLibraryBooks(searchBooks, Library(), '\n'));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 

@@ -202,24 +202,20 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 
 Future<List<Book>> extractBooks(
     Store<AppState> store, LibraryInterface library, String query) async {
-  // TODO after login get the cookie from store and pass it to getLibraryBooks
-  final Set<Book> libraryBooks = await library.getLibraryBooks(query);
 
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query);
   return libraryBooks.toList();
 }
 
 ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
-    LibraryInterface library, Tuple2<String, String> userPersistentInfo) {
+    LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
-      // TODO get this url from the search field
-      // TODO after login place the cookie in this store so we can
-      // use it inside of extract books
       final List<Book> books =
-          await extractBooks(store, library, 'Design Patterns');
+          await extractBooks(store, library, searchQuery);
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));
