@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
@@ -98,15 +100,19 @@ class ParserLibrary implements ParserLibraryInterface {
     for (Element element in elements) {
       final rows = element.querySelectorAll('td');
 
-      final String author = rows.elementAt(authorInfoIdx).text;
+      final String encodedAuthor = rows.elementAt(authorInfoIdx).text;
+      final String author = decodeLibraryText(encodedAuthor);
 
       final String titleText = rows.elementAt(titleInfoIdx).innerHtml;
-      final String title = titleText
+      final String rawTitle = titleText
           .substring(titleText.indexOf('</script>') + '</script>'.length)
           .trim();
+      final String encodedTitle = parse(rawTitle).documentElement.text;
+      final String title = decodeLibraryText(encodedTitle);
 
       final String year = rows.elementAt(yearInfoIdx).text.trim();
 
+      // TODO Check if other text fields need to be decoded
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
 
       // getting the img from catalog
@@ -205,5 +211,29 @@ class ParserLibrary implements ParserLibraryInterface {
       booksList.add(book);
     }
     return booksList;
+  }
+
+  String decodeLibraryText(String encoded) {
+    String decoded = '';
+    for (int i = 0; i < encoded.length; i++) {
+      try {
+        // Try to decode 8-bit char
+        final String utf8Decoded = utf8.decode(encoded[i].codeUnits);
+        decoded += utf8Decoded;
+      } catch (e) {
+        try {
+          // Try to decode 16-bit char
+          final List<int> codeUnits = encoded.substring(i, i + 2).codeUnits;
+          final String utf8Decoded = utf8.decode(codeUnits);
+          decoded += utf8Decoded;
+          ++i;
+        } catch (e) {
+          // Handle the remaining errors not handled by utf8.decode()
+          decoded += String.fromCharCodes(encoded[i].codeUnits);
+        }
+      }
+    }
+
+    return decoded;
   }
 }
