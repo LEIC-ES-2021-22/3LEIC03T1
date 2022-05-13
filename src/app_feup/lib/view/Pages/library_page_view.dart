@@ -79,6 +79,11 @@ class LibrarySearch extends StatelessWidget {
     final List<Widget> columns = <Widget>[];
     columns.add(LibrarySearchHeader());
 
+    if (books.isEmpty) {
+      columns.add(SizedBox(height: 5));
+      columns.add(Text('Não foram encontrados resultados'));
+    }
+
     for (int i = 0; i < books.length; ++i) {
       columns.add(BookContainer(book: books[i]));
     }
