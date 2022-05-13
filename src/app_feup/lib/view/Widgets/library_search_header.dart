@@ -69,6 +69,8 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
         focusNode: searchNode,
         onFieldSubmitted: (term) {
           searchNode.unfocus();
+          if (searchController.text == '') return;
+
           StoreProvider.of<AppState>(context).dispatch(
               getLibraryBooks(Completer(), Library(), searchController.text));
         },

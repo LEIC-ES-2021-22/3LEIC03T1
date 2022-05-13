@@ -74,7 +74,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
 
     // TODO get the cookie for catalog website after we login
     // TODO Novidades do dia/mês
-    store.dispatch(getLibraryBooks(searchBooks, Library(), '\n'));
+    store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 
