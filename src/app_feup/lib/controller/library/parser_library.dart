@@ -40,9 +40,9 @@ class ParserLibrary implements ParserLibraryInterface {
     final document = parse(utf8.decode(response.bodyBytes));
 
     final Map<String, dynamic> bookDetails = {
-      'editor': '',
-      'language': '',
-      'local': '',
+      'editor': null,
+      'language': null,
+      'local': null,
       'themes': []
     };
 
@@ -135,7 +135,7 @@ class ParserLibrary implements ParserLibraryInterface {
       bookIsbn = bookIsbn.substring(1, bookIsbn.length - 2); // remove " and ;
       bookIsbn = bookIsbn == '<BR>' ? '' : bookIsbn;
 
-      String bookImageUrl = '';
+      String bookImageUrl = null;
       if (catalogImage != '') {
         bookImageUrl = catalogBookUrl(catalogImage);
       } else if (bookIsbn != '') {
@@ -162,7 +162,7 @@ class ParserLibrary implements ParserLibraryInterface {
                   2, // remove ("
               digitalInfoHtml.length - 3 // remove ");
               )
-          : '';
+          : null;
 
       String units = rows.elementAt(unitsIdx).text.trim();
       int unitsAvailable = 0;
