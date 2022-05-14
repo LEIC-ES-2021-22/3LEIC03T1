@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
@@ -109,6 +108,8 @@ class ParserLibrary implements ParserLibraryInterface {
           .trim();
       final String encodedTitle = parse(rawTitle).documentElement.text;
       final String title = decodeLibraryText(encodedTitle);
+
+      Logger().i(title);
 
       final String year = rows.elementAt(yearInfoIdx).text.trim();
 
