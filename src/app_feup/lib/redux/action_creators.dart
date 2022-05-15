@@ -59,7 +59,7 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
-        final Cookie pdsCookie = await Library().catalogLogin();
+        final Cookie pdsCookie = await (await Library.create()).catalogLogin();
         store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
 
         final Completer<Null> searchBooks = Completer();
@@ -108,8 +108,13 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         passwordController.clear();
         await acceptTermsAndConditions();
 
-        final Cookie pdsCookie = await Library().catalogLogin();
+        final Library library = await Library.create();
+        final Cookie pdsCookie = await library.catalogLogin();
         store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+
+        final Completer<Null> searchBooks = Completer();
+        // TODO Novidades do dia/mês
+        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }

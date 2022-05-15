@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as html;
 import 'package:logger/logger.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uni/controller/library/library_interface.dart';
+import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/controller/local_storage/app_shared_preferences.dart';
+import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni/model/entities/search_filters.dart';
@@ -20,49 +23,27 @@ extension UriString on String {
   Uri toUri() => Uri.parse(this);
 }
 
-final String catalogUrl = 'https://catalogo.up.pt';
-
-final String testUrl =
-    'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
-
-// TODO change the EUP to the faculty
-final String reservationUrl =
-    'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=EUP50';
-
-final String baseUrl = 'https://catalogo.up.pt/F';
-
-String baseSearchUrl(String query, SearchFilters filters) {
-  String url =
-      'https://catalogo.up.pt/F/?func=find-b&request=$query&find_code=WRD';
-
-  if (filters.languageQuery != null && filters.languageQuery != '') {
-    url += '&filter_code_1=WLN&filter_request_1=' + filters.languageQuery;
-  }
-
-  if (filters.countryQuery != null && filters.countryQuery != '') {
-    url += '&filter_code_2=WCN&filter_request_2=' + filters.countryQuery;
-  }
-
-  if (filters.yearQuery != null && filters.yearQuery != '') {
-    url += '&filter_code_3=WYR&filter_request_3=' + filters.yearQuery;
-  }
-
-  if (filters.docTypeQuery != null && filters.docTypeQuery != '') {
-    url += '&filter_code_5=WFMT&filter_request_5=' + filters.docTypeQuery;
-  }
-
-  return url;
-}
-
 class Library implements LibraryInterface {
-  final cookieRegex = RegExp(r'(?<=^|\S,).*?(?=$|,\S)');
   final _client = http.Client();
   final cookies = CookieJar();
-
   Cookie pdsCookie;
-
   String _username;
   String _password;
+
+  // User can have multiple faculties, should we search for books in all?
+  List<String> faculties;
+
+  /**
+   * Need to create a factory function since we need the constructor
+   *  to have an async method
+   */
+  static Future<Library> create() async {
+    final library = Library();
+
+    library.faculties = await AppSharedPreferences.getUserFaculties();
+
+    return library;
+  }
 
   // TODO after get cookie from login receive it on this function and use it
   @override
@@ -77,8 +58,7 @@ class Library implements LibraryInterface {
     final http.Response response =
         await getHtml(baseSearchUrl(query, filters), cookies: [alephCookie]);
 
-    final Set<Book> libraryBooks =
-        await parserLibrary.parseBooksFeed(response, cookie: alephCookie);
+    final Set<Book> libraryBooks = await parserLibrary.parseBooksFeed(response);
 
     return libraryBooks;
   }
@@ -97,6 +77,7 @@ class Library implements LibraryInterface {
   Future<Cookie> catalogLogin() async {
     final Tuple2<String, String> userPersistentInfo =
         await AppSharedPreferences.getPersistentUserInfo();
+
     _username = userPersistentInfo.item1 + '@fe.up.pt';
     _password = userPersistentInfo.item2;
 

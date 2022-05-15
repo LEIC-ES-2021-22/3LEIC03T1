@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
@@ -86,8 +87,7 @@ class ParserLibrary implements ParserLibraryInterface {
   }
 
   @override
-  Future<Set<Book>> parseBooksFeed(http.Response response,
-      {String cookie = null}) async {
+  Future<Set<Book>> parseBooksFeed(http.Response response) async {
     final document = parse(response.body);
 
     final Set<Book> booksList = Set();
@@ -201,14 +201,16 @@ class ParserLibrary implements ParserLibraryInterface {
       );
 
       // TODO Test this with book details page
-      Library.getHtml(bookDetailsLink, cookie: cookie)
+      final Cookie cookie = await Library().parseAlephCookie();
+      Library()
+          .getHtml(bookDetailsLink, cookies: [cookie])
           .then((bdResponse) => parseBookDetailsHtml(bdResponse))
           .then((bookDetailsMap) {
-        book.editor = bookDetailsMap['editor'];
-        book.language = bookDetailsMap['language'];
-        book.country = bookDetailsMap['local'];
-        book.themes = List<String>.from(bookDetailsMap['themes']);
-      });
+            book.editor = bookDetailsMap['editor'];
+            book.language = bookDetailsMap['language'];
+            book.country = bookDetailsMap['local'];
+            book.themes = List<String>.from(bookDetailsMap['themes']);
+          });
 
       booksList.add(book);
     }

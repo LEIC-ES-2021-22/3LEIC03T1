@@ -5,6 +5,5 @@ abstract class ParserLibraryInterface {
   /**
    * Parses an html and gets books from it
    */
-  Future<Set<Book>> parseBooksFeed(http.Response response,
-      {String cookie = null});
+  Future<Set<Book>> parseBooksFeed(http.Response response);
 }
