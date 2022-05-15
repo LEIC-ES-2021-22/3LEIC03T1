@@ -52,3 +52,11 @@ final Map<String, String> libraryFacCodes = {
   'fpceup': 'UPB53',
   'icbas': 'UPB58'
 };
+
+String buildUp(String username) {
+  String res = username;
+  if (res.substring(0, 2) != 'up') {
+    res = 'up' + res;
+  }
+  return res;
+}

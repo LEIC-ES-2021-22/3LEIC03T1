@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -42,8 +40,6 @@ import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
 
-import 'package:html/parser.dart' show parse;
-
 import '../model/entities/bus_stop.dart';
 
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
@@ -59,12 +55,15 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
-        final Cookie pdsCookie = await (await Library.create()).catalogLogin();
+        final Library library = await Library.create();
+
+        final Cookie pdsCookie = await library.catalogLogin();
         store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
         store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+
         action?.complete();
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));

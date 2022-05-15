@@ -94,7 +94,6 @@ AppState setCatalogLoginCookie(
   return state.cloneAndUpdateValue('catalogLoginCookie', action.cookie);
 }
 
-// ignore: lines_longer_than_80_chars
 AppState setCatalogLoginStatus(
     AppState state, SetCatalogLoginStatusAction action) {
   Logger().i('setting Catalog login status: ' + action.status.toString());

@@ -186,10 +186,20 @@ class ParserLibrary implements ParserLibraryInterface {
                   2)
           .replaceAll('amp;', ''); // remove ; " and &amp;
 
+      final Cookie alephCookie = await Library().parseAlephCookie();
+      final http.Response bdResponse =
+          await Library.getHtml(bookDetailsLink, cookies: [alephCookie]);
+
+      final Map<String, dynamic> bookDetailsMap =
+          await parseBookDetailsHtml(bdResponse);
+
       final Book book = Book(
         title: title,
         author: author,
+        editor: bookDetailsMap['editor'],
         releaseYear: year,
+        language: bookDetailsMap['language'],
+        country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
         hasPhysicalVersion: totalUnits > 0 || unitsAvailable > 0 ? true : false,
@@ -198,19 +208,8 @@ class ParserLibrary implements ParserLibraryInterface {
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
+        themes: List<String>.from(bookDetailsMap['themes']),
       );
-
-      // TODO Test this with book details page
-      final Cookie cookie = await Library().parseAlephCookie();
-      Library()
-          .getHtml(bookDetailsLink, cookies: [cookie])
-          .then((bdResponse) => parseBookDetailsHtml(bdResponse))
-          .then((bookDetailsMap) {
-            book.editor = bookDetailsMap['editor'];
-            book.language = bookDetailsMap['language'];
-            book.country = bookDetailsMap['local'];
-            book.themes = List<String>.from(bookDetailsMap['themes']);
-          });
 
       booksList.add(book);
     }

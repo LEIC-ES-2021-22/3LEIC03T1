@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as html;
 import 'package:logger/logger.dart';
@@ -11,7 +10,6 @@ import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/controller/local_storage/app_shared_preferences.dart';
-import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni/model/entities/search_filters.dart';
@@ -30,7 +28,6 @@ class Library implements LibraryInterface {
   String _username;
   String _password;
 
-  // User can have multiple faculties, should we search for books in all?
   List<String> faculties;
 
   /**
@@ -51,9 +48,6 @@ class Library implements LibraryInterface {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
     final Cookie alephCookie = await parseAlephCookie();
-    // TODO CHANGE THIS CATALOG LOGIN TO OTHER LOCATION AND SAVE THE PDS HANDLE/ALEPH COOKIE
-    // await catalogLogin();
-    //await getReservationPage();
 
     final http.Response response =
         await getHtml(baseSearchUrl(query, filters), cookies: [alephCookie]);
@@ -66,8 +60,7 @@ class Library implements LibraryInterface {
   Future<void> getReservationPage() async {
     final Cookie alephCookie = await parseAlephCookie();
 
-    final reservationResponse =
-        await getHtml(reservationUrl, cookies: [alephCookie, this.pdsCookie]);
+    await getHtml(reservationUrl, cookies: [alephCookie, this.pdsCookie]);
   }
 
   /**
@@ -80,6 +73,8 @@ class Library implements LibraryInterface {
 
     _username = userPersistentInfo.item1 + '@fe.up.pt';
     _password = userPersistentInfo.item2;
+
+    _username = buildUp(_username);
 
     final String link =
         'https://catalogo.up.pt/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
@@ -190,6 +185,7 @@ class Library implements LibraryInterface {
       document = html.parse(finalResponse.body);
 
       var afterLoginLocation = document.querySelector('body > noscript').text;
+
       afterLoginLocation = afterLoginLocation.substring(
           afterLoginLocation.indexOf('<a href="') + '<a href="'.length,
           afterLoginLocation.indexOf('">Click here to continue'));
@@ -199,6 +195,7 @@ class Library implements LibraryInterface {
           .last;
 
       // get the pds handle cookie
+
       final sentCookies = await cookies.loadForRequest(lastResponseLocation);
       this.pdsCookie = sentCookies.elementAt(sentCookies.length - 1);
     } else if (title == 'Information Release') {
@@ -209,7 +206,7 @@ class Library implements LibraryInterface {
   }
 
   /**
-   * Gets the perfil html and updates the aleph cookie
+   * Gets the profile html and updates the aleph cookie
    */
   Future<http.Response> getProfileHtml(Cookie pdsCookie) async {
     final profileLink =
@@ -281,8 +278,9 @@ class Library implements LibraryInterface {
       return response;
     } else if (response.statusCode == 403) {
       // HTTP403 - Forbidden;
-      Logger().e('Library Books request failed');
-      return Future.error('Library Books request failed');
+      Logger().e('Library Books request failed. Request was forbidden');
+      return Future.error(
+          'Library Books request failed. Request was forbidden');
     } else {
       return Future.error('HTTP Error ${response.statusCode}');
     }
