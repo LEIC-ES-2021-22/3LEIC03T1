@@ -14,12 +14,12 @@ class bookReservationDialog extends StatefulWidget {
 }
 
 class _bookReservationDialogState extends State<bookReservationDialog> {
-
   TextEditingController begin_date_controller = TextEditingController();
   TextEditingController end_date_controller = TextEditingController();
 
   String _begin_date;
   String _end_date;
+  String _notes;
   bool _is_urgent;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -32,9 +32,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
           icon: Icon(Icons.calendar_today, color: Colors.grey),
           labelText: "Data de Início",
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey, width: 1)
-          )
-      ),
+              borderSide: BorderSide(color: Colors.grey, width: 1))),
       validator: (String value) {
         if (value.isEmpty) {
           return 'Este campo é obrigatório';
@@ -52,14 +50,12 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             initialDate: DateTime.now(),
             firstDate: DateTime.now(),
             //DateTime.now() - not to allow to choose before today.
-            lastDate: DateTime(DateTime.now().year + 1)
-        );
+            lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-          String formattedDate = DateFormat('dd-MM-yyyy').format(
-              pickedDate);
+          String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           //you can implement different kind of Date Format here according to your requirement
@@ -83,9 +79,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
           icon: Icon(Icons.calendar_today, color: Colors.grey),
           labelText: "Data de Devolução",
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey, width: 1)
-          )
-      ),
+              borderSide: BorderSide(color: Colors.grey, width: 1))),
       validator: (String value) {
         if (value.isEmpty) {
           return 'Este campo é obrigatório';
@@ -103,18 +97,15 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             initialDate: DateTime.now(),
             firstDate: DateTime.now(),
             //DateTime.now() - not to allow to choose before today.
-            lastDate: DateTime(DateTime.now().year + 1)
-        );
+            lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-          String formattedDate = DateFormat('dd-MM-yyyy').format(
-              pickedDate);
+          String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           //you can implement different kind of Date Format here according to your requirement
-
 
           setState(() {
             end_date_controller.text =
@@ -124,6 +115,24 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
           print("Date is not selected");
         }
       },
+    );
+  }
+
+  Widget _buildNotesField() {
+    return TextFormField(
+      maxLines: 5,
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.all(10.0),
+        hintText: 'Notas',
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey, width: 1),
+        ),
+      ),
+      keyboardType: TextInputType.multiline,
     );
   }
 
@@ -144,16 +153,16 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
         key: _formKey,
         child: Container(
             padding: EdgeInsets.all(15),
-            height: 200,
+            height: 350,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildBeginDateField(),
                 _buildEndDateField(),
+                _buildNotesField(),
               ],
-            )
-        ),
+            )),
       ),
       actions: [
         TextButton(
