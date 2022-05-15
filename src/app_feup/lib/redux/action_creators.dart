@@ -221,6 +221,11 @@ ThunkAction<AppState> getLibraryBooks(
     Completer<Null> action, LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
+      // TODO Check if this approach is correct
+      searchQuery = (searchQuery == null || searchQuery == '')
+          ? 'alldocuments'
+          : searchQuery;
+
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 

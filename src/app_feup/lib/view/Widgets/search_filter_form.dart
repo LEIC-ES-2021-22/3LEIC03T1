@@ -208,10 +208,8 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
 
     final String searchQuery = LibrarySearchHeaderState.searchController.text;
 
-    if (searchQuery != '') {
-      StoreProvider.of<AppState>(context)
-          .dispatch(getLibraryBooks(Completer(), Library(), searchQuery));
-    }
+    StoreProvider.of<AppState>(context)
+        .dispatch(getLibraryBooks(Completer(), Library(), searchQuery));
 
     this.updateSearchFilters = true;
     Navigator.pop(context);

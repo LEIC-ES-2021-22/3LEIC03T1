@@ -69,7 +69,6 @@ class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
         focusNode: searchNode,
         onFieldSubmitted: (term) {
           searchNode.unfocus();
-          if (searchController.text == '') return;
 
           StoreProvider.of<AppState>(context).dispatch(
               getLibraryBooks(Completer(), Library(), searchController.text));
@@ -111,7 +110,6 @@ class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
             onPressed: () {
               searchNode.unfocus();
-              if (searchController.text == '') return;
 
               StoreProvider.of<AppState>(context).dispatch(
                 getLibraryBooks(Completer(), Library(), searchController.text));
