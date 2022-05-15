@@ -11,10 +11,10 @@ import 'package:uni/view/Widgets/search_filter_form.dart';
 
 class LibrarySearchHeader extends StatefulWidget {
   @override
-  _LibrarySearchHeaderState createState() => _LibrarySearchHeaderState();
+  LibrarySearchHeaderState createState() => LibrarySearchHeaderState();
 }
 
-class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
+class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
   static final TextEditingController searchController = TextEditingController();
   static final GlobalKey<FormState> _formkey = GlobalKey<FormState>();

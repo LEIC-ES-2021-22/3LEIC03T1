@@ -5,6 +5,7 @@ import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
 import 'package:uni/model/entities/profile.dart';
 import 'package:uni/model/entities/restaurant.dart';
+import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/model/home_page_model.dart';
@@ -39,6 +40,11 @@ class SetBooksAction {
 class SetBooksStatusAction {
   RequestStatus status;
   SetBooksStatusAction(this.status);
+}
+
+class SetBookSearchFiltersAction {
+  SearchFilters filters;
+  SetBookSearchFiltersAction(this.filters);
 }
 
 class SetRestaurantsAction {

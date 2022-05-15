@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/model/app_state.dart';
+import 'package:uni/model/entities/search_filters.dart';
+import 'package:uni/redux/action_creators.dart';
 import 'package:uni/utils/methods.dart';
+import 'package:uni/view/Widgets/library_search_header.dart';
 
 class SearchFilterForm extends StatefulWidget {
   @override
@@ -60,16 +68,31 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   DropdownFilter docTypeFilter;
 
   static final TextEditingController yearController = TextEditingController();
+  SearchFilters searchFilters;
+  bool updateSearchFilters;
 
   _SearchFilterFormState() {
     sortByFilter = DropdownFilter(sortByFields, 'Ordenar por');
     languageFilter = DropdownFilter(languages, 'Linguagem');
     countryFilter = DropdownFilter(countries, 'País');
     docTypeFilter = DropdownFilter(documentTypes, 'Tipo de Documento');
+    updateSearchFilters = true;
   }
 
   @override
   Widget build(BuildContext context) {
+    return StoreConnector<AppState, SearchFilters>(
+      converter: (store) {
+        return store.state.content['bookSearchFilters'];
+      },
+      builder: (context, searchFilters) {
+        if (updateSearchFilters) setSearchFilters(searchFilters);
+        return buildFilterForm(context);
+      },
+    );
+  }
+
+  Widget buildFilterForm(BuildContext context) {
     return AlertDialog(
         title: Text(
           'Filtros de Pesquisa',
@@ -78,12 +101,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
         actions: [
           TextButton(
               child: Text('Cancelar'), onPressed: () => Navigator.pop(context)),
-          ElevatedButton(
-              child: Text('Confirmar'),
-              onPressed: () {
-                // TODO Update state with filters
-                Navigator.pop(context);
-              })
+          ElevatedButton(child: Text('Confirmar'), onPressed: submitFilterForm)
         ],
         content: Container(
           height: vs(350.0, context),
@@ -101,8 +119,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(dropdownSelector(context, languageFilter));
     formWidgets.add(dropdownSelector(context, countryFilter));
     formWidgets.add(dropdownSelector(context, docTypeFilter));
-    formWidgets.add(
-        filterTextField(
+    formWidgets.add(filterTextField(
         context, 'Ano de lançamento', 'Todos', yearController, true));
     return formWidgets;
   }
@@ -170,6 +187,61 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
         ],
       ),
     );
+  }
+
+  void submitFilterForm() {
+    // TODO Update state with filters
+    searchFilters.countryOption = countryFilter.selectedOption;
+    searchFilters.countryQuery = countries[countryFilter.selectedOption].item2;
+
+    searchFilters.languageOption = languageFilter.selectedOption;
+    searchFilters.languageQuery =
+        countries[languageFilter.selectedOption].item2;
+
+    searchFilters.docTypeOption = docTypeFilter.selectedOption;
+    searchFilters.docTypeQuery = countries[docTypeFilter.selectedOption].item2;
+
+    searchFilters.sortByOption = sortByFilter.selectedOption;
+    searchFilters.sortByQuery = countries[sortByFilter.selectedOption].item2;
+
+    searchFilters.yearQuery = yearController.text;
+
+    final String searchQuery = LibrarySearchHeaderState.searchController.text;
+
+    if (searchQuery != '') {
+      StoreProvider.of<AppState>(context)
+          .dispatch(getLibraryBooks(Completer(), Library(), searchQuery));
+    }
+
+    this.updateSearchFilters = true;
+    Navigator.pop(context);
+  }
+
+  void setSearchFilters(SearchFilters searchFilters) {
+    this.searchFilters = searchFilters;
+    this.updateSearchFilters = false;
+
+    if (searchFilters == null) return;
+
+    if (searchFilters.sortByOption != null) {
+      sortByFilter.selectedOption = searchFilters.sortByOption;
+    }
+
+    if (searchFilters.languageOption != null) {
+      languageFilter.selectedOption = searchFilters.languageOption;
+    }
+
+    if (searchFilters.countryOption != null) {
+      countryFilter.selectedOption = searchFilters.countryOption;
+    }
+
+    if (searchFilters.docTypeOption != null) {
+      docTypeFilter.selectedOption = searchFilters.docTypeOption;
+    }
+
+    if (searchFilters.yearQuery != null) {
+      yearController.text = searchFilters.yearQuery;
+    }
   }
 }
 
