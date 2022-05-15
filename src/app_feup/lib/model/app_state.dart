@@ -1,5 +1,7 @@
 // enum should be placed somewhere else?
 import 'package:uni/model/entities/book.dart';
+import 'dart:io';
+
 import 'package:uni/model/entities/bus_stop.dart';
 import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
@@ -40,6 +42,7 @@ class AppState {
       'searchBooks': <Book>[],
       'searchBooksStatus': RequestStatus.none,
       'bookSearchFilters': SearchFilters(),
+      'catalogLoginCookie': Cookie
     };
   }
 

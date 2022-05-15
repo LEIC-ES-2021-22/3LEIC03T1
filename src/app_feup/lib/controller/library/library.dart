@@ -94,9 +94,9 @@ class Library implements LibraryInterface {
 
   /**
    * Performs the Login on catalog platform, using the username and password
-   * of the user in the UNI app
+   * of the user in the UNI app. Returns the pds_handle cookie to be stored
   */
-  Future<void> catalogLogin() async {
+  Future<Cookie> catalogLogin() async {
     final Tuple2<String, String> userPersistentInfo =
         await AppSharedPreferences.getPersistentUserInfo();
     _username = userPersistentInfo.item1 + '@fe.up.pt';
@@ -126,7 +126,7 @@ class Library implements LibraryInterface {
         throw StateError('An unknown error occured during the login process');
       }
 
-      return;
+      return null;
     }
 
     var document = html.parse(lastResponse.body);
@@ -225,6 +225,8 @@ class Library implements LibraryInterface {
     } else if (title == 'Information Release') {
       throw StateError('An information release was requested');
     }
+
+    return this.pdsCookie;
   }
 
   /**
