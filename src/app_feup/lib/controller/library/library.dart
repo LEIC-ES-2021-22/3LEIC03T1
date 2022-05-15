@@ -59,7 +59,6 @@ class Library implements LibraryInterface {
   final _client = http.Client();
   final cookies = CookieJar();
 
-  Cookie alephCookie;
   Cookie pdsCookie;
 
   String _username;
@@ -70,15 +69,13 @@ class Library implements LibraryInterface {
   Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
-    final http.Response cookieResponse = await getHtml(baseUrl);
-
-    this.alephCookie = await parseAlephCookie(cookieResponse);
+    final Cookie alephCookie = await parseAlephCookie();
     // TODO CHANGE THIS CATALOG LOGIN TO OTHER LOCATION AND SAVE THE PDS HANDLE/ALEPH COOKIE
     // await catalogLogin();
     //await getReservationPage();
 
-    final http.Response response = await getHtml(baseSearchUrl(query, filters),
-        cookies: [this.alephCookie]);
+    final http.Response response =
+        await getHtml(baseSearchUrl(query, filters), cookies: [alephCookie]);
 
     final Set<Book> libraryBooks =
         await parserLibrary.parseBooksFeed(response, cookie: alephCookie);
@@ -87,9 +84,10 @@ class Library implements LibraryInterface {
   }
 
   Future<void> getReservationPage() async {
-    final reservationResponse = await getHtml(reservationUrl,
-        cookies: [this.alephCookie, this.pdsCookie]);
-    this.alephCookie = await parseAlephCookie(reservationResponse);
+    final Cookie alephCookie = await parseAlephCookie();
+
+    final reservationResponse =
+        await getHtml(reservationUrl, cookies: [alephCookie, this.pdsCookie]);
   }
 
   /**
@@ -232,17 +230,13 @@ class Library implements LibraryInterface {
   /**
    * Gets the perfil html and updates the aleph cookie
    */
-  Future<http.Response> getPerfilHtml(
-      Cookie alephCookie, Cookie pdsCookie) async {
-    final perfilLink =
+  Future<http.Response> getProfileHtml(Cookie pdsCookie) async {
+    final profileLink =
         'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${pdsCookie.value}';
-
-    final perfilResponse =
-        await getHtml(perfilLink, cookies: [alephCookie, pdsCookie]);
-
-    // updates the aleph cookie after getting perfil info
-    this.alephCookie = await parseAlephCookie(perfilResponse);
-    return perfilResponse;
+    final Cookie alephCookie = await parseAlephCookie();
+    final profileResponse =
+        await getHtml(profileLink, cookies: [alephCookie, pdsCookie]);
+    return profileResponse;
   }
 
   /**
@@ -313,7 +307,12 @@ class Library implements LibraryInterface {
     }
   }
 
-  Future<Cookie> parseAlephCookie(http.Response response) async {
+  /**
+   * Gets the aleph cookie by making a request to baseUrl 
+   */
+  Future<Cookie> parseAlephCookie() async {
+    final http.Response response = await getHtml(baseUrl);
+
     final document = html.parse(response.body);
     final element = document.querySelector('[language="Javascript"]');
 
