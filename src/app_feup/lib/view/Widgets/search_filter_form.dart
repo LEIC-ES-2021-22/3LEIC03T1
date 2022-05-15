@@ -26,40 +26,39 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   };
 
   final Map<int, Tuple2<String, String>> languages = {
-    0: Tuple2<String, String>('Todas', 'Any'),
-    1: Tuple2<String, String>('Português', 'Portuguese'),
-    2: Tuple2<String, String>('Inglês', 'English'),
-    3: Tuple2<String, String>('Espanhol', 'Spanish'),
-    4: Tuple2<String, String>('Francês', 'French'),
-    5: Tuple2<String, String>('Italiano', 'Italian'),
-    6: Tuple2<String, String>('Alemão', 'German'),
+    0: Tuple2<String, String>('Todas', ''),
+    1: Tuple2<String, String>('Português', 'POR'),
+    2: Tuple2<String, String>('Inglês', 'ENG'),
+    3: Tuple2<String, String>('Espanhol', 'SPA'),
+    4: Tuple2<String, String>('Francês', 'FRE'),
+    5: Tuple2<String, String>('Italiano', 'ITA'),
+    6: Tuple2<String, String>('Alemão', 'GER'),
   };
 
   final Map<int, Tuple2<String, String>> countries = {
-    0: Tuple2<String, String>('Todos', 'Any'),
-    1: Tuple2<String, String>('Portugal', 'Portugal'),
-    2: Tuple2<String, String>('Brasil', 'Brazil'),
-    3: Tuple2<String, String>('Estados Unidos', 'USA'),
-    4: Tuple2<String, String>('Inglaterra', 'UK'),
-    5: Tuple2<String, String>('Espanha', 'Spain'),
-    6: Tuple2<String, String>('França', 'France'),
-    7: Tuple2<String, String>('Itália', 'Italy'),
-    8: Tuple2<String, String>('Alemanha', 'Germany'),
+    0: Tuple2<String, String>('Todos', ''),
+    1: Tuple2<String, String>('Portugal', 'PT'),
+    2: Tuple2<String, String>('Brasil', 'BR'),
+    3: Tuple2<String, String>('Estados Unidos', 'US'),
+    4: Tuple2<String, String>('Inglaterra', 'GB'),
+    5: Tuple2<String, String>('Espanha', 'ES'),
+    6: Tuple2<String, String>('França', 'FR'),
+    7: Tuple2<String, String>('Itália', 'IT'),
+    8: Tuple2<String, String>('Alemanha', 'DE'),
   };
 
   final Map<int, Tuple2<String, String>> documentTypes = {
-    0: Tuple2<String, String>('Todos', 'Any'),
-    1: Tuple2<String, String>('Livro', 'Book'),
-    2: Tuple2<String, String>('Periódico', 'Periodic'),
-    3: Tuple2<String, String>('Artigo/Capítulo', 'Article'),
-    4: Tuple2<String, String>('Trabalho Académico', 'Academic'),
-    5: Tuple2<String, String>('Mapa', 'Map'),
-    6: Tuple2<String, String>('Recurso Eletrónico', 'Eletronic'),
-    7: Tuple2<String, String>('Recurso Visual', 'Visual'),
-    8: Tuple2<String, String>('Recurso Áudio', 'Audio'),
-    9: Tuple2<String, String>('Recurso Visual', 'Visual'),
-    10: Tuple2<String, String>('Recurso Misto', 'Mixed'),
-    11: Tuple2<String, String>('Norma', 'Regulation'),
+    0: Tuple2<String, String>('Todos', ''),
+    1: Tuple2<String, String>('Livro', 'BK'),
+    2: Tuple2<String, String>('Periódico', 'SE'),
+    3: Tuple2<String, String>('Artigo/Capítulo', 'AN'),
+    4: Tuple2<String, String>('Trabalho Académico', 'TA'),
+    5: Tuple2<String, String>('Mapa', 'MP'),
+    6: Tuple2<String, String>('Recurso Eletrónico', 'CF'),
+    7: Tuple2<String, String>('Recurso Visual', 'VM'),
+    8: Tuple2<String, String>('Recurso Áudio', 'AM'),
+    9: Tuple2<String, String>('Recurso Misto', 'MX'),
+    10: Tuple2<String, String>('Norma', 'NO'),
   };
 
   DropdownFilter sortByFilter;
@@ -190,21 +189,25 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   }
 
   void submitFilterForm() {
-    // TODO Update state with filters
-    searchFilters.countryOption = countryFilter.selectedOption;
-    searchFilters.countryQuery = countries[countryFilter.selectedOption].item2;
+    if (searchFilters != null) {
+      searchFilters.countryOption = countryFilter.selectedOption;
+      searchFilters.countryQuery =
+          countries[countryFilter.selectedOption].item2;
 
-    searchFilters.languageOption = languageFilter.selectedOption;
-    searchFilters.languageQuery =
-        countries[languageFilter.selectedOption].item2;
+      searchFilters.languageOption = languageFilter.selectedOption;
+      searchFilters.languageQuery =
+          languages[languageFilter.selectedOption].item2;
 
-    searchFilters.docTypeOption = docTypeFilter.selectedOption;
-    searchFilters.docTypeQuery = countries[docTypeFilter.selectedOption].item2;
+      searchFilters.docTypeOption = docTypeFilter.selectedOption;
+      searchFilters.docTypeQuery =
+          documentTypes[docTypeFilter.selectedOption].item2;
 
-    searchFilters.sortByOption = sortByFilter.selectedOption;
-    searchFilters.sortByQuery = countries[sortByFilter.selectedOption].item2;
+      searchFilters.sortByOption = sortByFilter.selectedOption;
+      searchFilters.sortByQuery =
+          sortByFields[sortByFilter.selectedOption].item2;
 
-    searchFilters.yearQuery = yearController.text;
+      searchFilters.yearQuery = yearController.text;
+    }
 
     final String searchQuery = LibrarySearchHeaderState.searchController.text;
 

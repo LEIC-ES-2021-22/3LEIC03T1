@@ -213,7 +213,8 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 
 Future<List<Book>> extractBooks(
     Store<AppState> store, LibraryInterface library, String query) async {
-  final Set<Book> libraryBooks = await library.getLibraryBooks(query);
+  final SearchFilters filters = store.state.content['bookSearchFilters'];
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
 }
 

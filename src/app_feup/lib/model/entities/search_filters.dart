@@ -24,4 +24,3 @@ class SearchFilters {
       this.docTypeQuery = '',
       this.yearQuery = ''});
 }
-// TODO escrever alldocuments quando a pesquisa esta vazia
