@@ -44,15 +44,22 @@ class Library implements LibraryInterface {
     return library;
   }
 
+  /**
+   * Wrapper to send a request, after first getting the aleph cookie
+   */
+  Future<http.Response> libRequestWithAleph(String url) async {
+    final Cookie alephCookie = await parseAlephCookie();
+
+    return await getHtml(url, cookies: [alephCookie, this.pdsCookie]);
+  }
+
   // TODO after get cookie from login receive it on this function and use it
   @override
   Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
-    final Cookie alephCookie = await parseAlephCookie();
-
     final http.Response response =
-        await getHtml(baseSearchUrl(query, filters), cookies: [alephCookie]);
+        await libRequestWithAleph(baseSearchUrl(query, filters));
 
     final Set<Book> libraryBooks = await parserLibrary.parseBooksFeed(response);
 
@@ -60,9 +67,7 @@ class Library implements LibraryInterface {
   }
 
   Future<void> getReservationPage() async {
-    final Cookie alephCookie = await parseAlephCookie();
-
-    await getHtml(reservationUrl, cookies: [alephCookie, this.pdsCookie]);
+    final reservationResponse = await libRequestWithAleph(reservationUrl);
   }
 
   /**
@@ -211,10 +216,8 @@ class Library implements LibraryInterface {
   Future<http.Response> getProfileHtml(Cookie pdsCookie) async {
     final profileLink =
         'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${pdsCookie.value}';
-    final Cookie alephCookie = await parseAlephCookie();
-    final profileResponse =
-        await getHtml(profileLink, cookies: [alephCookie, pdsCookie]);
-    return profileResponse;
+
+    return await libRequestWithAleph(profileLink);
   }
 
   /**
