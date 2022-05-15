@@ -137,11 +137,22 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
   }
 
   Widget _buildIsUrgentField() {
-    return null;
+
+    return CheckboxListTile(
+      title: Text("Urgent"),
+      controlAffinity: ListTileControlAffinity.leading,
+      value: _is_urgent,
+      onChanged: (bool value) {
+        setState(() {
+          _is_urgent = value;
+        });
+      },
+    );
   }
 
   @override
   void initState() {
+    _is_urgent = false;
     super.initState();
   }
 
@@ -152,15 +163,17 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
       content: Form(
         key: _formKey,
         child: Container(
-            padding: EdgeInsets.all(15),
-            height: 350,
+          constraints: BoxConstraints(maxHeight: 350),
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween ,
               children: [
                 _buildBeginDateField(),
                 _buildEndDateField(),
+                SizedBox(height: 30,),
                 _buildNotesField(),
+                _buildIsUrgentField(),
               ],
             )),
       ),
