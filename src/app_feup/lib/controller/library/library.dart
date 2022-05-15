@@ -59,7 +59,7 @@ class Library implements LibraryInterface {
   final _client = http.Client();
   final cookies = CookieJar();
 
-  String alephCookie;
+  Cookie alephCookie;
   Cookie pdsCookie;
 
   String _username;
@@ -70,16 +70,15 @@ class Library implements LibraryInterface {
   Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
-    // cookie just works if we get it from the base URL for some reason.
     final http.Response cookieResponse = await getHtml(baseUrl);
 
-    alephCookie = await parseCookie(cookieResponse);
+    this.alephCookie = await parseAlephCookie(cookieResponse);
     // TODO CHANGE THIS CATALOG LOGIN TO OTHER LOCATION AND SAVE THE PDS HANDLE/ALEPH COOKIE
-    //await catalogLogin();
+    // await catalogLogin();
     //await getReservationPage();
 
-    final http.Response response =
-        await getHtml(baseSearchUrl(query, filters), cookie: alephCookie);
+    final http.Response response = await getHtml(baseSearchUrl(query, filters),
+        cookies: [this.alephCookie]);
 
     final Set<Book> libraryBooks =
         await parserLibrary.parseBooksFeed(response, cookie: alephCookie);
@@ -89,27 +88,23 @@ class Library implements LibraryInterface {
 
   Future<void> getReservationPage() async {
     final reservationResponse = await getHtml(reservationUrl,
-        cookie: this.alephCookie +
-            ';' +
-            this.pdsCookie.name +
-            '=' +
-            this.pdsCookie.value);
-    Logger().i('reservation: ', reservationResponse.body);
-    //this.alephCookie = await parseCookie(reservationResponse);
+        cookies: [this.alephCookie, this.pdsCookie]);
+    this.alephCookie = await parseAlephCookie(reservationResponse);
   }
 
+  /**
+   * Performs the Login on catalog platform, using the username and password
+   * of the user in the UNI app
+  */
   Future<void> catalogLogin() async {
-    final String link =
-        'https://catalogo.up.pt/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
-
     final Tuple2<String, String> userPersistentInfo =
         await AppSharedPreferences.getPersistentUserInfo();
-
     _username = userPersistentInfo.item1 + '@fe.up.pt';
     _password = userPersistentInfo.item2;
 
+    final String link =
+        'https://catalogo.up.pt/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
     final url = Uri.parse(link);
-
     final responses = await _getUrlWithRedirects(url);
 
     if (responses.length <= 1) {
@@ -142,7 +137,6 @@ class Library implements LibraryInterface {
     if (title == 'Web Login Service - Loading Session Information') {
       final finalResponse =
           await this.getContinueRequest(document, lastResponseLocation);
-
       document = html.parse(finalResponse.body);
       title = document.querySelector('head > title')?.text;
     }
@@ -155,7 +149,6 @@ class Library implements LibraryInterface {
       };
 
       final formElement = document.querySelector('form');
-
       final formAction = formElement.attributes['action'];
       final formMethod = formElement.attributes['method'];
 
@@ -172,7 +165,6 @@ class Library implements LibraryInterface {
 
       final loginRequest =
           http.Request(formMethod, lastResponseLocation.resolve(formAction));
-
       loginRequest.bodyFields = formData;
 
       var loginResponse =
@@ -192,18 +184,18 @@ class Library implements LibraryInterface {
         final loginResponses =
             await _getUrlWithRedirects(loginRequest.url.resolve(location));
 
-        final sentCookies =
-            await cookies.loadForRequest(loginRequest.url.resolve(location));
+        await cookies.loadForRequest(loginRequest.url.resolve(location));
 
         lastResponse = loginResponse = loginResponses.last;
         lastResponseLocation = lastResponse.request.url;
       }
 
       document = html.parse(lastResponse.body);
+
+      // After the login request, appears the continue button again
       var finalResponse =
           await this.getContinueRequest(document, lastResponseLocation);
 
-      // PART MISSING TO DO
       lastResponse = finalResponse;
 
       if (finalResponse.statusCode == 302) {
@@ -216,7 +208,6 @@ class Library implements LibraryInterface {
       if (finalResponse.statusCode != 200) {
         throw StateError('Something went wrong');
       }
-
       document = html.parse(finalResponse.body);
 
       var afterLoginLocation = document.querySelector('body > noscript').text;
@@ -231,21 +222,25 @@ class Library implements LibraryInterface {
       // get the pds handle cookie
       final sentCookies = await cookies.loadForRequest(lastResponseLocation);
       this.pdsCookie = sentCookies.elementAt(sentCookies.length - 1);
-
-      final perfilLink =
-          'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${this.pdsCookie.value}';
-
-      final perfilResponse = await getHtml(perfilLink,
-          cookie: this.alephCookie +
-              ';' +
-              this.pdsCookie.name +
-              '=' +
-              this.pdsCookie.value);
-
-      this.alephCookie = await parseCookie(perfilResponse);
     } else if (title == 'Information Release') {
       throw StateError('An information release was requested');
     }
+  }
+
+  /**
+   * Gets the perfil html and updates the aleph cookie
+   */
+  Future<http.Response> getPerfilHtml(
+      Cookie alephCookie, Cookie pdsCookie) async {
+    final perfilLink =
+        'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${pdsCookie.value}';
+
+    final perfilResponse =
+        await getHtml(perfilLink, cookies: [alephCookie, pdsCookie]);
+
+    // updates the aleph cookie after getting perfil info
+    this.alephCookie = await parseAlephCookie(perfilResponse);
+    return perfilResponse;
   }
 
   /**
@@ -290,10 +285,17 @@ class Library implements LibraryInterface {
     return finalResponse;
   }
 
+  // Gets the Html of a get Request to Url with or without cookies
   static Future<http.Response> getHtml(String url,
-      {String cookie = null}) async {
+      {List<Cookie> cookies = null}) async {
     final Map<String, String> headers = Map<String, String>();
-    if (cookie != null) headers['cookie'] = cookie;
+    if (cookies != null) {
+      headers['cookie'] = '';
+
+      for (Cookie cookie in cookies) {
+        headers['cookie'] += cookie.name + '=' + cookie.value + ';';
+      }
+    }
 
     final http.Response response =
         await http.get(url.toUri(), headers: headers);
@@ -309,11 +311,16 @@ class Library implements LibraryInterface {
     }
   }
 
-  Future<String> parseCookie(http.Response response) async {
+  Future<Cookie> parseAlephCookie(http.Response response) async {
     final document = html.parse(response.body);
     final element = document.querySelector('[language="Javascript"]');
-    final String cookie = element.text
-        .substring(element.text.indexOf('=') + 3, element.text.indexOf(';'));
+
+    // [cookieName, cookieValue]
+    final List<String> fullCookie = element.text
+        .substring(element.text.indexOf('=') + 3, element.text.indexOf(';'))
+        .split(' = ');
+
+    final Cookie cookie = Cookie(fullCookie[0], fullCookie[1]);
 
     return cookie;
   }
