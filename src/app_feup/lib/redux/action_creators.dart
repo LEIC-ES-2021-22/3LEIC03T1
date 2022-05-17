@@ -212,8 +212,8 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 }
 
 Future<List<Book>> extractBooks(
-    Store<AppState> store, LibraryInterface library, String query) async {
-  final SearchFilters filters = store.state.content['bookSearchFilters'];
+    Store<AppState> store, LibraryInterface library,
+    String query, SearchFilters filters) async {
   final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
 }
@@ -222,15 +222,18 @@ ThunkAction<AppState> getLibraryBooks(
     Completer<Null> action, LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
-      // TODO Check if this approach is correct
-      searchQuery = (searchQuery == null || searchQuery == '')
-          ? 'alldocuments'
-          : searchQuery;
+
+      // TODO This should return the news of the day/month instead of \\n
+      final SearchFilters filters = store.state.content['bookSearchFilters'];
+      if (searchQuery == null || searchQuery == '') {
+        searchQuery = filters.hasFilters() ? 'alldocuments' : '\\n';
+      }
 
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
-      final List<Book> books = await extractBooks(store, library, searchQuery);
+      final List<Book> books =
+          await extractBooks(store, library, searchQuery, filters);
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));

@@ -23,4 +23,11 @@ class SearchFilters {
       this.docTypeOption = 0,
       this.docTypeQuery = '',
       this.yearQuery = ''});
+
+  bool hasFilters() {
+    return languageQuery != '' ||
+        countryQuery != '' ||
+        docTypeQuery != '' ||
+        yearQuery != '';
+  }
 }
