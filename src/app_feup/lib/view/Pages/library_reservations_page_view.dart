@@ -7,6 +7,7 @@ import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
 import 'package:uni/view/Widgets/reservation_container.dart';
+import 'package:uni/view/Widgets/book_reservation_details.dart';
 
 class LibraryReservations extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class LibraryReservations extends StatefulWidget {
 
 final List<BookReservation> mockedReservations = [
   BookReservation(
-    title: 'Programming - principles and practice using C++',
+    title: 'Programming - principles and practice using C++ && Java',
     author: 'Stroustrup, Bjarne',
     reservationNumber: 1,
     acquisitionDate: DateTime.now().add(Duration(days: 4)),
@@ -83,7 +84,14 @@ class LibraryReservationsBody extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ReservationDetails()),
+        );
+      },
+      child: ListView(
       children: <Widget>[
         Container(
           child: Column(
@@ -92,6 +100,7 @@ class LibraryReservationsBody extends StatelessWidget {
           ),
         )
       ],
+    ),
     );
   }
 
