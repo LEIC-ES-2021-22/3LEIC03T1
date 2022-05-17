@@ -6,7 +6,7 @@
 .pub/
 build/
 *.bin
-
+.idea
 app_feup/pubspec.lock
 .DS_Store
 .atom/
