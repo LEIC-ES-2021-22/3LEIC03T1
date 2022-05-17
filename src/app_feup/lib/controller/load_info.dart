@@ -4,7 +4,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
-import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
 import 'package:uni/model/app_state.dart';
@@ -51,7 +50,6 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
 
   final Completer<Null> userInfo = Completer(),
       exams = Completer(),
-      searchBooks = Completer(),
       schedule = Completer(),
       printBalance = Completer(),
       fees = Completer(),
@@ -71,10 +69,6 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       await AppSharedPreferences.getPersistentUserInfo();
   userInfo.future.then((value) {
     store.dispatch(getUserExams(exams, ParserExams(), userPersistentInfo));
-
-    // TODO get the cookie for catalog website after we login
-    // TODO Novidades do dia/mês
-    store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
     store.dispatch(getUserSchedule(schedule, userPersistentInfo));
   });
 

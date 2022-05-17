@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/library_interface.dart';
 import 'package:uni/controller/load_info.dart';
 import 'package:uni/controller/load_static/terms_and_conditions.dart';
@@ -52,6 +53,11 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
       if (session.authenticated) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
+
+        final Completer<Null> searchBooks = Completer();
+        // TODO Novidades do dia/mês
+        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+
         action?.complete();
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
@@ -94,6 +100,10 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         usernameController.clear();
         passwordController.clear();
         await acceptTermsAndConditions();
+
+        final Completer<Null> searchBooks = Completer();
+        // TODO Novidades do dia/mês
+        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }
