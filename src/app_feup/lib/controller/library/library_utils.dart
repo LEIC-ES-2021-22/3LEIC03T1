@@ -17,7 +17,7 @@ String reservationLoansUrl(faculty, pdsHandle) {
 
 String reservationsUrl(faculty, pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
-  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
 final String baseUrl = 'https://catalogo.up.pt/F';

@@ -8,6 +8,7 @@ import 'package:html/dom.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/model/entities/book_reservation.dart';
 
 final int bookDetailsIdx = 0;
 final int authorInfoIdx = 2;
@@ -258,9 +259,23 @@ class ParserLibrary implements ParserLibraryInterface {
     final List<Element> rows = document.querySelectorAll('#centered');
     Logger().i("Number of rows found:", rows.length);
 
+    final String docNumPattern = 'doc_number=';
     for (Element row in rows) {
-      final parent = row.parent;
-      Logger().i("Parent:", parent.innerHtml);
+      final List<Element> children = row.parent.children;
+      int idx = 1;
+
+      String docNumber = children.elementAt(0).firstChild.attributes['href'];
+      docNumber = docNumber.substring(
+          docNumber.indexOf(docNumPattern) + docNumPattern.length,
+          docNumber.indexOf('&item_sequence='));
+
+      final String author = children.elementAt(1).text;
+      final String title = children.elementAt(2).text;
+      final String publishYear = children.elementAt(3).text;
+      final String reservationDate = children.elementAt(5).text;
+      final String endReservationDate = children.elementAt(6).text;
+
+      Logger().i("Res info:", docNumber + ' ' + author);
     }
   }
 }
