@@ -16,7 +16,6 @@ extension UriString on String {
 
 final String baseUrl = 'https://catalogo.up.pt/F';
 
-// TODO receive this WRD from the search filter
 String baseSearchUrl(String query) =>
     'https://catalogo.up.pt/F/?func=find-b&request=$query&find_code=WRD';
 

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
@@ -38,9 +39,9 @@ class ParserLibrary implements ParserLibraryInterface {
     final document = parse(utf8.decode(response.bodyBytes));
 
     final Map<String, dynamic> bookDetails = {
-      'editor': '',
-      'language': '',
-      'local': '',
+      'editor': null,
+      'language': null,
+      'local': null,
       'themes': []
     };
 
@@ -98,15 +99,21 @@ class ParserLibrary implements ParserLibraryInterface {
     for (Element element in elements) {
       final rows = element.querySelectorAll('td');
 
-      final String author = rows.elementAt(authorInfoIdx).text;
+      final String encodedAuthor = rows.elementAt(authorInfoIdx).text;
+      final String author = decodeLibraryText(encodedAuthor);
 
       final String titleText = rows.elementAt(titleInfoIdx).innerHtml;
-      final String title = titleText
+      final String rawTitle = titleText
           .substring(titleText.indexOf('</script>') + '</script>'.length)
           .trim();
+      final String encodedTitle = parse(rawTitle).documentElement.text;
+      final String title = decodeLibraryText(encodedTitle);
+
+      Logger().i(title);
 
       final String year = rows.elementAt(yearInfoIdx).text.trim();
 
+      // TODO Check if other text fields need to be decoded
       final String documentType = rows.elementAt(documentTypeIdx).text.trim();
 
       // getting the img from catalog
@@ -129,7 +136,7 @@ class ParserLibrary implements ParserLibraryInterface {
       bookIsbn = bookIsbn.substring(1, bookIsbn.length - 2); // remove " and ;
       bookIsbn = bookIsbn == '<BR>' ? '' : bookIsbn;
 
-      String bookImageUrl = '';
+      String bookImageUrl = null;
       if (catalogImage != '') {
         bookImageUrl = catalogBookUrl(catalogImage);
       } else if (bookIsbn != '') {
@@ -156,7 +163,7 @@ class ParserLibrary implements ParserLibraryInterface {
                   2, // remove ("
               digitalInfoHtml.length - 3 // remove ");
               )
-          : '';
+          : null;
 
       String units = rows.elementAt(unitsIdx).text.trim();
       int unitsAvailable = 0;
@@ -179,18 +186,10 @@ class ParserLibrary implements ParserLibraryInterface {
                   2)
           .replaceAll('amp;', ''); // remove ; " and &amp;
 
-      final http.Response bdResponse =
-          await Library.getHtml(bookDetailsLink, cookie: cookie);
-      final Map<String, dynamic> bookDetailsMap =
-          await parseBookDetailsHtml(bdResponse);
-
       final Book book = Book(
         title: title,
         author: author,
-        editor: bookDetailsMap['editor'],
         releaseYear: year,
-        language: bookDetailsMap['language'],
-        country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
         hasPhysicalVersion: totalUnits > 0 || unitsAvailable > 0 ? true : false,
@@ -199,11 +198,44 @@ class ParserLibrary implements ParserLibraryInterface {
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
-        themes: List<String>.from(bookDetailsMap['themes']),
       );
+
+      // TODO Test this with book details page
+      Library.getHtml(bookDetailsLink, cookie: cookie)
+          .then((bdResponse) => parseBookDetailsHtml(bdResponse))
+          .then((bookDetailsMap) {
+        book.editor = bookDetailsMap['editor'];
+        book.language = bookDetailsMap['language'];
+        book.country = bookDetailsMap['local'];
+        book.themes = List<String>.from(bookDetailsMap['themes']);
+      });
 
       booksList.add(book);
     }
     return booksList;
+  }
+
+  String decodeLibraryText(String encoded) {
+    String decoded = '';
+    for (int i = 0; i < encoded.length; i++) {
+      try {
+        // Try to decode 8-bit char
+        final String utf8Decoded = utf8.decode(encoded[i].codeUnits);
+        decoded += utf8Decoded;
+      } catch (e) {
+        try {
+          // Try to decode 16-bit char
+          final List<int> codeUnits = encoded.substring(i, i + 2).codeUnits;
+          final String utf8Decoded = utf8.decode(codeUnits);
+          decoded += utf8Decoded;
+          ++i;
+        } catch (e) {
+          // Handle the remaining errors not handled by utf8.decode()
+          decoded += String.fromCharCodes(encoded[i].codeUnits);
+        }
+      }
+    }
+
+    return decoded;
   }
 }

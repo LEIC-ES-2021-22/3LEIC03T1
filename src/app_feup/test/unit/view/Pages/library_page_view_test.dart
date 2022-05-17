@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:uni/model/app_state.dart';
 import 'package:uni/view/Pages/library_page_view.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Widgets/book_container.dart';
@@ -27,7 +28,11 @@ void main() {
       );
 
       final widget =
-          makeTestableWidget(child: LibrarySearch(books: <Book>[book]));
+          makeTestableWidget(
+          child: LibrarySearch(
+        books: <Book>[book],
+        searchBooksStatus: RequestStatus.successful,
+      ));
       await tester.pumpWidget(widget);
 
       expect(find.byType(LibrarySearchHeader), findsOneWidget);
@@ -60,7 +65,11 @@ void main() {
         )
       ];
 
-      final widget = makeTestableWidget(child: LibrarySearch(books: books));
+      final widget = makeTestableWidget(
+          child: LibrarySearch(
+        books: books,
+        searchBooksStatus: RequestStatus.successful,
+      ));
       await tester.pumpWidget(widget);
 
       expect(find.byType(LibrarySearchHeader), findsOneWidget);
