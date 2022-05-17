@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/utils/methods.dart';
 
 class bookReservationDialog extends StatefulWidget {
   bookReservationDialog({Key key, @required this.book}) : super(key: key);
@@ -120,7 +121,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
 
   Widget _buildNotesField() {
     return TextFormField(
-      maxLines: 3,
+      maxLines: 5,
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.all(10.0),
@@ -156,46 +157,55 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
     super.initState();
   }
 
+  List<Widget> createFormField() {
+    final List<Widget> formWidgets = [];
+
+    formWidgets.add(_buildBeginDateField());
+    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(_buildEndDateField());
+    formWidgets.add(SizedBox(height: 50,));
+    formWidgets.add(_buildNotesField());
+    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(_buildIsUrgentField());
+
+    return formWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text('Reserva do Livro')),
-      content: Form(
-        key: _formKey,
-        child: Container(
-          constraints: BoxConstraints(maxHeight: 340),
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween ,
-              children: [
-                _buildBeginDateField(),
-                _buildEndDateField(),
-                Container(constraints: BoxConstraints(maxHeight: 20),),
-                _buildNotesField(),
-                _buildIsUrgentField(),
-              ],
-            )),
-      ),
-      actions: [
-        TextButton(
-          child: Text('SUBMIT'),
-          onPressed: () {
-            if (!_formKey.currentState.validate()) {
-              return;
-            }
+        title: Center(child: Text('Reserva do Livro')),
+        content: Container(
+          constraints: BoxConstraints(maxHeight: 370),
+          height: vs(350.0, context),
+          width: hs(250.0, context),
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+                  children: createFormField(),
+                ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text('SUBMIT'),
+            onPressed: () {
+              if (!_formKey.currentState.validate()) {
+                return;
+              }
 
-            _formKey.currentState.save();
+              _formKey.currentState.save();
 
-            print(_begin_date);
-            print(_end_date);
-            print(_is_urgent);
+              print(_begin_date);
+              print(_end_date);
+              print(_is_urgent);
 
-            //TODO: Book Reservation Logic
-            Navigator.of(context).pop();
-          },
-        )
-      ],
-    );
+              //TODO: Book Reservation Logic
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
   }
 }
