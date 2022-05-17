@@ -30,7 +30,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
       //editing controller of this TextField
       decoration: InputDecoration(
           icon: Icon(Icons.calendar_today, color: Colors.grey),
-          labelText: "Data de Início",
+          labelText: 'Data de Início',
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey, width: 1))),
       validator: (String value) {
@@ -120,7 +120,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
 
   Widget _buildNotesField() {
     return TextFormField(
-      maxLines: 5,
+      maxLines: 3,
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.all(10.0),
@@ -163,7 +163,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
       content: Form(
         key: _formKey,
         child: Container(
-          constraints: BoxConstraints(maxHeight: 350),
+          constraints: BoxConstraints(maxHeight: 340),
             padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +171,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
               children: [
                 _buildBeginDateField(),
                 _buildEndDateField(),
-                SizedBox(height: 30,),
+                Container(constraints: BoxConstraints(maxHeight: 20),),
                 _buildNotesField(),
                 _buildIsUrgentField(),
               ],
