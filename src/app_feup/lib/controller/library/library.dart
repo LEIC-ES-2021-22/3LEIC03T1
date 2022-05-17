@@ -74,12 +74,11 @@ class Library implements LibraryInterface {
   }
 
   Future<void> getReservations() async {
-    Logger().i(
-        "reservation url", reservationsUrl(this.faculty, this.pdsCookie.value));
     final reservationResponse = await libRequestWithAleph(
         reservationsUrl(this.faculty, this.pdsCookie.value));
 
     Logger().i("Reservation request:", reservationResponse.body);
+    ParserLibrary().parseReservations(reservationResponse);
   }
 
   /**

@@ -251,4 +251,16 @@ class ParserLibrary implements ParserLibraryInterface {
 
     return decoded;
   }
+
+  Future<Set<Book>> parseReservations(http.Response response) {
+    final Document document = parse(utf8.decode(response.bodyBytes));
+
+    final List<Element> rows = document.querySelectorAll('#centered');
+    Logger().i("Number of rows found:", rows.length);
+
+    for (Element row in rows) {
+      final parent = row.parent;
+      Logger().i("Parent:", parent.innerHtml);
+    }
+  }
 }
