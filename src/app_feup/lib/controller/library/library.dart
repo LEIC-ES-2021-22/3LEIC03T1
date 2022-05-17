@@ -29,17 +29,23 @@ class Library implements LibraryInterface {
   Cookie pdsCookie;
   String _username;
   String _password;
-
-  List<String> faculties;
+  String faculty;
 
   /**
    * Need to create a factory function since we need the constructor
    *  to have an async method
    */
-  static Future<Library> create() async {
+  static Future<Library> create({Cookie pdsCookie}) async {
     final library = Library();
+    if (pdsCookie != null) {
+      library.pdsCookie = pdsCookie; // Set libraries' pds cookie if exists
+    }
 
-    library.faculties = await AppSharedPreferences.getUserFaculties();
+    try {
+      library.faculty = (await AppSharedPreferences.getUserFaculties()).first;
+    } catch (err) {
+      Logger().e("Unable to retrieve the user's institution");
+    }
 
     return library;
   }
@@ -66,7 +72,7 @@ class Library implements LibraryInterface {
     return libraryBooks;
   }
 
-  Future<void> getReservationPage() async {
+  Future<void> getReservations() async {
     final reservationResponse = await libRequestWithAleph(reservationUrl);
   }
 

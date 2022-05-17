@@ -64,6 +64,8 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         // TODO Novidades do dia/mês
         store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
 
+        await library.getReservations();
+
         action?.complete();
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
