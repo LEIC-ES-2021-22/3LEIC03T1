@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -256,8 +258,13 @@ class BookDetailsWidget extends StatelessWidget {
                 borderRadius: new BorderRadius.circular(25.0),
               ),
             ),
-            onPressed: () {
-              //TODO: Download Action here
+            onPressed: () async {
+              const url = "https://flutter.io";
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw "Could not launch $url";
+              }
             },
             child: Icon(
               Icons.download_sharp,
