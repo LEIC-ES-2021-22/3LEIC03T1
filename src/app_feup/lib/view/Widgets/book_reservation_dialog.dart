@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/utils/methods.dart';
 
 class bookReservationDialog extends StatefulWidget {
   bookReservationDialog({Key key, @required this.book}) : super(key: key);
@@ -30,7 +31,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
       //editing controller of this TextField
       decoration: InputDecoration(
           icon: Icon(Icons.calendar_today, color: Colors.grey),
-          labelText: "Data de Início",
+          labelText: 'Data de Início',
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey, width: 1))),
       validator: (String value) {
@@ -53,19 +54,12 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          print(
-              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-          print(
-              formattedDate); //formatted date output using intl package =>  2021-03-16
-          //you can implement different kind of Date Format here according to your requirement
 
           setState(() {
             begin_date_controller.text =
                 formattedDate; //set output date to TextField value.
           });
-        } else {
-          print("Date is not selected");
         }
       },
     );
@@ -100,19 +94,12 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          print(
-              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-          print(
-              formattedDate); //formatted date output using intl package =>  2021-03-16
-          //you can implement different kind of Date Format here according to your requirement
 
           setState(() {
             end_date_controller.text =
                 formattedDate; //set output date to TextField value.
           });
-        } else {
-          print("Date is not selected");
         }
       },
     );
@@ -141,6 +128,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
     return CheckboxListTile(
       title: Text("Urgent"),
       controlAffinity: ListTileControlAffinity.leading,
+      contentPadding: EdgeInsets.all(0),
       value: _is_urgent,
       onChanged: (bool value) {
         setState(() {
@@ -156,46 +144,51 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
     super.initState();
   }
 
+  List<Widget> createFormField() {
+    final List<Widget> formWidgets = [];
+
+    formWidgets.add(_buildBeginDateField());
+    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(_buildEndDateField());
+    formWidgets.add(SizedBox(height: 50,));
+    formWidgets.add(_buildNotesField());
+    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(_buildIsUrgentField());
+
+    return formWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text('Reserva do Livro')),
-      content: Form(
-        key: _formKey,
-        child: Container(
-          constraints: BoxConstraints(maxHeight: 350),
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween ,
-              children: [
-                _buildBeginDateField(),
-                _buildEndDateField(),
-                SizedBox(height: 30,),
-                _buildNotesField(),
-                _buildIsUrgentField(),
-              ],
-            )),
-      ),
-      actions: [
-        TextButton(
-          child: Text('SUBMIT'),
-          onPressed: () {
-            if (!_formKey.currentState.validate()) {
-              return;
-            }
+        title: Center(child: Text('Reserva do Livro')),
+        content: Container(
+          constraints: BoxConstraints(maxHeight: 370),
+          height: vs(350.0, context),
+          width: hs(250.0, context),
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+                  children: createFormField(),
+                ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text('SUBMIT'),
+            onPressed: () {
+              if (!_formKey.currentState.validate()) {
+                return;
+              }
 
-            _formKey.currentState.save();
+              _formKey.currentState.save();
 
-            print(_begin_date);
-            print(_end_date);
-            print(_is_urgent);
-
-            //TODO: Book Reservation Logic
-            Navigator.of(context).pop();
-          },
-        )
-      ],
-    );
+              //TODO: Book Reservation Logic
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
   }
 }

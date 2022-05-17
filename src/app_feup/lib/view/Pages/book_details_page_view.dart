@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
-import 'package:uni/view/Widgets/book_reservation_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -32,7 +32,7 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+/*
     if (this.book.releaseYear == null)
       this.book.releaseYear = "desconhecido";
     if (this.book.editor == null)
@@ -41,7 +41,7 @@ class BookDetailsWidget extends StatelessWidget {
       this.book.isbnCode = "desconhecido";
     if (this.book.language == null)
       this.book.language = "desconhecido";
-
+*/
     return Stack(
       children: [
         Container(
@@ -97,59 +97,14 @@ class BookDetailsWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children:
+            [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.createBookThemes(context, this.book),
-                  ),
-                  SizedBox(
-                    height: 45,
-                  ),
-                  Text(
-                    "Ano: ${this.book.releaseYear}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Editor: ${this.book.editor}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "ISBN: ${this.book.isbnCode}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
+                children: this.createBookDetailsLeft(context, this.book),
               ),
               Row(
-                children: [
-                  Icon(
-                    Icons.language,
-                    color: Colors.black,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "${this.book.language}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
+                children: this.createBookDetailsRight(context, this.book),
               ),
             ],
           ),
@@ -258,8 +213,13 @@ class BookDetailsWidget extends StatelessWidget {
                 borderRadius: new BorderRadius.circular(25.0),
               ),
             ),
-            onPressed: () {
-              //TODO: Download Action here
+            onPressed: () async {
+              const url = "https://flutter.io";
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw "Could not launch $url";
+              }
             },
             child: Icon(
               Icons.download_sharp,
@@ -270,9 +230,97 @@ class BookDetailsWidget extends StatelessWidget {
     return buttons;
   }
 
+  List<Widget> createBookDetailsRight(BuildContext context, Book book) {
+    List<Widget> bookDetailsRight = <Widget>[];
 
-  Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
-    context: context,
-    builder: (context) => bookReservationDialog(book: this.book)
-  );
+    if (this.book.language != null) {
+      bookDetailsRight.add(
+        Icon(
+          Icons.language,
+          color: Colors.black,
+        ),
+      );
+
+      bookDetailsRight.add(
+        SizedBox(
+          width: 10,
+        ),
+      );
+
+      bookDetailsRight.add(
+        Text(
+          "${this.book.language}",
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+    }
+
+    return bookDetailsRight;
+  }
+
+  List<Widget> createBookDetailsLeft(BuildContext context, Book book) {
+    List<Widget> bookDetailsLeft = <Widget>[];
+
+    bookDetailsLeft.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: this.createBookThemes(context, this.book),
+        )
+    );
+
+    bookDetailsLeft.add(
+        SizedBox(
+          height: 45,
+        )
+    );
+
+    if (this.book.releaseYear != null) {
+      bookDetailsLeft.add(
+        Text(
+          "Ano: ${this.book.releaseYear}",
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+
+      bookDetailsLeft.add(
+        SizedBox(
+          height: 20,
+        ),
+      );
+    }
+
+    if (this.book.editor != null) {
+      bookDetailsLeft.add(
+        Text(
+          "Editor: ${this.book.editor}",
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+
+      bookDetailsLeft.add(
+        SizedBox(
+          height: 20,
+        ),
+      );
+    }
+
+    if (this.book.isbnCode != null) {
+      bookDetailsLeft.add(
+        Text(
+          "ISBN: ${this.book.isbnCode}",
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+    }
+
+    return bookDetailsLeft;
+  }
 }
