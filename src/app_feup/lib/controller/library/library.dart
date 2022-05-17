@@ -17,6 +17,7 @@ import 'package:uni/model/entities/search_filters.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:uni/model/entities/book_reservation.dart';
 
 extension UriString on String {
   /// Converts a [String] to an [Uri].
@@ -52,12 +53,16 @@ class Library implements LibraryInterface {
 
   /**
    * Wrapper to send a request, after first getting the aleph cookie
+   * pdsCookie is an optional argument
    */
-  Future<http.Response> libRequestWithAleph(String url) async {
+  static Future<http.Response> libRequestWithAleph(String url,
+      {Cookie pdsCookie = null}) async {
     final Cookie alephCookie = await parseAlephCookie();
 
-    Logger().i("Sending request with pds:", this.pdsCookie);
-    return await getHtml(url, cookies: [alephCookie, this.pdsCookie]);
+    final List<Cookie> cookies = [alephCookie];
+    if (pdsCookie != null) cookies.add(pdsCookie);
+
+    return await getHtml(url, cookies: cookies);
   }
 
   // TODO after get cookie from login receive it on this function and use it
@@ -77,8 +82,11 @@ class Library implements LibraryInterface {
     final reservationResponse = await libRequestWithAleph(
         reservationsUrl(this.faculty, this.pdsCookie.value));
 
-    Logger().i("Reservation request:", reservationResponse.body);
-    ParserLibrary().parseReservations(reservationResponse);
+    // Logger().i("Reservation request:", reservationResponse.body);
+    final Set<BookReservation> reservations = await ParserLibrary()
+        .parseReservations(reservationResponse, this.faculty);
+
+    Logger().i("reservations:", reservations.toString());
   }
 
   /**
@@ -303,7 +311,7 @@ class Library implements LibraryInterface {
   /**
    * Gets the aleph cookie by making a request to baseUrl 
    */
-  Future<Cookie> parseAlephCookie() async {
+  static Future<Cookie> parseAlephCookie() async {
     final http.Response response = await getHtml(baseUrl);
 
     final document = html.parse(response.body);

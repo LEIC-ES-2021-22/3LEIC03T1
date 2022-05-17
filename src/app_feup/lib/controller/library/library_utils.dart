@@ -5,19 +5,23 @@ final String catalogUrl = 'https://catalogo.up.pt';
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
-String loginUrl(faculty) {
+String loginUrl(String faculty) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
 }
 
-String reservationLoansUrl(faculty, pdsHandle) {
+String reservationLoansUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
-String reservationsUrl(faculty, pdsHandle) {
+String reservationsUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String bookDetailsUrl(String docNumber) {
+  return 'https://catalogo.up.pt/F/?func=direct&doc_number=$docNumber';
 }
 
 final String baseUrl = 'https://catalogo.up.pt/F';
@@ -44,6 +48,11 @@ String baseSearchUrl(String query, SearchFilters filters) {
 
   return url;
 }
+
+String catalogBookUrl(String book) => 'https://catalogo.up.pt$book';
+
+String gBookUrl(String isbn) =>
+    'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
 
 final cookieRegex = RegExp(r'(?<=^|\S,).*?(?=$|,\S)');
 
@@ -88,3 +97,26 @@ final Map<String, String> facInitials = {
   'fpceup': 'fpce',
   'icbas': 'icbas'
 };
+
+final Map<String, String> monthToNum = {
+  'Jan': '01',
+  'Fev': '02',
+  'Mar': '03',
+  'Abr': '04',
+  'Mai': '05',
+  'Jun': '06',
+  'Jul': '07',
+  'Ago': '08',
+  'Set': '09',
+  'Out': '10',
+  'Nov': '11',
+  'Dez': '12',
+};
+
+/**
+ * Receives a Date with the libraries' format and returns a DateTime
+ */
+DateTime parseDate(String libraryDate) {
+  List<String> data = libraryDate.split('/');
+  return DateTime.parse(data[2] + '-' + monthToNum[data[1]] + '-' + data[0]);
+}
