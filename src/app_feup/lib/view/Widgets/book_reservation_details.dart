@@ -7,7 +7,7 @@ import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/model/entities/book_reservation.dart';
-
+import 'package:uni/model/utils/reservation_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -200,7 +200,12 @@ class ReservationDetailsWidget extends StatelessWidget {
       totalUnits = '/ ${reservation.totalUnits}';
     }
 
-    if (reservation.unitsAvailable != null) {
+    header_info.add(Text(
+      '${toString(reservation.status)}',
+      style: TextStyle(color: reservation.getStatusColor()),
+    ));
+
+    /*if (reservation.unitsAvailable != null) {
       if (reservation.unitsAvailable == 1) {
         header_info.add(Text(
           '${reservation.unitsAvailable} ${totalUnits} unidade disponível',
@@ -217,7 +222,7 @@ class ReservationDetailsWidget extends StatelessWidget {
           style: TextStyle(color: Colors.red[900]),
         ));
       }
-    }
+    }*/
     return header_info;
   }
 
