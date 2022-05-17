@@ -142,6 +142,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
     return CheckboxListTile(
       title: Text("Urgent"),
       controlAffinity: ListTileControlAffinity.leading,
+      contentPadding: EdgeInsets.all(0),
       value: _is_urgent,
       onChanged: (bool value) {
         setState(() {
