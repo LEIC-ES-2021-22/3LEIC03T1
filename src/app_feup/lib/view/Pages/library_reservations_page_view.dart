@@ -84,14 +84,7 @@ class LibraryReservationsBody extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ReservationDetails()),
-        );
-      },
-      child: ListView(
+    return ListView(
       children: <Widget>[
         Container(
           child: Column(
@@ -99,8 +92,7 @@ class LibraryReservationsBody extends StatelessWidget {
             children: this.createReservationsFeed(context, reservations),
           ),
         )
-      ],
-    ),
+      ]
     );
   }
 

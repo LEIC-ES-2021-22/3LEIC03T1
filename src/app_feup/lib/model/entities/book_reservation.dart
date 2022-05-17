@@ -26,6 +26,8 @@ class BookReservation {
   String documentType;
   String isbnCode;
 
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
   BookReservation({
     this.title,
     this.author,
@@ -50,7 +52,6 @@ class BookReservation {
     switch (this.status) {
       case ReservationStatus.pending:
       case ReservationStatus.finished:
-        final DateFormat formatter = DateFormat('dd/MM/yyyy');
         return formatter.format(this.acquisitionDate) +
             ' - ' +
             formatter.format(this.returnDate);
@@ -69,6 +70,14 @@ class BookReservation {
         return '$delayedDays dias em atraso';
     }
     return '';
+  }
+
+  String getReturnDate(){
+    return formatter.format(this.returnDate);
+  }
+
+    String getAcquisitionDate(){
+    return formatter.format(this.returnDate);
   }
 
   Color getStatusColor() {

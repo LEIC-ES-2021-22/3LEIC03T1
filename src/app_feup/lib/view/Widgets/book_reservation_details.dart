@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:logger/logger.dart';
+import 'package:uni/model/app_state.dart';
+import 'package:uni/model/entities/book.dart';
+import 'package:uni/view/Pages/secondary_page_view.dart';
+import 'package:uni/view/Pages/unnamed_page_view.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni/model/entities/book_reservation.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:logger/logger.dart';
@@ -8,39 +18,42 @@ import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class  ReservationDetails extends StatelessWidget{ 
-  ReservationDetails({Key key, @required this.book}) : super(key: key);
-  final Book book;
+class ReservationDetails extends StatefulWidget {
+  ReservationDetails({Key key, @required this.reservation}) : super(key: key);
+  final BookReservation reservation;
 
   @override
-  State<StatefulWidget> createState() => ReservationDetailsState(book: book);
+  // ignore: lines_longer_than_80_chars
+  State<StatefulWidget> createState() =>
+      ReservationDetailsState(reservation: reservation);
 }
 
 class ReservationDetailsState extends UnnamedPageView {
-  ReservationDetailsState({@required this.book});
-  final Book book;
+  ReservationDetailsState({@required this.reservation});
+  final BookReservation reservation;
 
   @override
   Widget getBody(BuildContext context) {
-    return ReservationDetailsWidget(book: this.book);
+    return ReservationDetailsWidget(reservation: this.reservation);
   }
 }
 
 class ReservationDetailsWidget extends StatelessWidget {
-  ReservationDetailsWidget({Key key, @required this.book}) : super(key: key);
-  final Book book;
+  // ignore: lines_longer_than_80_chars
+  ReservationDetailsWidget({Key key, @required this.reservation})
+      : super(key: key);
+  final BookReservation reservation;
 
   @override
   Widget build(BuildContext context) {
-
-    if (this.book.releaseYear == null)
-      this.book.releaseYear = "desconhecido";
-    if (this.book.editor == null)
-      this.book.editor = "desconhecido";
-    if (this.book.isbnCode == null)
-      this.book.isbnCode = "desconhecido";
-    if (this.book.language == null)
-      this.book.language = "desconhecido";
+    /*if (this.reservation.releaseYear == null)
+      this.reservation.releaseYear = "desconhecido";
+    if (this.reservation.editor == null)
+      this.reservation.editor = "desconhecido";
+    if (this.reservation.isbnCode == null)
+      this.reservation.isbnCode = "desconhecido";
+    if (this.reservation.language == null)
+      this.reservation.language = "desconhecido";*/
 
     return Stack(
       children: [
@@ -51,10 +64,10 @@ class ReservationDetailsWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
             child: Text(
-              "Detalhes do Livro",
+              "Detalhes da Reserva",
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 20.0,
+                fontSize: 30,
               ),
             ),
           ),
@@ -65,20 +78,21 @@ class ReservationDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                  tag: this.book.title,
-                  child: Image.network(
-                    this.book.imageURL,
-                    width: 100,
-                    height: 150,
-                    fit: BoxFit.fill,
-                  ),
+                tag: this.reservation.title,
+                child: Image.network(
+                  this.reservation.imageURL,
+                  width: 100,
+                  height: 150,
+                  fit: BoxFit.fill,
+                ),
               ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.createBookHeaderInfo(context, this.book),
+                    children: this
+                        .createReservationHeaderInfo(context, this.reservation),
                   ),
                 ),
               ),
@@ -87,9 +101,9 @@ class ReservationDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
-          child: Row (
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: bookActionButtons(context, this.book),
+            children: reservationActionButtons(context, this.reservation),
           ),
         ),
         Padding(
@@ -103,54 +117,65 @@ class ReservationDetailsWidget extends StatelessWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.createBookThemes(context, this.book),
                   ),
                   SizedBox(
                     height: 45,
                   ),
                   Text(
-                    "Ano: ${this.book.releaseYear}",
+                    "Data de aquisição: \n${this.reservation.getAcquisitionDate()}",
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 30,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    "Data de devolução: \n${this.reservation.getReturnDate()}",
+                    style: const TextStyle(
+                      fontSize: 30,
                     ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Editor: ${this.book.editor}",
+                    "Local de Levantamento: \n${this.reservation.pickupLocation}",
                     style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "ISBN: ${this.book.isbnCode}",
-                    style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 30,
                     ),
                   ),
                 ],
               ),
               Row(
-                children: [
-                  Icon(
-                    Icons.language,
-                    color: Colors.black,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "${this.book.language}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(crossAxisAlignment: CrossAxisAlignment.start),
+                          SizedBox(
+                            height: 40,
+                            width: 15,
+                          ),
+                          Text(
+                            "Nº Reserva \n${this.reservation.reservationNumber}",
+                            style: const TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Devolução: \n${this.reservation.getDateIndicator()}",
+                            style: const TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
+                        ]),
+                  ]),
             ],
           ),
         ),
@@ -158,69 +183,34 @@ class ReservationDetailsWidget extends StatelessWidget {
     );
   }
 
-  List<Widget> createBookThemes(BuildContext context, Book book) {
-    final List<Widget> themes = <Widget>[];
-
-    themes.add(Text(
-      "Temas",
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-    ));
-
-    themes.add(SizedBox(
-      height: 18,
-    ));
-
-    if (book.themes != null) {
-      for (int i = 0; i < book.themes.length; ++i) {
-        themes.add(
-          Text('\u2022  ${book.themes[i]}'),
-        );
-        themes.add(
-          SizedBox(
-            height: 8,
-          ),
-        );
-      }
-    } else {
-      themes.add(Text("Não há temas"));
-    }
-
-    return themes;
-  }
-
-  createBookHeaderInfo(BuildContext context, Book book) {
+  createReservationHeaderInfo(
+      BuildContext context, BookReservation reservation) {
     final List<Widget> header_info = <Widget>[];
 
-    header_info.add(
-        Text(
-          book.title,
-          style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 17.0),
-    )
-    );
+    header_info.add(Text(
+      reservation.title,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+    ));
     header_info.add(SizedBox(height: 10));
-    header_info.add(Text(book.author));
+    header_info.add(Text(reservation.author));
     header_info.add(SizedBox(height: 15));
 
-
     var totalUnits = '';
-    if (book.totalUnits != null) {
-      totalUnits = '/ ${book.totalUnits}';
+    if (reservation.totalUnits != null) {
+      totalUnits = '/ ${reservation.totalUnits}';
     }
 
-    if (book.unitsAvailable != null) {
-      if (book.unitsAvailable == 1) {
+    if (reservation.unitsAvailable != null) {
+      if (reservation.unitsAvailable == 1) {
         header_info.add(Text(
-            '${book.unitsAvailable} ${totalUnits} unidade disponível',
-            style: TextStyle(color: Colors.red[700]),
+          '${reservation.unitsAvailable} ${totalUnits} unidade disponível',
+          style: TextStyle(color: Colors.red[700]),
         ));
-      } else if (book.unitsAvailable > 1) {
+      } else if (reservation.unitsAvailable > 1) {
         header_info.add(Text(
-              '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
-              style: TextStyle(color: Colors.black),
-          ));
+          '${reservation.status}',
+          style: TextStyle(color: reservation.getStatusColor()),
+        ));
       } else {
         header_info.add(Text(
           'Nenhuma unidade disponível',
@@ -231,49 +221,41 @@ class ReservationDetailsWidget extends StatelessWidget {
     return header_info;
   }
 
-  bookActionButtons(BuildContext context, Book book) {
-
+  reservationActionButtons(BuildContext context, BookReservation reservation) {
     final List<Widget> buttons = <Widget>[];
 
-    if (book.unitsAvailable > 0) {
-      buttons.add(
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(90, 45)
-            ),
-            onPressed: () {
-              //TODO: Reserve Action here
-            },
-            child: Text("RESERVAR"),
-          )
-      );
+    if (reservation.unitsAvailable > 0) {
+      buttons.add(ElevatedButton(
+        style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
+        onPressed: () {
+          //TODO: Reserve Action here
+        },
+        child: Text("RENOVAR"),
+      ));
     }
 
-    if (book.hasDigitalVersion) {
-      buttons.add(
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(50, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(25.0),
-              ),
-            ),
-            onPressed: () async {
-              const url = "https://flutter.io";
-              if (await canLaunch(url)) {
-                await launch(url);
-              } else {
-                throw "Could not launch $url";
-              }
-            },
-            child: Icon(
-              Icons.download_sharp,
-            ),
-          )
-      );
+    if (reservation.hasDigitalVersion) {
+      buttons.add(ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(55, 55),
+          shape: RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(25.0),
+          ),
+        ),
+        onPressed: () async {
+          const url = "https://flutter.io";
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            throw "Could not launch $url";
+          }
+        },
+        child: Icon(
+          Icons.download_sharp,
+        ),
+      ));
     }
 
     return buttons;
-
   }
 }
