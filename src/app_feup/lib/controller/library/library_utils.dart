@@ -10,9 +10,14 @@ String loginUrl(faculty) {
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
 }
 
-String reservationUrl(faculty) {
+String reservationLoansUrl(faculty, pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
-  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode';
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String reservationsUrl(faculty, pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
 final String baseUrl = 'https://catalogo.up.pt/F';
@@ -66,3 +71,20 @@ String buildUp(String username) {
   }
   return res;
 }
+
+final Map<String, String> facInitials = {
+  'faup': 'arq',
+  'fbaup': 'fba',
+  'fcup': 'fc',
+  'fcnaup': 'fcna',
+  'fadeup': 'fade',
+  'fdup': 'fd',
+  'fep': 'fep',
+  'feup': 'fe',
+  'ffup': 'ff',
+  'flup': 'fl',
+  'fmup': 'med',
+  'fmdup': 'med',
+  'fpceup': 'fpce',
+  'icbas': 'icbas'
+};

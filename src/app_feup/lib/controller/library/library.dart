@@ -56,6 +56,7 @@ class Library implements LibraryInterface {
   Future<http.Response> libRequestWithAleph(String url) async {
     final Cookie alephCookie = await parseAlephCookie();
 
+    Logger().i("Sending request with pds:", this.pdsCookie);
     return await getHtml(url, cookies: [alephCookie, this.pdsCookie]);
   }
 
@@ -73,8 +74,10 @@ class Library implements LibraryInterface {
   }
 
   Future<void> getReservations() async {
-    final reservationResponse =
-        await libRequestWithAleph(reservationUrl(this.faculty));
+    Logger().i(
+        "reservation url", reservationsUrl(this.faculty, this.pdsCookie.value));
+    final reservationResponse = await libRequestWithAleph(
+        reservationsUrl(this.faculty, this.pdsCookie.value));
 
     Logger().i("Reservation request:", reservationResponse.body);
   }
@@ -87,7 +90,8 @@ class Library implements LibraryInterface {
     final Tuple2<String, String> userPersistentInfo =
         await AppSharedPreferences.getPersistentUserInfo();
 
-    _username = userPersistentInfo.item1 + '@fe.up.pt';
+    final String emailPrefix = facInitials[this.faculty];
+    _username = userPersistentInfo.item1 + '@$emailPrefix.up.pt';
     _password = userPersistentInfo.item2;
 
     _username = buildUp(_username);
