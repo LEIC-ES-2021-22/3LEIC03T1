@@ -5,9 +5,15 @@ final String catalogUrl = 'https://catalogo.up.pt';
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
-// TODO change the EUP to the faculty
-final String reservationUrl =
-    'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=EUP50';
+String loginUrl(faculty) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
+}
+
+String reservationUrl(faculty) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode';
+}
 
 final String baseUrl = 'https://catalogo.up.pt/F';
 

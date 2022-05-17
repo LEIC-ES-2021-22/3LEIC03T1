@@ -73,7 +73,10 @@ class Library implements LibraryInterface {
   }
 
   Future<void> getReservations() async {
-    final reservationResponse = await libRequestWithAleph(reservationUrl);
+    final reservationResponse =
+        await libRequestWithAleph(reservationUrl(this.faculty));
+
+    Logger().i("Reservation request:", reservationResponse.body);
   }
 
   /**
@@ -89,8 +92,7 @@ class Library implements LibraryInterface {
 
     _username = buildUp(_username);
 
-    final String link =
-        'https://catalogo.up.pt/shib/EUP50/pds_main?func=load-login&calling_system=aleph&institute=EUP50&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
+    final String link = loginUrl(this.faculty);
     final url = Uri.parse(link);
     final responses = await _getUrlWithRedirects(url);
 
