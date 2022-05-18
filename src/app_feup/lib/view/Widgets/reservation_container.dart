@@ -27,7 +27,6 @@ class ReservationContainer extends GenericLibraryContainer {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  // ignore: lines_longer_than_80_chars
                   builder: (context) => ReservationDetails(reservation: this.reservation),
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uni/utils/methods.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/model/entities/book_reservation.dart';
@@ -10,7 +11,6 @@ class ReservationDetails extends StatefulWidget {
   final BookReservation reservation;
 
   @override
-  // ignore: lines_longer_than_80_chars
   State<StatefulWidget> createState() =>
       ReservationDetailsState(reservation: reservation);
 }
@@ -26,7 +26,6 @@ class ReservationDetailsState extends UnnamedPageView {
 }
 
 class ReservationDetailsWidget extends StatelessWidget {
-  // ignore: lines_longer_than_80_chars
   ReservationDetailsWidget({Key key, @required this.reservation})
       : super(key: key);
   final BookReservation reservation;
@@ -36,7 +35,7 @@ class ReservationDetailsWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: 200.0,
+          height: vs(135, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
@@ -45,7 +44,7 @@ class ReservationDetailsWidget extends StatelessWidget {
               'Detalhes da Reserva',
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 30,
+                fontSize: 20,
               ),
             ),
           ),
@@ -59,8 +58,8 @@ class ReservationDetailsWidget extends StatelessWidget {
                 tag: this.reservation.title,
                 child: Image.network(
                   this.reservation.imageURL,
-                  width: 100,
-                  height: 150,
+                  width: hs(70, context),
+                  height: vs(110, context),
                   fit: BoxFit.fill,
                 ),
               ),
@@ -97,32 +96,30 @@ class ReservationDetailsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                   SizedBox(
-                    height: 45,
+                    height: vs(30, context),
                   ),
                   Text(
-                    // ignore: lines_longer_than_80_chars
                     'Data de aquisição: \n${this.reservation.getAcquisitionDate()}',
                     style: const TextStyle(
-                      fontSize: 30,
+                      fontSize: 20,
                     ),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: vs(30, context),
                   ),
                   Text(
                     'Data de devolução: \n${this.reservation.getReturnDate()}',
                     style: const TextStyle(
-                      fontSize: 30,
+                      fontSize: 20,
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: vs(20, context),
                   ),
                   Text(
-                    // ignore: lines_longer_than_80_chars
                     'Local de Levantamento: \n${this.reservation.pickupLocation}',
                     style: const TextStyle(
-                      fontSize: 30,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -136,24 +133,22 @@ class ReservationDetailsWidget extends StatelessWidget {
                         children: [
                           Column(crossAxisAlignment: CrossAxisAlignment.start),
                           SizedBox(
-                            height: 40,
-                            width: 15,
+                            width: hs(15, context),
+                            height: vs(40, context),
                           ),
                           Text(
-                            // ignore: lines_longer_than_80_chars
                             'Nº Reserva :\n${this.reservation.reservationNumber}',
                             style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 20,
                             ),
                           ),
                           SizedBox(
-                            height: 30,
+                            height: vs(20, context),
                           ),
                           Text(
-                            // ignore: lines_longer_than_80_chars
                             'Devolução: \n${this.reservation.getDateIndicator()}',
                             style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 20,
                             ),
                           ),
                         ]),
@@ -173,9 +168,9 @@ class ReservationDetailsWidget extends StatelessWidget {
       reservation.title,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
     ));
-    headerInfo.add(SizedBox(height: 10));
+    headerInfo.add(SizedBox(height: vs(15, context)));
     headerInfo.add(Text(reservation.author));
-    headerInfo.add(SizedBox(height: 15));
+    headerInfo.add(SizedBox(height: vs(15, context)));
     headerInfo.add(Text(
       '${toString(reservation.status)}',
       style: TextStyle(color: reservation.getStatusColor()),
@@ -191,7 +186,6 @@ class ReservationDetailsWidget extends StatelessWidget {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
         onPressed: () {
-          // ignore: lines_longer_than_80_chars
           //TODO: GoToReservationPage but with information from the current reservation
         },
         child: Text('RENOVAR'),
