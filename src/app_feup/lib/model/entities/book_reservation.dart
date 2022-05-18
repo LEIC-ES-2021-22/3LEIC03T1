@@ -77,7 +77,7 @@ class BookReservation {
   }
 
     String getAcquisitionDate(){
-    return formatter.format(this.returnDate);
+    return formatter.format(this.acquisitionDate);
   }
 
   Color getStatusColor() {
