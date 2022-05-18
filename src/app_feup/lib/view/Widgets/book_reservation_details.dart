@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:logger/logger.dart';
-import 'package:uni/model/app_state.dart';
-import 'package:uni/model/entities/book.dart';
-import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:logger/logger.dart';
-import 'package:uni/model/app_state.dart';
-import 'package:uni/model/entities/book.dart';
-import 'package:uni/view/Pages/secondary_page_view.dart';
-import 'package:uni/view/Pages/unnamed_page_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ReservationDetails extends StatefulWidget {
   ReservationDetails({Key key, @required this.reservation}) : super(key: key);
@@ -46,15 +33,6 @@ class ReservationDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*if (this.reservation.releaseYear == null)
-      this.reservation.releaseYear = "desconhecido";
-    if (this.reservation.editor == null)
-      this.reservation.editor = "desconhecido";
-    if (this.reservation.isbnCode == null)
-      this.reservation.isbnCode = "desconhecido";
-    if (this.reservation.language == null)
-      this.reservation.language = "desconhecido";*/
-
     return Stack(
       children: [
         Container(
@@ -194,35 +172,11 @@ class ReservationDetailsWidget extends StatelessWidget {
     header_info.add(SizedBox(height: 10));
     header_info.add(Text(reservation.author));
     header_info.add(SizedBox(height: 15));
-
-    var totalUnits = '';
-    if (reservation.totalUnits != null) {
-      totalUnits = '/ ${reservation.totalUnits}';
-    }
-
     header_info.add(Text(
       '${toString(reservation.status)}',
       style: TextStyle(color: reservation.getStatusColor()),
     ));
 
-    /*if (reservation.unitsAvailable != null) {
-      if (reservation.unitsAvailable == 1) {
-        header_info.add(Text(
-          '${reservation.unitsAvailable} ${totalUnits} unidade disponível',
-          style: TextStyle(color: Colors.red[700]),
-        ));
-      } else if (reservation.unitsAvailable > 1) {
-        header_info.add(Text(
-          '${reservation.status}',
-          style: TextStyle(color: reservation.getStatusColor()),
-        ));
-      } else {
-        header_info.add(Text(
-          'Nenhuma unidade disponível',
-          style: TextStyle(color: Colors.red[900]),
-        ));
-      }
-    }*/
     return header_info;
   }
 
@@ -233,7 +187,7 @@ class ReservationDetailsWidget extends StatelessWidget {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
         onPressed: () {
-          //TODO: Reserve Action here
+          //TODO: GoToReservationPage but with information from the current reservation
         },
         child: Text("RENOVAR"),
       ));
@@ -248,7 +202,7 @@ class ReservationDetailsWidget extends StatelessWidget {
           ),
         ),
         onPressed: () async {
-          const url = "https://flutter.io";
+          final url = reservation.digitalURL;
           if (await canLaunch(url)) {
             await launch(url);
           } else {
