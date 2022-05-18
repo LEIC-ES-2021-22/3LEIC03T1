@@ -54,19 +54,12 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          print(
-              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-          print(
-              formattedDate); //formatted date output using intl package =>  2021-03-16
-          //you can implement different kind of Date Format here according to your requirement
 
           setState(() {
             begin_date_controller.text =
                 formattedDate; //set output date to TextField value.
           });
-        } else {
-          print("Date is not selected");
         }
       },
     );
@@ -101,19 +94,12 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          print(
-              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-          print(
-              formattedDate); //formatted date output using intl package =>  2021-03-16
-          //you can implement different kind of Date Format here according to your requirement
 
           setState(() {
             end_date_controller.text =
                 formattedDate; //set output date to TextField value.
           });
-        } else {
-          print("Date is not selected");
         }
       },
     );
@@ -197,10 +183,6 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
               }
 
               _formKey.currentState.save();
-
-              print(_begin_date);
-              print(_end_date);
-              print(_is_urgent);
 
               //TODO: Book Reservation Logic
               Navigator.of(context).pop();
