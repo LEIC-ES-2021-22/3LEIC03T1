@@ -16,7 +16,7 @@ class LibraryReservations extends StatefulWidget {
 
 final List<BookReservation> mockedReservations = [
   BookReservation(
-    title: 'Programming - principles and practice using C++ && Java',
+    title: 'Programming - principles and practice using C++',
     author: 'Stroustrup, Bjarne',
     reservationNumber: 1,
     acquisitionDate: DateTime.now().add(Duration(days: 4)),
