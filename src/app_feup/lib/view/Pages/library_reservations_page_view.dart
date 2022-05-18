@@ -7,7 +7,6 @@ import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Widgets/library_reservations_header.dart';
 import 'package:uni/view/Widgets/reservation_container.dart';
-import 'package:uni/view/Widgets/book_reservation_details.dart';
 
 class LibraryReservations extends StatefulWidget {
   @override
