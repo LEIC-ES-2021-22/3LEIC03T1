@@ -10,12 +10,12 @@ String loginUrl(String faculty) {
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
 }
 
-String reservationLoansUrl(String faculty, String pdsHandle) {
+String reservationUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
-  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
+  return 'https://catalogo.up.pt:443/F/?func=bor-hold&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
-String reservationsUrl(String faculty, String pdsHandle) {
+String reservationHistoryUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
 }
@@ -117,6 +117,6 @@ final Map<String, String> monthToNum = {
  * Receives a Date with the libraries' format and returns a DateTime
  */
 DateTime parseDate(String libraryDate) {
-  List<String> data = libraryDate.split('/');
+  final List<String> data = libraryDate.split('/');
   return DateTime.parse(data[2] + '-' + monthToNum[data[1]] + '-' + data[0]);
 }

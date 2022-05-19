@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:uni/model/entities/book_reservation.dart';
 
 class Book {
   String title;

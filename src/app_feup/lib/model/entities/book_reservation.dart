@@ -76,7 +76,7 @@ class BookReservation {
   @override
   String toString() {
     return '''
-      $reservationNumber - $acquisitionDate - $returnDate - $pickupLocation - \
+      $reservationNumber - $acquisitionDate - $returnDate - $pickupLocation - $status - \
       ''' +
         this.book.toString();
   }

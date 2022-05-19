@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/entities/course_unit.dart';
 import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
@@ -191,4 +192,14 @@ class SetExamFilter {
 class SetUserFaculties {
   List<String> faculties;
   SetUserFaculties(this.faculties);
+}
+
+class SetCatalogReservations {
+  List<BookReservation> reservations;
+  SetCatalogReservations(this.reservations);
+}
+
+class SetCatalogReservationsStatus {
+  RequestStatus status;
+  SetCatalogReservationsStatus(this.status);
 }

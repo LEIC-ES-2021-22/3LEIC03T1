@@ -62,39 +62,25 @@ class ParserLibrary implements ParserLibraryInterface {
 
       switch (elemInfo) {
         case 'título':
-          {
-            bookDetails['title'] = info;
-          }
+          bookDetails['title'] = info;
           break;
         case 'autor':
-          {
-            bookDetails['author'] = info;
-          }
+          bookDetails['author'] = info;
           break;
         case 'língua':
-          {
-            bookDetails['language'] = info;
-          }
+          bookDetails['language'] = info;
           break;
         case 'local':
-          {
-            bookDetails['local'] = info;
-          }
+          bookDetails['local'] = info;
           break;
         case 'editor':
-          {
-            bookDetails['editor'] = info;
-          }
+          bookDetails['editor'] = info;
           break;
         case 'ano':
-          {
-            bookDetails['year'] = info;
-          }
+          bookDetails['year'] = info;
           break;
         case 'isbn':
-          {
-            bookDetails['isbn'] = info;
-          }
+          bookDetails['isbn'] = info;
           break;
         case 'Objeto Digital':
           {
@@ -107,8 +93,8 @@ class ParserLibrary implements ParserLibraryInterface {
                 digitalUrl.length - 3);
 
             bookDetails['digitalURL'] = digitalUrl;
+            break;
           }
-          break;
         case 'assunto(s)':
           {
             // it has at least 1 theme
@@ -125,9 +111,8 @@ class ParserLibrary implements ParserLibraryInterface {
               currIdx += 2;
               elemInfo = elements.elementAt(currIdx).text.trim();
             }
+            break;
           }
-
-          break;
       }
 
       idx += 2;
@@ -302,68 +287,83 @@ class ParserLibrary implements ParserLibraryInterface {
     return decoded;
   }
 
-  Future<Set<Book>> parseReservations(http.Response response) {
-    @override
-    Future<Set<BookReservation>> parseReservations(
-        http.Response response, String faculty) async {
-      final Document document = parse(utf8.decode(response.bodyBytes));
-      final Set<BookReservation> reservations = Set();
+  @override
+  Future<Set<BookReservation>> parseReservations(
+      http.Response response, String faculty, bool isHistoryReservation) async {
+    final Document document = parse(utf8.decode(response.bodyBytes));
+    final Set<BookReservation> reservations = Set();
 
-      final List<Element> rows = document.querySelectorAll('#centered');
+    final List<Element> rows = document.querySelectorAll('#centered');
 
-      final String docNumPattern = 'doc_number=';
-      for (Element row in rows) {
-        final List<Element> children = row.parent.children;
-        int idx = 1;
+    final String docNumPattern = 'doc_number=';
+    for (Element row in rows) {
+      final List<Element> children = row.parent.children;
 
-        String docNumber = children.elementAt(0).firstChild.attributes['href'];
-        docNumber = docNumber.substring(
-            docNumber.indexOf(docNumPattern) + docNumPattern.length,
-            docNumber.indexOf('&item_sequence='));
+      String docNumber = children.elementAt(0).firstChild.attributes['href'];
+      docNumber = docNumber.substring(
+          docNumber.indexOf(docNumPattern) + docNumPattern.length,
+          docNumber.indexOf('&item_sequence='));
 
-        final String reservationNumber = children.elementAt(0).text.trim();
-        final String author = children.elementAt(1).text.trim();
-        final String title = children.elementAt(2).text.trim();
-        final String publishYear = children.elementAt(3).text.trim();
-        final String reservationDate = children.elementAt(5).text.trim();
-        final String endReservationDate = children.elementAt(6).text.trim();
+      final String detailsUrl = bookDetailsUrl(docNumber);
 
-        final String detailsUrl = bookDetailsUrl(docNumber);
+      final http.Response detailsResponse =
+          await Library.libRequestWithAleph(detailsUrl);
 
-        final http.Response detailsResponse =
-            await Library.libRequestWithAleph(detailsUrl);
+      final Map<String, dynamic> bookDetails =
+          await this.parseBookDetailsHtml(detailsResponse);
 
-        final Map<String, dynamic> bookDetails =
-            await this.parseBookDetailsHtml(detailsResponse);
-
-        final BookReservation bookReservation = BookReservation(
-            reservationNumber: int.parse(reservationNumber),
-            acquisitionDate: parseDate(reservationDate),
-            returnDate: parseDate(endReservationDate),
-            pickupLocation: faculty,
-            status: ReservationStatus.pending, // TODO
-            book: Book(
-                title: title,
-                author: author,
-                editor: bookDetails['editor'],
-                releaseYear: publishYear,
-                language: bookDetails['language'],
-                country: bookDetails['country'],
-                /*
-        TODO: Should have hasPhysicalVersion? 
-        */
-                hasDigitalVersion: bookDetails['digitalURL'] != '',
-                digitalURL: bookDetails['digitalURL'],
-                imageURL: bookDetails['isbn'] != ''
-                    ? gBookUrl(bookDetails['isbn'])
-                    : '',
-                isbnCode: bookDetails['isbn'],
-                themes: bookDetails['themes']));
-
-        reservations.add(bookReservation);
+      final String reservationNumber = children.elementAt(0).text.trim();
+      String author;
+      String title;
+      String publishYear;
+      String reservationDate;
+      String endReservationDate;
+      ReservationStatus status;
+      if (isHistoryReservation) {
+        author = children.elementAt(1).text.trim();
+        title = children.elementAt(2).text.trim();
+        publishYear = children.elementAt(3).text.trim();
+        reservationDate = children.elementAt(5).text.trim();
+        endReservationDate = children.elementAt(6).text.trim();
+        status = ReservationStatus.finished;
+      } else {
+        author = bookDetails['author'];
+        title = children.elementAt(1).text.trim();
+        publishYear = bookDetails['year'];
+        reservationDate = children.elementAt(2).text.trim();
+        endReservationDate = children.elementAt(3).text.trim();
+        status = ReservationStatus.pending;
+        // TODO Check this value and change it accordingly to catalog output
       }
 
-      return reservations;
+      final BookReservation bookReservation = BookReservation(
+          reservationNumber: int.parse(reservationNumber),
+          /* TODO: history reservations have the same number
+           as active reservations
+          */
+          acquisitionDate: parseDate(reservationDate),
+          returnDate: parseDate(endReservationDate),
+          pickupLocation: faculty,
+          status: status,
+          book: Book(
+              title: title,
+              author: author,
+              editor: bookDetails['editor'],
+              releaseYear: publishYear,
+              language: bookDetails['language'],
+              country: bookDetails['country'],
+              //  TODO: Should have hasPhysicalVersion?
+              hasDigitalVersion: bookDetails['digitalURL'] != '',
+              digitalURL: bookDetails['digitalURL'],
+              imageURL: bookDetails['isbn'] != ''
+                  ? gBookUrl(bookDetails['isbn'])
+                  : '',
+              isbnCode: bookDetails['isbn'],
+              themes: bookDetails['themes']));
+
+      reservations.add(bookReservation);
     }
+
+    return reservations;
   }
 }

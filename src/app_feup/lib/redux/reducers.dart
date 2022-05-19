@@ -74,6 +74,10 @@ AppState appReducers(AppState state, dynamic action) {
     return setUserFaculties(state, action);
   } else if (action is SetRestaurantsAction) {
     return setRestaurantsAction(state, action);
+  } else if (action is SetCatalogReservations) {
+    return setCatalogReservations(state, action);
+  } else if (action is SetCatalogReservationsStatus) {
+    return setCatalogReservationsStatus(state, action);
   }
   return state;
 }
@@ -255,4 +259,15 @@ AppState setExamFilter(AppState state, SetExamFilter action) {
 AppState setUserFaculties(AppState state, SetUserFaculties action) {
   Logger().i('setting user faculty(ies) ' + action.faculties.toString());
   return state.cloneAndUpdateValue('userFaculties', action.faculties);
+}
+
+AppState setCatalogReservations(AppState state, SetCatalogReservations action) {
+  Logger().i('setting reservations: ' + action.reservations.length.toString());
+  return state.cloneAndUpdateValue('catalogReservations', action.reservations);
+}
+
+AppState setCatalogReservationsStatus(
+    AppState state, SetCatalogReservationsStatus action) {
+  Logger().i('setting reservations: ' + action.status.toString());
+  return state.cloneAndUpdateValue('catalogReservationsStatus', action.status);
 }
