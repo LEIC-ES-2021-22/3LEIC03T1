@@ -65,4 +65,8 @@ class BookContainer extends GenericLibraryContainer {
       ),
     );
   }
+  @override
+  InkWell onClick(BuildContext context){
+    return InkWell();
+  }
 }

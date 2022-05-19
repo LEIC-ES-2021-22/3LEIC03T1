@@ -14,45 +14,18 @@ class ReservationContainer extends GenericLibraryContainer {
   ReservationContainer({Key key, @required this.reservation})
       : super(key: key, book: Book.fromReservation(reservation));
 
-    @override
+  /*@override
   Widget build(BuildContext context) {
     final keyValue = '${book.toString()}-book';
     return Container(
         key: Key(keyValue),
         margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
         child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            child: InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ReservationDetails(reservation: this.reservation),
-                ),
-              ),
-              enableFeedback: true,
-              child: RowContainer(
-                  color: Theme.of(context).backgroundColor,
-                  child: Container(
-                      padding: EdgeInsets.all(12.0),
-                      child: IntrinsicHeight(
-                          child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Hero(
-                              tag: book.title,
-                              child: Image.network(
-                                book.imageURL,
-                                width: hs(70, context),
-                                height: vs(105, context),
-                                fit: BoxFit.fill,
-                              ),
-                          ),
-                          buildLibraryContainerBody(context)
-                        ],
-                      )))),
-            )));
-  }
+          elevation: 4,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          child: onClick(context)
+        ));
+  }*/
 
   @override
   Widget buildLibraryContainerBody(BuildContext context) {
@@ -76,16 +49,29 @@ class ReservationContainer extends GenericLibraryContainer {
                       .apply(fontSizeDelta: -2)),
               Expanded(
                   child: Container(
-                  alignment: Alignment.bottomLeft,
-                  margin: EdgeInsets.only(bottom: 5),
-                  child: Text(
-                    toString(reservation.status),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        .apply(color: reservation.getStatusColor()),
-                  ),
-                ))
+                alignment: Alignment.bottomLeft,
+                margin: EdgeInsets.only(bottom: 5),
+                child: Text(
+                  toString(reservation.status),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      .apply(color: reservation.getStatusColor()),
+                ),
+              ))
             ])));
+  }
+
+  @override
+  Widget onClick(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ReservationDetails(reservation: this.reservation),
+        ),
+      ),
+    );
   }
 }
