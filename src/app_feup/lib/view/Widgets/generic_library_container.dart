@@ -50,5 +50,5 @@ abstract class GenericLibraryContainer extends StatelessWidget {
 
   Widget buildLibraryContainerBody(BuildContext context);
 
-  Widget onClick(BuildContext context);
+  void onClick(BuildContext context);
 }

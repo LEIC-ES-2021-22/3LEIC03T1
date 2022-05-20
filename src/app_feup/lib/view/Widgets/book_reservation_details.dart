@@ -35,16 +35,16 @@ class ReservationDetailsWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: vs(135, context),
+          height: vs(138, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
+            padding: const EdgeInsets.fromLTRB(15, 20, 0, 0),
             child: Text(
               'Detalhes da Reserva',
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 14,
               ),
             ),
           ),
@@ -58,14 +58,14 @@ class ReservationDetailsWidget extends StatelessWidget {
                 tag: this.reservation.title,
                 child: Image.network(
                   this.reservation.imageURL,
-                  width: hs(70, context),
-                  height: vs(110, context),
+                  width: hs(60, context),
+                  height: vs(80, context),
                   fit: BoxFit.fill,
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  padding: const EdgeInsets.fromLTRB(7,0, 7, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: this
@@ -77,7 +77,7 @@ class ReservationDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
+          padding: EdgeInsets.fromLTRB(150, 105, 15, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: reservationActionButtons(context, this.reservation),
@@ -96,30 +96,30 @@ class ReservationDetailsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                   SizedBox(
-                    height: vs(30, context),
+                    height: vs(15, context),
                   ),
                   Text(
                     'Data de aquisição: \n${this.reservation.getAcquisitionDate()}',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                   SizedBox(
-                    height: vs(30, context),
+                    height: vs(15, context),
                   ),
                   Text(
                     'Data de devolução: \n${this.reservation.getReturnDate()}',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                   SizedBox(
-                    height: vs(20, context),
+                    height: vs(15, context),
                   ),
                   Text(
                     'Local de Levantamento: \n${this.reservation.pickupLocation}',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -133,22 +133,22 @@ class ReservationDetailsWidget extends StatelessWidget {
                         children: [
                           Column(crossAxisAlignment: CrossAxisAlignment.start),
                           SizedBox(
-                            width: hs(15, context),
-                            height: vs(40, context),
+                            width: hs(10, context),
+                            height: vs(15, context),
                           ),
                           Text(
                             'Nº Reserva :\n${this.reservation.reservationNumber}',
                             style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 14,
                             ),
                           ),
                           SizedBox(
-                            height: vs(20, context),
+                            height: vs(15, context),
                           ),
                           Text(
                             'Devolução: \n${this.reservation.getDateIndicator()}',
                             style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 14,
                             ),
                           ),
                         ]),
@@ -166,11 +166,11 @@ class ReservationDetailsWidget extends StatelessWidget {
 
     headerInfo.add(Text(
       reservation.title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
     ));
-    headerInfo.add(SizedBox(height: vs(15, context)));
+    headerInfo.add(SizedBox(height: vs(6, context)));
     headerInfo.add(Text(reservation.author));
-    headerInfo.add(SizedBox(height: vs(15, context)));
+    headerInfo.add(SizedBox(height: vs(6, context)));
     headerInfo.add(Text(
       '${toString(reservation.status)}',
       style: TextStyle(color: reservation.getStatusColor()),
@@ -184,7 +184,7 @@ class ReservationDetailsWidget extends StatelessWidget {
 
     if (reservation.unitsAvailable > 0) {
       buttons.add(ElevatedButton(
-        style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
+        style: ElevatedButton.styleFrom(minimumSize: Size(50, 40)),
         onPressed: () {
           //TODO: GoToReservationPage but with information from the current reservation
         },
@@ -195,7 +195,7 @@ class ReservationDetailsWidget extends StatelessWidget {
     if (reservation.hasDigitalVersion) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(55, 55),
+          minimumSize: Size(40, 40),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
           ),

@@ -49,7 +49,7 @@ class BookContainer extends GenericLibraryContainer {
             )));
   }
 
-    Widget buildBookTypesContainer(BuildContext context) {
+  Widget buildBookTypesContainer(BuildContext context) {
     final List<Widget> iconList = [];
     if (book.hasPhysicalVersion) {
       iconList.add(Icon(Icons.menu_book));
@@ -65,8 +65,10 @@ class BookContainer extends GenericLibraryContainer {
       ),
     );
   }
+
   @override
-  InkWell onClick(BuildContext context){
-    return InkWell();
+  void onClick(BuildContext context) {
+    // TODO: Complete in Book details merge request
+    return;
   }
 }

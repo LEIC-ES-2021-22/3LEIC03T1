@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
-//import 'package:uni/utils/methods.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
-//import 'package:uni/view/Widgets/row_container.dart';
 import 'package:uni/view/Widgets/book_reservation_details.dart';
 
 class ReservationContainer extends GenericLibraryContainer {
@@ -13,19 +11,6 @@ class ReservationContainer extends GenericLibraryContainer {
 
   ReservationContainer({Key key, @required this.reservation})
       : super(key: key, book: Book.fromReservation(reservation));
-
-  /*@override
-  Widget build(BuildContext context) {
-    final keyValue = '${book.toString()}-book';
-    return Container(
-        key: Key(keyValue),
-        margin: EdgeInsets.fromLTRB(12, 4, 12, 0),
-        child: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          child: onClick(context)
-        ));
-  }*/
 
   @override
   Widget buildLibraryContainerBody(BuildContext context) {
@@ -63,7 +48,7 @@ class ReservationContainer extends GenericLibraryContainer {
   }
 
   @override
-  Widget onClick(BuildContext context) { 
+  void onClick(BuildContext context) { 
       Navigator.push(
         context,
         MaterialPageRoute(
