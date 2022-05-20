@@ -6,8 +6,12 @@ import 'actions.dart';
 AppState appReducers(AppState state, dynamic action) {
   if (action is SaveLoginDataAction) {
     return login(state, action);
+  } else if (action is SetCatalogLoginStatusAction) {
+    return setCatalogLoginStatus(state, action);
   } else if (action is SetLoginStatusAction) {
     return setLoginStatus(state, action);
+  } else if (action is SaveCatalogLoginDataAction) {
+    return setCatalogLoginCookie(state, action);
   } else if (action is SetExamsAction) {
     return setExams(state, action);
   } else if (action is SetExamsStatusAction) {
@@ -82,6 +86,18 @@ AppState login(AppState state, SaveLoginDataAction action) {
 AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   Logger().i('setting login status: ' + action.status.toString());
   return state.cloneAndUpdateValue('loginStatus', action.status);
+}
+
+AppState setCatalogLoginCookie(
+    AppState state, SaveCatalogLoginDataAction action) {
+  Logger().i('setting catalog state: ' + action.cookie.toString());
+  return state.cloneAndUpdateValue('catalogLoginCookie', action.cookie);
+}
+
+AppState setCatalogLoginStatus(
+    AppState state, SetCatalogLoginStatusAction action) {
+  Logger().i('setting Catalog login status: ' + action.status.toString());
+  return state.cloneAndUpdateValue('catalogLoginStatus', action.status);
 }
 
 AppState setBooks(AppState state, SetBooksAction action) {

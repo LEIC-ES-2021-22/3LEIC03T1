@@ -68,6 +68,7 @@ class NetworkRouter {
     });
   }
 
+
   /// Re-authenticates the user [session].
   static Future<bool> loginFromSession(Session session) async {
     Logger().i('Trying to login...');

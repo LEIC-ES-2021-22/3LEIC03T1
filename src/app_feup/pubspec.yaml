@@ -50,6 +50,10 @@ dependencies:
   material_design_icons_flutter: ^5.0.6595
   flutter_gherkin: ^2.0.0
 
+  # Catalog login Cookies
+  cookie_jar: ^3.0.1
+
+
 
 dev_dependencies:
   flutter_test:

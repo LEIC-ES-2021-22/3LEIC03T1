@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -55,6 +55,11 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
+        final Library library = await Library.create();
+
+        final Cookie pdsCookie = await library.catalogLogin();
+        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
         store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
@@ -101,6 +106,10 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         usernameController.clear();
         passwordController.clear();
         await acceptTermsAndConditions();
+
+        final Library library = await Library.create();
+        final Cookie pdsCookie = await library.catalogLogin();
+        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
@@ -211,8 +220,7 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
   };
 }
 
-Future<List<Book>> extractBooks(
-    Store<AppState> store, LibraryInterface library,
+Future<List<Book>> extractBooks(Store<AppState> store, LibraryInterface library,
     String query, SearchFilters filters) async {
   final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
@@ -222,7 +230,6 @@ ThunkAction<AppState> getLibraryBooks(
     Completer<Null> action, LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
-
       // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
       if (searchQuery == null || searchQuery == '') {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/course_unit.dart';
@@ -20,6 +22,16 @@ class SaveLoginDataAction {
 class SetLoginStatusAction {
   RequestStatus status;
   SetLoginStatusAction(this.status);
+}
+
+class SaveCatalogLoginDataAction {
+  Cookie cookie;
+  SaveCatalogLoginDataAction(this.cookie);
+}
+
+class SetCatalogLoginStatusAction {
+  RequestStatus status;
+  SetCatalogLoginStatusAction(this.status);
 }
 
 class SetExamsAction {
