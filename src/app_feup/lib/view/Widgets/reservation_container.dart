@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
-import 'package:uni/utils/methods.dart';
+//import 'package:uni/utils/methods.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
-import 'package:uni/view/Widgets/row_container.dart';
+//import 'package:uni/view/Widgets/row_container.dart';
 import 'package:uni/view/Widgets/book_reservation_details.dart';
 
 class ReservationContainer extends GenericLibraryContainer {
@@ -63,15 +63,13 @@ class ReservationContainer extends GenericLibraryContainer {
   }
 
   @override
-  Widget onClick(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.push(
+  Widget onClick(BuildContext context) { 
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) =>
               ReservationDetails(reservation: this.reservation),
         ),
-      ),
-    );
+      );
   }
 }
