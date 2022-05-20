@@ -16,6 +16,8 @@ AppState appReducers(AppState state, dynamic action) {
     return setBooks(state, action);
   } else if (action is SetBooksStatusAction) {
     return setBooksStatus(state, action);
+  } else if (action is SetBookSearchFiltersAction) {
+    return setBookSearchFilters(state, action);
   } else if (action is SetScheduleStatusAction) {
     return setScheduleStatus(state, action);
   } else if (action is SetScheduleAction) {
@@ -90,6 +92,12 @@ AppState setBooks(AppState state, SetBooksAction action) {
 AppState setBooksStatus(AppState state, SetBooksStatusAction action) {
   Logger().i('setting books status: ' + action.status.toString());
   return state.cloneAndUpdateValue('searchBooksStatus', action.status);
+}
+
+AppState setBookSearchFilters(
+    AppState state, SetBookSearchFiltersAction action) {
+  Logger().i('setting book search filters: ' + action.filters.toString());
+  return state.cloneAndUpdateValue('bookSearchFilters', action.filters);
 }
 
 AppState setExams(AppState state, SetExamsAction action) {

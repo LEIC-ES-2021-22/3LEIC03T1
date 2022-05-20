@@ -35,6 +35,7 @@ import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
 import 'package:uni/model/entities/profile.dart';
 import 'package:uni/model/entities/restaurant.dart';
+import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
@@ -211,21 +212,28 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
 }
 
 Future<List<Book>> extractBooks(
-    Store<AppState> store, LibraryInterface library, String query) async {
-
-  final Set<Book> libraryBooks = await library.getLibraryBooks(query);
+    Store<AppState> store, LibraryInterface library,
+    String query, SearchFilters filters) async {
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
 }
 
-ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
-    LibraryInterface library, String searchQuery) {
+ThunkAction<AppState> getLibraryBooks(
+    Completer<Null> action, LibraryInterface library, String searchQuery) {
   return (Store<AppState> store) async {
     try {
+
+      // TODO This should return the news of the day/month instead of \\n
+      final SearchFilters filters = store.state.content['bookSearchFilters'];
+      if (searchQuery == null || searchQuery == '') {
+        searchQuery = filters.hasFilters() ? 'alldocuments' : '\\n';
+      }
+
       //need to get student course here
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
       final List<Book> books =
-          await extractBooks(store, library, searchQuery);
+          await extractBooks(store, library, searchQuery, filters);
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));
@@ -235,6 +243,12 @@ ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
     }
 
     action.complete();
+  };
+}
+
+ThunkAction<AppState> setBookSearchFilters(SearchFilters filters) {
+  return (Store<AppState> store) async {
+    store.dispatch(SetBookSearchFiltersAction(filters));
   };
 }
 

@@ -11,10 +11,10 @@ import 'package:uni/view/Widgets/search_filter_form.dart';
 
 class LibrarySearchHeader extends StatefulWidget {
   @override
-  _LibrarySearchHeaderState createState() => _LibrarySearchHeaderState();
+  LibrarySearchHeaderState createState() => LibrarySearchHeaderState();
 }
 
-class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
+class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
   static final TextEditingController searchController = TextEditingController();
   static final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -69,7 +69,6 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
         focusNode: searchNode,
         onFieldSubmitted: (term) {
           searchNode.unfocus();
-          if (searchController.text == '') return;
 
           StoreProvider.of<AppState>(context).dispatch(
               getLibraryBooks(Completer(), Library(), searchController.text));
@@ -111,7 +110,6 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
             onPressed: () {
               searchNode.unfocus();
-              if (searchController.text == '') return;
 
               StoreProvider.of<AppState>(context).dispatch(
                 getLibraryBooks(Completer(), Library(), searchController.text));
