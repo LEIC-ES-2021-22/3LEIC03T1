@@ -91,7 +91,7 @@ class LibraryReservationsBody extends StatelessWidget {
             children: this.createReservationsFeed(context, reservations),
           ),
         )
-      ],
+      ]
     );
   }
 

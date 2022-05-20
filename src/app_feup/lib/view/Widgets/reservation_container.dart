@@ -4,6 +4,7 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
+import 'package:uni/view/Widgets/book_reservation_details.dart';
 
 class ReservationContainer extends GenericLibraryContainer {
   final BookReservation reservation;
@@ -33,16 +34,27 @@ class ReservationContainer extends GenericLibraryContainer {
                       .apply(fontSizeDelta: -2)),
               Expanded(
                   child: Container(
-                  alignment: Alignment.bottomLeft,
-                  margin: EdgeInsets.only(bottom: 5),
-                  child: Text(
-                    toString(reservation.status),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        .apply(color: reservation.getStatusColor()),
-                  ),
-                ))
+                alignment: Alignment.bottomLeft,
+                margin: EdgeInsets.only(bottom: 5),
+                child: Text(
+                  toString(reservation.status),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      .apply(color: reservation.getStatusColor()),
+                ),
+              ))
             ])));
+  }
+
+  @override
+  void onClick(BuildContext context) { 
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ReservationDetails(reservation: this.reservation),
+        ),
+      );
   }
 }

@@ -15,6 +15,7 @@ class LibraryReservationsHeader extends StatelessWidget {
             Text(
               'Reservas',
               style:
+                  
                   Theme.of(context).textTheme.headline6.apply(fontSizeDelta: 7),
             ),
             Material(
