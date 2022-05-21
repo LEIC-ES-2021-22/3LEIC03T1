@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/utils/reservation_status.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
-import 'package:uni/view/Widgets/book_reservation_details.dart';
+import 'package:uni/view/Pages/book_reservation_details.dart';
 
 class ReservationContainer extends GenericLibraryContainer {
   final BookReservation reservation;
