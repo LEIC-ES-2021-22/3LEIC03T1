@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
@@ -118,17 +117,20 @@ class ParserLibrary implements ParserLibraryInterface {
       final String isbnHtml = rows.elementAt(isbnIdx).innerHtml;
 
       String catalogImage = '';
-      Element catalogImgPath = rows.elementAt(catalogImgPathIdx);
+      final Element catalogImgPath = rows.elementAt(catalogImgPathIdx);
       final int catalogNumChildren = catalogImgPath.children.length;
-      if (catalogNumChildren == 2) {
-        catalogImage = catalogImgPath
-            .firstChild // <a> with image inside
-            .firstChild // <img> with src
-            .attributes['src'];
-      } else if (catalogNumChildren == 1) {
-        catalogImage = catalogImgPath
-            .firstChild // <img> with src
-            .attributes['src'];
+      if (catalogNumChildren == 1) {
+        // Check if is a link or just an image
+        if (catalogImgPath.firstChild.hasChildNodes()) {
+          catalogImage = catalogImgPath
+              .firstChild // <a> with image inside
+              .firstChild // <img> with src
+              .attributes['src'];
+        } else {
+          catalogImage = catalogImgPath
+              .firstChild // <img> with src
+              .attributes['src'];
+        }
       }
 
       String bookIsbn = isbnHtml
@@ -150,7 +152,7 @@ class ParserLibrary implements ParserLibraryInterface {
       final digitalText = rows.elementAt(digitalInfoIdx).text.trim();
 
       final String digitalInfoHtml =
-          digitalText == 'url' || digitalText == 'pdf' || digitalText == 'jpg'
+          digitalText.contains('url') || digitalText.contains('pdf')
               ? rows
                   .elementAt(digitalInfoIdx)
                   .firstChild // <table>
