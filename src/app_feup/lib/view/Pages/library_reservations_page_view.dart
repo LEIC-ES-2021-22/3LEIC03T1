@@ -94,6 +94,7 @@ class LibraryReservationsBody extends StatelessWidget {
       children: <Widget>[
         Container(
           child: Column(
+            key: Key('reservationsFeedColumn'),
             mainAxisSize: MainAxisSize.max,
             children: this.createReservationsFeed(context, reservations),
           ),
