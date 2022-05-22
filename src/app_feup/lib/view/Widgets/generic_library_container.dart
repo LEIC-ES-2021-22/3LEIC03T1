@@ -29,7 +29,7 @@ abstract class GenericLibraryContainer extends StatelessWidget {
                           child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          book.imageURL == null
+                          this.book.imageURL == null
                               ? Image.asset(
                                   'assets/images/book_placeholder.png',
                                   width: hs(70, context),
