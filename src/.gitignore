@@ -6,7 +6,7 @@
 .pub/
 build/
 *.bin
-
+.idea
 app_feup/pubspec.lock
 .DS_Store
 .atom/
@@ -15,3 +15,6 @@ app_feup/pubspec.lock
 # Key properties
 app_feup/android/key.properties
 **.jks
+
+# Releases
+app_feup/android/app/release/
