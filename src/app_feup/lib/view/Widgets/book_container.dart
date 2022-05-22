@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/book_details_page_view.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
 
+enum BookContainerType { searchResult, reservation }
+
 class BookContainer extends GenericLibraryContainer {
-  BookContainer({Key key, @required book}) : super(key: key, book: book);
+  @override
+  final Book book;
+
+  BookContainer({Key key, @required this.book})
+      : super(key: key, book: book);
 
   @override
   Widget buildLibraryContainerBody(BuildContext context) {
@@ -73,7 +80,7 @@ class BookContainer extends GenericLibraryContainer {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              BookDetails(book: this.book)
+              BookDetails(book: this.book),
         ),
       );
   }

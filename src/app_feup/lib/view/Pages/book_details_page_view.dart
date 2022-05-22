@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uni/utils/methods.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -41,7 +42,7 @@ class BookDetailsWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: 200.0,
+          height: vs(200.0, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
@@ -61,11 +62,11 @@ class BookDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                  tag: this.book.title,
+                  tag: book.title,
                   child: Image.network(
-                    this.book.imageURL,
-                    width: 100,
-                    height: 150,
+                    this.book.imageURL == null? 'assets/images/book_placeholder.png' :  this.book.imageURL,
+                    width: hs(100, context),
+                    height: vs(150, context),
                     fit: BoxFit.fill,
                   ),
               ),
@@ -120,7 +121,7 @@ class BookDetailsWidget extends StatelessWidget {
     ));
 
     themes.add(SizedBox(
-      height: 18,
+      height: vs(18, context),
     ));
 
     if (book.themes != null) {
@@ -130,7 +131,7 @@ class BookDetailsWidget extends StatelessWidget {
         );
         themes.add(
           SizedBox(
-            height: 8,
+            height: vs(8, context)
           ),
         );
       }
@@ -151,9 +152,9 @@ class BookDetailsWidget extends StatelessWidget {
           fontWeight: FontWeight.bold, fontSize: 17.0),
     )
     );
-    headerInfo.add(SizedBox(height: 10));
+    headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(Text(book.author));
-    headerInfo.add(SizedBox(height: 15));
+    headerInfo.add(SizedBox(height: vs(15, context)));
 
 
     var totalUnits = '';
@@ -241,7 +242,7 @@ class BookDetailsWidget extends StatelessWidget {
 
       bookDetailsRight.add(
         SizedBox(
-          width: 10,
+          width: hs(10, context),
         ),
       );
 
@@ -270,7 +271,7 @@ class BookDetailsWidget extends StatelessWidget {
 
     bookDetailsLeft.add(
         SizedBox(
-          height: 45,
+          height: vs(45,context),
         )
     );
 
@@ -286,7 +287,7 @@ class BookDetailsWidget extends StatelessWidget {
 
       bookDetailsLeft.add(
         SizedBox(
-          height: 20,
+          height: vs(20, context),
         ),
       );
     }
@@ -303,7 +304,7 @@ class BookDetailsWidget extends StatelessWidget {
 
       bookDetailsLeft.add(
         SizedBox(
-          height: 20,
+          height: vs(20, context),
         ),
       );
     }
