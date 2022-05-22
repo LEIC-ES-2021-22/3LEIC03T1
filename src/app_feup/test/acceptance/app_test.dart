@@ -7,7 +7,7 @@ import 'steps/navigate.dart';
 
 Future<void> main() {
   final config = FlutterTestConfiguration()
-    ..features = [Glob('test/acceptance/features/**.feature')]
+    ..features = [Glob('test/acceptance/features/library_search.feature')]
     ..reporters = [
       ProgressReporter(),
       TestRunSummaryReporter(),
@@ -16,6 +16,7 @@ Future<void> main() {
     ..stepDefinitions = [navigate()]
     ..customStepParameterDefinitions = []
     ..restartAppBetweenScenarios = true
-    ..targetAppPath = 'test/acceptance/app.dart';
+    ..targetAppPath = 'test/acceptance/app.dart'
+    ..defaultTimeout = Duration(seconds: 60);
   return GherkinRunner().execute(config);
 }
