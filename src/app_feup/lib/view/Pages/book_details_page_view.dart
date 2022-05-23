@@ -119,7 +119,7 @@ class BookDetailsWidget extends StatelessWidget {
       height: vs(18, context),
     ));
 
-    if (book.themes != null) {
+    if (book.themes != null && book.themes.isNotEmpty) {
       for (int i = 0; i < book.themes.length; ++i) {
         themes.add(
           Text('\u2022  ${book.themes[i]}'),
@@ -136,15 +136,29 @@ class BookDetailsWidget extends StatelessWidget {
   }
 
   createBookHeaderInfo(BuildContext context, Book book) {
-    final List<Widget> header_info = <Widget>[];
+    final List<Widget> headerInfo = <Widget>[];
 
-    header_info.add(Text(
-      book.title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
-    ));
-    header_info.add(SizedBox(height: vs(10, context)));
-    header_info.add(Text(book.author));
-    header_info.add(SizedBox(height: vs(15, context)));
+    headerInfo.add(
+      Container(
+        height: 80,
+        child: Text(
+          book.title,
+          overflow: TextOverflow.fade,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
+        ),
+      ),
+    );
+    headerInfo.add(SizedBox(height: vs(8, context)));
+    headerInfo.add(
+      Container(
+        height: 30,
+        child: Text(
+          book.author,
+          overflow: TextOverflow.fade,
+        ),
+      ),
+    );
+    headerInfo.add(SizedBox(height: vs(10, context)));
 
     var totalUnits = '';
     if (book.totalUnits != null) {
@@ -153,23 +167,23 @@ class BookDetailsWidget extends StatelessWidget {
 
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
-        header_info.add(Text(
+        headerInfo.add(Text(
           '${book.unitsAvailable} ${totalUnits} unidade disponível',
           style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
-        header_info.add(Text(
+        headerInfo.add(Text(
           '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
           style: TextStyle(color: Colors.black),
         ));
       } else {
-        header_info.add(Text(
+        headerInfo.add(Text(
           'Nenhuma unidade disponível',
           style: TextStyle(color: Colors.red[900]),
         ));
       }
     }
-    return header_info;
+    return headerInfo;
   }
 
   bookActionButtons(BuildContext context, Book book) {
@@ -213,7 +227,7 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookDetailsRight(BuildContext context, Book book) {
     List<Widget> bookDetailsRight = <Widget>[];
 
-    if (this.book.language != null) {
+    if (this.book.language != null && this.book.language.isNotEmpty) {
       bookDetailsRight.add(
         Icon(
           Icons.language,
@@ -252,7 +266,7 @@ class BookDetailsWidget extends StatelessWidget {
       height: vs(45, context),
     ));
 
-    if (this.book.releaseYear != null) {
+    if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           "Ano: ${this.book.releaseYear}",
@@ -269,7 +283,7 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    if (this.book.editor != null) {
+    if (this.book.editor != null && this.book.editor.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           "Editor: ${this.book.editor}",
@@ -286,7 +300,7 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    if (this.book.isbnCode != null) {
+    if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           "ISBN: ${this.book.isbnCode}",
