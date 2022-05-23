@@ -82,20 +82,10 @@ class BookDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children:
-            [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: this.createBookDetailsLeft(context, this.book),
-              ),
-              Row(
-                children: this.createBookDetailsRight(context, this.book),
-              ),
-            ],
-          ),
+            children: this.createBookDetails(context, this.book),
+          )
         ),
       ],
     );
@@ -262,24 +252,55 @@ class BookDetailsWidget extends StatelessWidget {
     return bookDetailsRight;
   }
 
-  List<Widget> createBookDetailsLeft(BuildContext context, Book book) {
-    final List<Widget> bookDetailsLeft = <Widget>[];
+  List<Widget> createBookDetails(BuildContext context, Book book) {
+    final List<Widget> bookDetails = <Widget>[];
 
-    bookDetailsLeft.add(
+    bookDetails.add(
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: this.createBookThemes(context, this.book),
         )
     );
 
-    bookDetailsLeft.add(
+    bookDetails.add(
         SizedBox(
           height: vs(45,context),
         )
     );
 
+    if (this.book.language != null && this.book.language.isNotEmpty) {
+
+      bookDetails.add(
+        Row(
+          children: [
+            Icon(
+              Icons.language,
+              color: Colors.black,
+            ),
+            SizedBox(
+              width: hs(10, context),
+            ),
+            Text(
+              '${this.book.language}',
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      bookDetails.add(
+        SizedBox(
+          height: vs(20, context),
+        ),
+      );
+
+    }
+
+
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           'Ano: ${this.book.releaseYear}',
           style: const TextStyle(
@@ -288,7 +309,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       );
 
-      bookDetailsLeft.add(
+      bookDetails.add(
         SizedBox(
           height: vs(20, context),
         ),
@@ -296,7 +317,7 @@ class BookDetailsWidget extends StatelessWidget {
     }
 
     if (this.book.editor != null && this.book.editor.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           'Editor: ${this.book.editor}',
           style: const TextStyle(
@@ -305,7 +326,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       );
 
-      bookDetailsLeft.add(
+      bookDetails.add(
         SizedBox(
           height: vs(20, context),
         ),
@@ -313,7 +334,7 @@ class BookDetailsWidget extends StatelessWidget {
     }
 
     if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           'ISBN: ${this.book.isbnCode}',
           style: const TextStyle(
@@ -323,6 +344,6 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    return bookDetailsLeft;
+    return bookDetails;
   }
 }
