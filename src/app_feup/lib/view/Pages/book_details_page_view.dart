@@ -38,7 +38,7 @@ class BookDetailsWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
             child: Text(
-              "Detalhes do Livro",
+              'Detalhes do Livro',
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 20.0,
@@ -95,7 +95,7 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> themes = <Widget>[];
 
     themes.add(Text(
-      "Temas",
+      'Temas',
       style: const TextStyle(
         fontSize: 18,
       ),
@@ -181,7 +181,7 @@ class BookDetailsWidget extends StatelessWidget {
         onPressed: () {
           //TODO: Reserve Action here
         },
-        child: Text("RESERVAR"),
+        child: Text('RESERVAR'),
       ));
     }
 
@@ -190,15 +190,15 @@ class BookDetailsWidget extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           minimumSize: Size(50, 50),
           shape: RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(25.0),
+            borderRadius: BorderRadius.circular(25.0),
           ),
         ),
         onPressed: () async {
-          const url = "https://flutter.io";
+          const url = 'https://flutter.io';
           if (await canLaunch(url)) {
             await launch(url);
           } else {
-            throw "Could not launch $url";
+            throw 'Could not launch $url';
           }
         },
         child: Icon(
@@ -211,7 +211,7 @@ class BookDetailsWidget extends StatelessWidget {
   }
 
   List<Widget> createBookDetailsRight(BuildContext context, Book book) {
-    List<Widget> bookDetailsRight = <Widget>[];
+    final List<Widget> bookDetailsRight = <Widget>[];
 
     if (this.book.language != null && this.book.language.isNotEmpty) {
       bookDetailsRight.add(
@@ -229,7 +229,7 @@ class BookDetailsWidget extends StatelessWidget {
 
       bookDetailsRight.add(
         Text(
-          "${this.book.language}",
+          '${this.book.language}',
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -283,7 +283,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetails.add(
         Text(
-          "Ano: ${this.book.releaseYear}",
+          'Ano: ${this.book.releaseYear}',
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -300,7 +300,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (this.book.editor != null && this.book.editor.isNotEmpty) {
       bookDetails.add(
         Text(
-          "Editor: ${this.book.editor}",
+          'Editor: ${this.book.editor}',
           style: const TextStyle(
             fontSize: 18,
           ),
@@ -317,7 +317,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
       bookDetails.add(
         Text(
-          "ISBN: ${this.book.isbnCode}",
+          'ISBN: ${this.book.isbnCode}',
           style: const TextStyle(
             fontSize: 18,
           ),
