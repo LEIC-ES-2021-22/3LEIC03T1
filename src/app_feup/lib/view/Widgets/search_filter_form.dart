@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/model/app_state.dart';
+import 'package:uni/model/entities/search_filters.dart';
+import 'package:uni/redux/action_creators.dart';
 import 'package:uni/utils/methods.dart';
+import 'package:uni/view/Widgets/library_search_header.dart';
 
 class SearchFilterForm extends StatefulWidget {
   @override
@@ -18,40 +26,39 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   };
 
   final Map<int, Tuple2<String, String>> languages = {
-    0: Tuple2<String, String>('Todas', 'Any'),
-    1: Tuple2<String, String>('Português', 'Portuguese'),
-    2: Tuple2<String, String>('Inglês', 'English'),
-    3: Tuple2<String, String>('Espanhol', 'Spanish'),
-    4: Tuple2<String, String>('Francês', 'French'),
-    5: Tuple2<String, String>('Italiano', 'Italian'),
-    6: Tuple2<String, String>('Alemão', 'German'),
+    0: Tuple2<String, String>('Todas', ''),
+    1: Tuple2<String, String>('Português', 'POR'),
+    2: Tuple2<String, String>('Inglês', 'ENG'),
+    3: Tuple2<String, String>('Espanhol', 'SPA'),
+    4: Tuple2<String, String>('Francês', 'FRE'),
+    5: Tuple2<String, String>('Italiano', 'ITA'),
+    6: Tuple2<String, String>('Alemão', 'GER'),
   };
 
   final Map<int, Tuple2<String, String>> countries = {
-    0: Tuple2<String, String>('Todos', 'Any'),
-    1: Tuple2<String, String>('Portugal', 'Portugal'),
-    2: Tuple2<String, String>('Brasil', 'Brazil'),
-    3: Tuple2<String, String>('Estados Unidos', 'USA'),
-    4: Tuple2<String, String>('Inglaterra', 'UK'),
-    5: Tuple2<String, String>('Espanha', 'Spain'),
-    6: Tuple2<String, String>('França', 'France'),
-    7: Tuple2<String, String>('Itália', 'Italy'),
-    8: Tuple2<String, String>('Alemanha', 'Germany'),
+    0: Tuple2<String, String>('Todos', ''),
+    1: Tuple2<String, String>('Portugal', 'PT'),
+    2: Tuple2<String, String>('Brasil', 'BR'),
+    3: Tuple2<String, String>('Estados Unidos', 'US'),
+    4: Tuple2<String, String>('Inglaterra', 'GB'),
+    5: Tuple2<String, String>('Espanha', 'ES'),
+    6: Tuple2<String, String>('França', 'FR'),
+    7: Tuple2<String, String>('Itália', 'IT'),
+    8: Tuple2<String, String>('Alemanha', 'DE'),
   };
 
   final Map<int, Tuple2<String, String>> documentTypes = {
-    0: Tuple2<String, String>('Todos', 'Any'),
-    1: Tuple2<String, String>('Livro', 'Book'),
-    2: Tuple2<String, String>('Periódico', 'Periodic'),
-    3: Tuple2<String, String>('Artigo/Capítulo', 'Article'),
-    4: Tuple2<String, String>('Trabalho Académico', 'Academic'),
-    5: Tuple2<String, String>('Mapa', 'Map'),
-    6: Tuple2<String, String>('Recurso Eletrónico', 'Eletronic'),
-    7: Tuple2<String, String>('Recurso Visual', 'Visual'),
-    8: Tuple2<String, String>('Recurso Áudio', 'Audio'),
-    9: Tuple2<String, String>('Recurso Visual', 'Visual'),
-    10: Tuple2<String, String>('Recurso Misto', 'Mixed'),
-    11: Tuple2<String, String>('Norma', 'Regulation'),
+    0: Tuple2<String, String>('Todos', ''),
+    1: Tuple2<String, String>('Livro', 'BK'),
+    2: Tuple2<String, String>('Periódico', 'SE'),
+    3: Tuple2<String, String>('Artigo/Capítulo', 'AN'),
+    4: Tuple2<String, String>('Trabalho Académico', 'TA'),
+    5: Tuple2<String, String>('Mapa', 'MP'),
+    6: Tuple2<String, String>('Recurso Eletrónico', 'CF'),
+    7: Tuple2<String, String>('Recurso Visual', 'VM'),
+    8: Tuple2<String, String>('Recurso Áudio', 'AM'),
+    9: Tuple2<String, String>('Recurso Misto', 'MX'),
+    10: Tuple2<String, String>('Norma', 'NO'),
   };
 
   DropdownFilter sortByFilter;
@@ -59,18 +66,32 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
   DropdownFilter countryFilter;
   DropdownFilter docTypeFilter;
 
-  static final FocusNode yearNode = FocusNode();
   static final TextEditingController yearController = TextEditingController();
+  SearchFilters searchFilters;
+  bool updateSearchFilters;
 
   _SearchFilterFormState() {
     sortByFilter = DropdownFilter(sortByFields, 'Ordenar por');
     languageFilter = DropdownFilter(languages, 'Linguagem');
     countryFilter = DropdownFilter(countries, 'País');
     docTypeFilter = DropdownFilter(documentTypes, 'Tipo de Documento');
+    updateSearchFilters = true;
   }
 
   @override
   Widget build(BuildContext context) {
+    return StoreConnector<AppState, SearchFilters>(
+      converter: (store) {
+        return store.state.content['bookSearchFilters'];
+      },
+      builder: (context, searchFilters) {
+        if (updateSearchFilters) setSearchFilters(searchFilters);
+        return buildFilterForm(context);
+      },
+    );
+  }
+
+  Widget buildFilterForm(BuildContext context) {
     return AlertDialog(
         title: Text(
           'Filtros de Pesquisa',
@@ -79,12 +100,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
         actions: [
           TextButton(
               child: Text('Cancelar'), onPressed: () => Navigator.pop(context)),
-          ElevatedButton(
-              child: Text('Confirmar'),
-              onPressed: () {
-                // TODO Update state with filters
-                Navigator.pop(context);
-              })
+          ElevatedButton(child: Text('Confirmar'), onPressed: submitFilterForm)
         ],
         content: Container(
           height: vs(350.0, context),
@@ -102,18 +118,8 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     formWidgets.add(dropdownSelector(context, languageFilter));
     formWidgets.add(dropdownSelector(context, countryFilter));
     formWidgets.add(dropdownSelector(context, docTypeFilter));
-    formWidgets.add(
-        filterTextField(
+    formWidgets.add(filterTextField(
         context, 'Ano de lançamento', 'Todos', yearController, true));
-    /*formWidgets.add(FormTextField(
-      // TODO This is shaky
-      yearController,
-      null,
-      maxLines: 1,
-      description: 'Ano de lançamento',
-      hintText: 'Ano',
-      bottomMargin: 15,
-    ));*/
     return formWidgets;
   }
 
@@ -180,6 +186,63 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
         ],
       ),
     );
+  }
+
+  void submitFilterForm() {
+    if (searchFilters != null) {
+      searchFilters.countryOption = countryFilter.selectedOption;
+      searchFilters.countryQuery =
+          countries[countryFilter.selectedOption].item2;
+
+      searchFilters.languageOption = languageFilter.selectedOption;
+      searchFilters.languageQuery =
+          languages[languageFilter.selectedOption].item2;
+
+      searchFilters.docTypeOption = docTypeFilter.selectedOption;
+      searchFilters.docTypeQuery =
+          documentTypes[docTypeFilter.selectedOption].item2;
+
+      searchFilters.sortByOption = sortByFilter.selectedOption;
+      searchFilters.sortByQuery =
+          sortByFields[sortByFilter.selectedOption].item2;
+
+      searchFilters.yearQuery = yearController.text;
+    }
+
+    final String searchQuery = LibrarySearchHeaderState.searchController.text;
+
+    StoreProvider.of<AppState>(context)
+        .dispatch(getLibraryBooks(Completer(), Library(), searchQuery));
+
+    this.updateSearchFilters = true;
+    Navigator.pop(context);
+  }
+
+  void setSearchFilters(SearchFilters searchFilters) {
+    this.searchFilters = searchFilters;
+    this.updateSearchFilters = false;
+
+    if (searchFilters == null) return;
+
+    if (searchFilters.sortByOption != null) {
+      sortByFilter.selectedOption = searchFilters.sortByOption;
+    }
+
+    if (searchFilters.languageOption != null) {
+      languageFilter.selectedOption = searchFilters.languageOption;
+    }
+
+    if (searchFilters.countryOption != null) {
+      countryFilter.selectedOption = searchFilters.countryOption;
+    }
+
+    if (searchFilters.docTypeOption != null) {
+      docTypeFilter.selectedOption = searchFilters.docTypeOption;
+    }
+
+    if (searchFilters.yearQuery != null) {
+      yearController.text = searchFilters.yearQuery;
+    }
   }
 }
 

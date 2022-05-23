@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:intl/intl.dart';
-import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
-import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:uni/view/Widgets/book_reservation_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni/utils/methods.dart';
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -32,26 +30,17 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    if (this.book.releaseYear == null)
-      this.book.releaseYear = "desconhecido";
-    if (this.book.editor == null)
-      this.book.editor = "desconhecido";
-    if (this.book.isbnCode == null)
-      this.book.isbnCode = "desconhecido";
-    if (this.book.language == null)
-      this.book.language = "desconhecido";
-
+    
     return Stack(
       children: [
         Container(
-          height: 200.0,
+          height: vs(200.0, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
             child: Text(
-              "Detalhes do Livro",
+              'Detalhes do Livro',
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 20.0,
@@ -65,11 +54,11 @@ class BookDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                  tag: this.book.title,
+                  tag: book.title,
                   child: Image.network(
-                    this.book.imageURL,
-                    width: 100,
-                    height: 150,
+                    this.book.imageURL == null? 'assets/images/book_placeholder.png' :  this.book.imageURL,
+                    width: hs(100, context),
+                    height: vs(150, context),
                     fit: BoxFit.fill,
                   ),
               ),
@@ -94,65 +83,10 @@ class BookDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.createBookThemes(context, this.book),
-                  ),
-                  SizedBox(
-                    height: 45,
-                  ),
-                  Text(
-                    "Ano: ${this.book.releaseYear}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Editor: ${this.book.editor}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "ISBN: ${this.book.isbnCode}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.language,
-                    color: Colors.black,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "${this.book.language}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            children: this.createBookDetails(context, this.book),
+          )
         ),
       ],
     );
@@ -162,47 +96,59 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> themes = <Widget>[];
 
     themes.add(Text(
-      "Temas",
+      'Temas',
       style: const TextStyle(
         fontSize: 18,
       ),
     ));
 
     themes.add(SizedBox(
-      height: 18,
+      height: vs(18, context),
     ));
 
-    if (book.themes != null) {
+    if (book.themes != null && book.themes.isNotEmpty) {
       for (int i = 0; i < book.themes.length; ++i) {
         themes.add(
           Text('\u2022  ${book.themes[i]}'),
         );
         themes.add(
           SizedBox(
-            height: 8,
+            height: vs(8, context)
           ),
         );
       }
     } else {
-      themes.add(Text("Não há temas"));
+      themes.add(Text('Não existem temas disponíveis'));
     }
 
     return themes;
   }
 
   createBookHeaderInfo(BuildContext context, Book book) {
-    final List<Widget> header_info = <Widget>[];
+    final List<Widget> headerInfo = <Widget>[];
 
-    header_info.add(
-        Text(
+    headerInfo.add(
+      Container(
+        height: 80,
+        child: Text(
           book.title,
+          overflow: TextOverflow.fade,
           style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 17.0),
-    )
+              fontWeight: FontWeight.bold, fontSize: 17.0),
+        ),
+      ),
     );
-    header_info.add(SizedBox(height: 10));
-    header_info.add(Text(book.author));
-    header_info.add(SizedBox(height: 15));
+    headerInfo.add(SizedBox(height: vs(8, context)));
+    headerInfo.add(
+      Container(
+        height: 30,
+        child: Text(
+          book.author,
+          overflow: TextOverflow.fade,
+        ),
+      ),
+    );
+    headerInfo.add(SizedBox(height: vs(10, context)));
 
 
     var totalUnits = '';
@@ -212,23 +158,23 @@ class BookDetailsWidget extends StatelessWidget {
 
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
-        header_info.add(Text(
+        headerInfo.add(Text(
             '${book.unitsAvailable} ${totalUnits} unidade disponível',
             style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
-        header_info.add(Text(
+        headerInfo.add(Text(
               '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
               style: TextStyle(color: Colors.black),
           ));
       } else {
-        header_info.add(Text(
+        headerInfo.add(Text(
           'Nenhuma unidade disponível',
           style: TextStyle(color: Colors.red[900]),
         ));
       }
     }
-    return header_info;
+    return headerInfo;
   }
 
   bookActionButtons(BuildContext context, Book book) {
@@ -244,7 +190,7 @@ class BookDetailsWidget extends StatelessWidget {
             onPressed: () {
               openBookReservationDialog(context, book);
             },
-            child: Text("RESERVAR"),
+            child: Text('RESERVAR'),
           )
       );
     }
@@ -255,11 +201,16 @@ class BookDetailsWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               minimumSize: Size(50, 50),
               shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(25.0),
+                borderRadius: BorderRadius.circular(25.0),
               ),
             ),
-            onPressed: () {
-              //TODO: Download Action here
+            onPressed: () async {
+              const url = 'https://flutter.io';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
             },
             child: Icon(
               Icons.download_sharp,
@@ -270,9 +221,103 @@ class BookDetailsWidget extends StatelessWidget {
     return buttons;
   }
 
+  List<Widget> createBookDetails(BuildContext context, Book book) {
+    final List<Widget> bookDetails = <Widget>[];
+
+    bookDetails.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: this.createBookThemes(context, this.book),
+        )
+    );
+
+    bookDetails.add(
+        SizedBox(
+          height: vs(45,context),
+        )
+    );
+
+    if (this.book.language != null && this.book.language.isNotEmpty) {
+
+      bookDetails.add(
+        Row(
+          children: [
+            Icon(
+              Icons.language,
+              color: Colors.black,
+            ),
+            SizedBox(
+              width: hs(10, context),
+            ),
+            Text(
+              '${this.book.language}',
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      bookDetails.add(
+        SizedBox(
+          height: vs(20, context),
+        ),
+      );
+
+    }
+
+
+    if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
+      bookDetails.add(
+        Text(
+          'Ano: ${this.book.releaseYear}',
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+
+      bookDetails.add(
+        SizedBox(
+          height: vs(20, context),
+        ),
+      );
+    }
+
+    if (this.book.editor != null && this.book.editor.isNotEmpty) {
+      bookDetails.add(
+        Text(
+          'Editor: ${this.book.editor}',
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+
+      bookDetails.add(
+        SizedBox(
+          height: vs(20, context),
+        ),
+      );
+    }
+
+    if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
+      bookDetails.add(
+        Text(
+          'ISBN: ${this.book.isbnCode}',
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      );
+    }
+
+    return bookDetails;
+  }
 
   Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
-    context: context,
-    builder: (context) => bookReservationDialog(book: this.book)
+      context: context,
+      builder: (context) => bookReservationDialog(book: this.book)
   );
 }

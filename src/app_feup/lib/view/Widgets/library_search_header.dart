@@ -1,13 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/model/app_state.dart';
+import 'package:uni/redux/action_creators.dart';
+import 'package:uni/view/Pages/library_reservations_page_view.dart';
 import 'package:uni/view/Widgets/search_filter_form.dart';
 
 class LibrarySearchHeader extends StatefulWidget {
   @override
-  _LibrarySearchHeaderState createState() => _LibrarySearchHeaderState();
+  LibrarySearchHeaderState createState() => LibrarySearchHeaderState();
 }
 
-class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
+class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   static final FocusNode searchNode = FocusNode();
   static final TextEditingController searchController = TextEditingController();
   static final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -29,8 +36,12 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
             Material(
                 child: ElevatedButton(
                     child: Text('Reservas'),
+                    key: Key('reservationsButton'),
                     onPressed: () {
-                      debugPrint('clicked reservations');
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LibraryReservations()));
                     })),
           ],
         ),
@@ -49,24 +60,26 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
 
   Widget createSearchBar(BuildContext context) {
     return Flexible(
-      child: 
-        Form(
-          key: _formkey,
-          child: TextFormField(
-            style: TextStyle(color: Colors.black, fontSize: 18),
-            controller: searchController,
-            autofocus: false,
-            focusNode: searchNode,
-            onFieldSubmitted: (term) {
-              searchNode.unfocus();
-              // TODO Search action
-            },
-            textInputAction: TextInputAction.done,
-            textAlign: TextAlign.left,
-            decoration: searchBarInputDecoration(context, 'Procure'),
-        ),
-        )
-      ); 
+        child: Form(
+      key: _formkey,
+      child: TextFormField(
+        style: TextStyle(color: Colors.black, fontSize: 18),
+        controller: searchController,
+        autofocus: false,
+        focusNode: searchNode,
+        onFieldSubmitted: (term) {
+          searchNode.unfocus();
+
+          StoreProvider.of<AppState>(context).dispatch(
+              getLibraryBooks(Completer(), Library(), searchController.text));
+        },
+        textInputAction: TextInputAction.done,
+        textAlign: TextAlign.left,
+        decoration: searchBarInputDecoration(context, 'Procure'),
+        // Key for flutter_gherkin
+        key: Key('searchBar'),
+      ),
+    ));
   }
 
   Widget createSearchFilters(BuildContext context) {
@@ -92,7 +105,16 @@ class _LibrarySearchHeaderState extends State<LibrarySearchHeader> {
   InputDecoration searchBarInputDecoration(
       BuildContext context, String placeholder) {
     return InputDecoration(
-        icon: Icon(Icons.search, color: Colors.grey),
+        // Key for flutter_gherkin
+        icon: IconButton(
+            icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
+            onPressed: () {
+              searchNode.unfocus();
+
+              StoreProvider.of<AppState>(context).dispatch(
+                getLibraryBooks(Completer(), Library(), searchController.text));
+          },
+        ),
         hintText: placeholder,
         contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         border: const UnderlineInputBorder(

@@ -48,6 +48,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   material_design_icons_flutter: ^5.0.6595
+  flutter_gherkin: ^2.0.0
+
+  # Catalog login Cookies
+  cookie_jar: ^3.0.1
+
 
 
 dev_dependencies:
@@ -136,3 +141,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
+
+# This is needed to use flutter_gherkin with the current dependencies
+dependency_overrides:
+  crypto: 3.0.1
+  args: ^2.0.0
+  archive: ^3.0.0-nullsafety.0

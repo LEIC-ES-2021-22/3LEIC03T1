@@ -1,9 +1,11 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/controller/library/library_interface.dart';
 import 'package:uni/controller/load_info.dart';
 import 'package:uni/controller/load_static/terms_and_conditions.dart';
 import 'package:uni/controller/local_storage/app_bus_stop_database.dart';
@@ -26,12 +28,14 @@ import 'package:uni/controller/schedule_fetcher/schedule_fetcher.dart';
 import 'package:uni/controller/schedule_fetcher/schedule_fetcher_api.dart';
 import 'package:uni/controller/schedule_fetcher/schedule_fetcher_html.dart';
 import 'package:uni/model/app_state.dart';
+import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/course.dart';
 import 'package:uni/model/entities/course_unit.dart';
 import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
 import 'package:uni/model/entities/profile.dart';
 import 'package:uni/model/entities/restaurant.dart';
+import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
@@ -50,6 +54,16 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
       if (session.authenticated) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
+
+        final Library library = await Library.create();
+
+        final Cookie pdsCookie = await library.catalogLogin();
+        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+
+        final Completer<Null> searchBooks = Completer();
+        // TODO Novidades do dia/mês
+        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+
         action?.complete();
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
@@ -92,6 +106,14 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         usernameController.clear();
         passwordController.clear();
         await acceptTermsAndConditions();
+
+        final Library library = await Library.create();
+        final Cookie pdsCookie = await library.catalogLogin();
+        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+
+        final Completer<Null> searchBooks = Completer();
+        // TODO Novidades do dia/mês
+        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }
@@ -198,6 +220,45 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
   };
 }
 
+Future<List<Book>> extractBooks(Store<AppState> store, LibraryInterface library,
+    String query, SearchFilters filters) async {
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
+  return libraryBooks.toList();
+}
+
+ThunkAction<AppState> getLibraryBooks(
+    Completer<Null> action, LibraryInterface library, String searchQuery) {
+  return (Store<AppState> store) async {
+    try {
+      // TODO This should return the news of the day/month instead of \\n
+      final SearchFilters filters = store.state.content['bookSearchFilters'];
+      if (searchQuery == null || searchQuery == '') {
+        searchQuery = filters.hasFilters() ? 'alldocuments' : '\\n';
+      }
+
+      //need to get student course here
+      store.dispatch(SetBooksStatusAction(RequestStatus.busy));
+
+      final List<Book> books =
+          await extractBooks(store, library, searchQuery, filters);
+
+      store.dispatch(SetBooksStatusAction(RequestStatus.successful));
+      store.dispatch(SetBooksAction(books));
+    } catch (e) {
+      Logger().e(e.toString());
+      store.dispatch(SetBooksStatusAction(RequestStatus.failed));
+    }
+
+    action.complete();
+  };
+}
+
+ThunkAction<AppState> setBookSearchFilters(SearchFilters filters) {
+  return (Store<AppState> store) async {
+    store.dispatch(SetBookSearchFiltersAction(filters));
+  };
+}
+
 Future<List<Exam>> extractExams(
     Store<AppState> store, ParserExams parserExams) async {
   Set<Exam> courseExams = Set();
@@ -248,7 +309,7 @@ ThunkAction<AppState> getUserExams(Completer<Null> action,
       store.dispatch(SetExamsStatusAction(RequestStatus.successful));
       store.dispatch(SetExamsAction(exams));
     } catch (e) {
-      Logger().e('Failed to get Exams');
+      Logger().e(e.toString());
       store.dispatch(SetExamsStatusAction(RequestStatus.failed));
     }
 
@@ -282,22 +343,20 @@ ThunkAction<AppState> getUserSchedule(
   };
 }
 
-ThunkAction<AppState> getRestaurantsFromFetcher(Completer<Null> action){
-  return (Store<AppState> store) async{
-    try{
+ThunkAction<AppState> getRestaurantsFromFetcher(Completer<Null> action) {
+  return (Store<AppState> store) async {
+    try {
       store.dispatch(SetRestaurantsStatusAction(RequestStatus.busy));
 
       final List<Restaurant> restaurants =
-                      await RestaurantFetcherHtml().getRestaurants(store);
+          await RestaurantFetcherHtml().getRestaurants(store);
       // Updates local database according to information fetched -- Restaurants
       final RestaurantDatabase db = RestaurantDatabase();
       db.saveRestaurants(restaurants);
-      db.restaurants(day:null);
+      db.restaurants(day: null);
       store.dispatch(SetRestaurantsAction(restaurants));
       store.dispatch(SetRestaurantsStatusAction(RequestStatus.successful));
-
-
-    } catch(e){
+    } catch (e) {
       Logger().e('Failed to get Restaurants: ${e.toString()}');
       store.dispatch(SetRestaurantsStatusAction(RequestStatus.failed));
     }

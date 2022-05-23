@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:uni/model/app_state.dart';
+import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/course_unit.dart';
 import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
 import 'package:uni/model/entities/profile.dart';
 import 'package:uni/model/entities/restaurant.dart';
+import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/model/home_page_model.dart';
@@ -20,6 +24,16 @@ class SetLoginStatusAction {
   SetLoginStatusAction(this.status);
 }
 
+class SaveCatalogLoginDataAction {
+  Cookie cookie;
+  SaveCatalogLoginDataAction(this.cookie);
+}
+
+class SetCatalogLoginStatusAction {
+  RequestStatus status;
+  SetCatalogLoginStatusAction(this.status);
+}
+
 class SetExamsAction {
   List<Exam> exams;
   SetExamsAction(this.exams);
@@ -28,6 +42,21 @@ class SetExamsAction {
 class SetExamsStatusAction {
   RequestStatus status;
   SetExamsStatusAction(this.status);
+}
+
+class SetBooksAction {
+  List<Book> books;
+  SetBooksAction(this.books);
+}
+
+class SetBooksStatusAction {
+  RequestStatus status;
+  SetBooksStatusAction(this.status);
+}
+
+class SetBookSearchFiltersAction {
+  SearchFilters filters;
+  SetBookSearchFiltersAction(this.filters);
 }
 
 class SetRestaurantsAction {
@@ -49,7 +78,6 @@ class SetScheduleStatusAction {
   RequestStatus status;
   SetScheduleStatusAction(this.status);
 }
-
 
 class SetInitialStoreStateAction {
   SetInitialStoreStateAction();

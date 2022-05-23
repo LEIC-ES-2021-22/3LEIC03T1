@@ -1,5 +1,9 @@
 // enum should be placed somewhere else?
+import 'package:uni/model/entities/book.dart';
+import 'dart:io';
+
 import 'package:uni/model/entities/bus_stop.dart';
+import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/utils/constants.dart' as Constants;
@@ -34,7 +38,11 @@ class AppState {
       'printBalanceStatus': RequestStatus.none,
       'feesStatus': RequestStatus.none,
       'coursesStateStatus': RequestStatus.none,
-      'lastUserInfoUpdateTime': null
+      'lastUserInfoUpdateTime': null,
+      'searchBooks': <Book>[],
+      'searchBooksStatus': RequestStatus.none,
+      'bookSearchFilters': SearchFilters(),
+      'catalogLoginCookie': Cookie
     };
   }
 
