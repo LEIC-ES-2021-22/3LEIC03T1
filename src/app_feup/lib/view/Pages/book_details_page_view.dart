@@ -235,7 +235,7 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookDetailsRight(BuildContext context, Book book) {
     final List<Widget> bookDetailsRight = <Widget>[];
 
-    if (this.book.language != null) {
+    if (this.book.language != null && this.book.language.isNotEmpty) {
       bookDetailsRight.add(
         Icon(
           Icons.language,
