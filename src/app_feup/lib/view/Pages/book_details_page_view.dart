@@ -4,7 +4,6 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
-import 'dart:developer' as developer;
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -116,7 +115,7 @@ class BookDetailsWidget extends StatelessWidget {
       height: vs(18, context),
     ));
 
-    if (book.themes != null) {
+    if (book.themes != null && book.themes.isNotEmpty) {
       for (int i = 0; i < book.themes.length; ++i) {
         themes.add(
           Text('\u2022  ${book.themes[i]}'),
@@ -279,7 +278,7 @@ class BookDetailsWidget extends StatelessWidget {
         )
     );
 
-    if (this.book.releaseYear != null) {
+    if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           'Ano: ${this.book.releaseYear}',
@@ -296,7 +295,7 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    if (this.book.editor != null) {
+    if (this.book.editor != null && this.book.editor.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           'Editor: ${this.book.editor}',
@@ -313,8 +312,7 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    if (this.book.isbnCode != null) {
-      developer.log(this.book.isbnCode);
+    if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
       bookDetailsLeft.add(
         Text(
           'ISBN: ${this.book.isbnCode}',
