@@ -29,16 +29,7 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-/*
-    if (this.book.releaseYear == null)
-      this.book.releaseYear = 'desconhecido';
-    if (this.book.editor == null)
-      this.book.editor = 'desconhecido';
-    if (this.book.isbnCode == null)
-      this.book.isbnCode = 'desconhecido';
-    if (this.book.language == null)
-      this.book.language = 'desconhecido';
-*/
+    
     return Stack(
       children: [
         Container(
@@ -136,7 +127,7 @@ class BookDetailsWidget extends StatelessWidget {
         );
       }
     } else {
-      themes.add(Text('Não há temas'));
+      themes.add(Text('Não existem temas disponíveis'));
     }
 
     return themes;
