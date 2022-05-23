@@ -4,6 +4,7 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
+import 'dart:developer' as developer;
 
 class BookDetails extends StatefulWidget {
   BookDetails({Key key, @required this.book}) : super(key: key);
@@ -137,15 +138,27 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> headerInfo = <Widget>[];
 
     headerInfo.add(
-        Text(
+      Container(
+        height: 80,
+        child: Text(
           book.title,
+          overflow: TextOverflow.fade,
           style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 17.0),
-    )
+              fontWeight: FontWeight.bold, fontSize: 17.0),
+        ),
+      ),
+    );
+    headerInfo.add(SizedBox(height: vs(8, context)));
+    headerInfo.add(
+      Container(
+        height: 30,
+        child: Text(
+          book.author,
+          overflow: TextOverflow.fade,
+        ),
+      ),
     );
     headerInfo.add(SizedBox(height: vs(10, context)));
-    headerInfo.add(Text(book.author));
-    headerInfo.add(SizedBox(height: vs(15, context)));
 
 
     var totalUnits = '';
@@ -301,6 +314,7 @@ class BookDetailsWidget extends StatelessWidget {
     }
 
     if (this.book.isbnCode != null) {
+      developer.log(this.book.isbnCode);
       bookDetailsLeft.add(
         Text(
           'ISBN: ${this.book.isbnCode}',
