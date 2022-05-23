@@ -74,6 +74,7 @@ class LibrarySearch extends StatelessWidget {
       children: <Widget>[
         Container(
           child: Column(
+            key: Key('searchFeedColumn'),
             mainAxisSize: MainAxisSize.max,
             children: this.createSearchFeed(context, books),
           ),
