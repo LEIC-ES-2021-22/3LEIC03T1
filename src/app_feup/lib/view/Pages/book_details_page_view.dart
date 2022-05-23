@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:logger/logger.dart';
-import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
-import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
@@ -86,21 +82,11 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: this.createBookDetailsLeft(context, this.book),
-              ),
-              Row(
-                children: this.createBookDetailsRight(context, this.book),
-              ),
-            ],
-          ),
-        ),
+            padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: this.createBookDetails(context, this.book),
+            )),
       ],
     );
   }
@@ -254,20 +240,48 @@ class BookDetailsWidget extends StatelessWidget {
     return bookDetailsRight;
   }
 
-  List<Widget> createBookDetailsLeft(BuildContext context, Book book) {
-    List<Widget> bookDetailsLeft = <Widget>[];
+  List<Widget> createBookDetails(BuildContext context, Book book) {
+    final List<Widget> bookDetails = <Widget>[];
 
-    bookDetailsLeft.add(Column(
+    bookDetails.add(Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: this.createBookThemes(context, this.book),
     ));
 
-    bookDetailsLeft.add(SizedBox(
+    bookDetails.add(SizedBox(
       height: vs(45, context),
     ));
 
+    if (this.book.language != null && this.book.language.isNotEmpty) {
+      bookDetails.add(
+        Row(
+          children: [
+            Icon(
+              Icons.language,
+              color: Colors.black,
+            ),
+            SizedBox(
+              width: hs(10, context),
+            ),
+            Text(
+              '${this.book.language}',
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      bookDetails.add(
+        SizedBox(
+          height: vs(20, context),
+        ),
+      );
+    }
+
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           "Ano: ${this.book.releaseYear}",
           style: const TextStyle(
@@ -276,7 +290,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       );
 
-      bookDetailsLeft.add(
+      bookDetails.add(
         SizedBox(
           height: vs(20, context),
         ),
@@ -284,7 +298,7 @@ class BookDetailsWidget extends StatelessWidget {
     }
 
     if (this.book.editor != null && this.book.editor.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           "Editor: ${this.book.editor}",
           style: const TextStyle(
@@ -293,7 +307,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       );
 
-      bookDetailsLeft.add(
+      bookDetails.add(
         SizedBox(
           height: vs(20, context),
         ),
@@ -301,7 +315,7 @@ class BookDetailsWidget extends StatelessWidget {
     }
 
     if (this.book.isbnCode != null && this.book.isbnCode.isNotEmpty) {
-      bookDetailsLeft.add(
+      bookDetails.add(
         Text(
           "ISBN: ${this.book.isbnCode}",
           style: const TextStyle(
@@ -311,6 +325,6 @@ class BookDetailsWidget extends StatelessWidget {
       );
     }
 
-    return bookDetailsLeft;
+    return bookDetails;
   }
 }
