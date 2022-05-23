@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/model/entities/book.dart';
@@ -97,7 +96,7 @@ class ParserLibrary implements ParserLibraryInterface {
         document.querySelectorAll('[valign=baseline]');
 
     for (Element element in elements) {
-      final rows = element.querySelectorAll('td');
+      final rows = element.querySelectorAll('td[class=td1]');
 
       final String encodedAuthor = rows.elementAt(authorInfoIdx).text;
       final String author = decodeLibraryText(encodedAuthor);
@@ -109,8 +108,6 @@ class ParserLibrary implements ParserLibraryInterface {
       final String encodedTitle = parse(rawTitle).documentElement.text;
       final String title = decodeLibraryText(encodedTitle);
 
-      Logger().i(title);
-
       final String year = rows.elementAt(yearInfoIdx).text.trim();
 
       // TODO Check if other text fields need to be decoded
@@ -118,14 +115,23 @@ class ParserLibrary implements ParserLibraryInterface {
 
       // getting the img from catalog
       final String isbnHtml = rows.elementAt(isbnIdx).innerHtml;
-      final String catalogImage =
-          rows.elementAt(catalogImgPathIdx).children.isNotEmpty
-              ? rows
-                  .elementAt(catalogImgPathIdx)
-                  .firstChild // <a> with image inside
-                  .firstChild // <img> with src
-                  .attributes['src']
-              : '';
+
+      String catalogImage = '';
+      final Element catalogImgPath = rows.elementAt(catalogImgPathIdx);
+      final int catalogNumChildren = catalogImgPath.children.length;
+      if (catalogNumChildren == 1) {
+        // Check if is a link or just an image
+        if (catalogImgPath.firstChild.hasChildNodes()) {
+          catalogImage = catalogImgPath
+              .firstChild // <a> with image inside
+              .firstChild // <img> with src
+              .attributes['src'];
+        } else {
+          catalogImage = catalogImgPath
+              .firstChild // <img> with src
+              .attributes['src'];
+        }
+      }
 
       String bookIsbn = isbnHtml
           .substring(
@@ -143,8 +149,10 @@ class ParserLibrary implements ParserLibraryInterface {
         bookImageUrl = gBookUrl(bookIsbn);
       }
 
+      final digitalText = rows.elementAt(digitalInfoIdx).text.trim();
+
       final String digitalInfoHtml =
-          rows.elementAt(digitalInfoIdx).text.trim() == 'url'
+          digitalText.contains('url') || digitalText.contains('pdf')
               ? rows
                   .elementAt(digitalInfoIdx)
                   .firstChild // <table>
@@ -165,10 +173,14 @@ class ParserLibrary implements ParserLibraryInterface {
               )
           : null;
 
-      String units = rows.elementAt(unitsIdx).text.trim();
+      String units = rows.elementAt(unitsIdx).innerHtml.trim();
+
       int unitsAvailable = 0;
       int totalUnits = 0;
-      if (units != '') {
+      if (units != '<br>') {
+        // has content so lets get the faculty. If has more than 1, we're getting
+        // just the first one
+        units = rows.elementAt(unitsIdx).firstChild.text.trim();
         units = units.substring(units.indexOf('(') + '('.length);
         totalUnits = int.parse(units.substring(0, units.indexOf('/')));
         unitsAvailable = int.parse(
