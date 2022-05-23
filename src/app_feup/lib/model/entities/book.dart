@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:uni/model/entities/book_reservation.dart';
 
 class Book {
   String title;
@@ -37,21 +36,6 @@ class Book {
       this.documentType,
       this.isbnCode,
       this.themes});
-
-  Book.fromReservation(BookReservation reservation) {
-    this.title = reservation.title;
-    this.author = reservation.author;
-    this.language = reservation.language;
-    this.country = reservation.country;
-    this.unitsAvailable = reservation.unitsAvailable;
-    this.totalUnits = reservation.totalUnits;
-    this.hasPhysicalVersion = reservation.hasPhysicalVersion;
-    this.hasDigitalVersion = reservation.hasDigitalVersion;
-    this.digitalURL = reservation.digitalURL;
-    this.imageURL = reservation.imageURL;
-    this.documentType = reservation.documentType;
-    this.isbnCode = reservation.isbnCode;
-  }
 
   String getUnitsText() {
     if (unitsAvailable == 1) return '1 unidade';

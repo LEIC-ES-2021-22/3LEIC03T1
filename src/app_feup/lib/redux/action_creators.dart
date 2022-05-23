@@ -40,6 +40,7 @@ import 'package:uni/model/entities/session.dart';
 import 'package:uni/model/entities/trip.dart';
 import 'package:uni/redux/actions.dart';
 
+import '../model/entities/book_reservation.dart';
 import '../model/entities/bus_stop.dart';
 
 ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
@@ -63,6 +64,8 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
         store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+
+        store.dispatch(getCatalogReservations(Completer(), library));
 
         action?.complete();
       } else {
@@ -114,6 +117,8 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
         store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+
+        store.dispatch(getCatalogReservations(Completer(), library));
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }
@@ -256,6 +261,27 @@ ThunkAction<AppState> getLibraryBooks(
 ThunkAction<AppState> setBookSearchFilters(SearchFilters filters) {
   return (Store<AppState> store) async {
     store.dispatch(SetBookSearchFiltersAction(filters));
+  };
+}
+
+ThunkAction<AppState> getCatalogReservations(
+  Completer<Null> action,
+  LibraryInterface library,
+) {
+  return (Store<AppState> store) async {
+    try {
+      store.dispatch(SetCatalogReservationsStatus(RequestStatus.busy));
+
+      final Set<BookReservation> reservations = await library.getReservations();
+
+      store.dispatch(SetCatalogReservations(reservations.toList()));
+      store.dispatch(SetCatalogReservationsStatus(RequestStatus.successful));
+    } catch (e) {
+      Logger().e(e.toString());
+      store.dispatch(SetBooksStatusAction(RequestStatus.failed));
+    }
+
+    action.complete();
   };
 }
 

@@ -55,9 +55,9 @@ class ReservationDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                tag: this.reservation.title,
+                tag: this.reservation.book.title,
                 child: Image.network(
-                  this.reservation.imageURL,
+                  this.reservation.book.imageURL,
                   width: hs(60, context),
                   height: vs(80, context),
                   fit: BoxFit.fill,
@@ -65,7 +65,7 @@ class ReservationDetailsWidget extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(7,0, 7, 0),
+                  padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: this
@@ -165,11 +165,11 @@ class ReservationDetailsWidget extends StatelessWidget {
     final List<Widget> headerInfo = <Widget>[];
 
     headerInfo.add(Text(
-      reservation.title,
+      reservation.book.title,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
     ));
     headerInfo.add(SizedBox(height: vs(6, context)));
-    headerInfo.add(Text(reservation.author));
+    headerInfo.add(Text(reservation.book.author));
     headerInfo.add(SizedBox(height: vs(6, context)));
     headerInfo.add(Text(
       '${toString(reservation.status)}',
@@ -182,7 +182,7 @@ class ReservationDetailsWidget extends StatelessWidget {
   reservationActionButtons(BuildContext context, BookReservation reservation) {
     final List<Widget> buttons = <Widget>[];
 
-    if (reservation.unitsAvailable > 0) {
+    if (reservation.book.unitsAvailable > 0) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(minimumSize: Size(50, 40)),
         onPressed: () {
@@ -192,7 +192,7 @@ class ReservationDetailsWidget extends StatelessWidget {
       ));
     }
 
-    if (reservation.hasDigitalVersion) {
+    if (reservation.book.hasDigitalVersion) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: Size(40, 40),
@@ -201,7 +201,7 @@ class ReservationDetailsWidget extends StatelessWidget {
           ),
         ),
         onPressed: () async {
-          final url = reservation.digitalURL;
+          final url = reservation.book.digitalURL;
           if (await canLaunch(url)) {
             await launch(url);
           } else {

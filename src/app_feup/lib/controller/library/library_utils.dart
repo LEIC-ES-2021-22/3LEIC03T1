@@ -5,9 +5,24 @@ final String catalogUrl = 'https://catalogo.up.pt';
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
-// TODO change the EUP to the faculty
-final String reservationUrl =
-    'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=EUP50';
+String loginUrl(String faculty) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
+}
+
+String reservationUrl(String faculty, String pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-hold&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String reservationHistoryUrl(String faculty, String pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String bookDetailsUrl(String docNumber) {
+  return 'https://catalogo.up.pt/F/?func=direct&doc_number=$docNumber';
+}
 
 final String baseUrl = 'https://catalogo.up.pt/F';
 
@@ -34,6 +49,11 @@ String baseSearchUrl(String query, SearchFilters filters) {
   return url;
 }
 
+String catalogBookUrl(String book) => 'https://catalogo.up.pt$book';
+
+String gBookUrl(String isbn) =>
+    'https://media.springernature.com/w153/springer-static/cover/book/$isbn.jpg';
+
 final cookieRegex = RegExp(r'(?<=^|\S,).*?(?=$|,\S)');
 
 final Map<String, String> libraryFacCodes = {
@@ -59,4 +79,44 @@ String buildUp(String username) {
     res = 'up' + res;
   }
   return res;
+}
+
+final Map<String, String> facInitials = {
+  'faup': 'arq',
+  'fbaup': 'fba',
+  'fcup': 'fc',
+  'fcnaup': 'fcna',
+  'fadeup': 'fade',
+  'fdup': 'fd',
+  'fep': 'fep',
+  'feup': 'fe',
+  'ffup': 'ff',
+  'flup': 'fl',
+  'fmup': 'med',
+  'fmdup': 'med',
+  'fpceup': 'fpce',
+  'icbas': 'icbas'
+};
+
+final Map<String, String> monthToNum = {
+  'Jan': '01',
+  'Fev': '02',
+  'Mar': '03',
+  'Abr': '04',
+  'Mai': '05',
+  'Jun': '06',
+  'Jul': '07',
+  'Ago': '08',
+  'Set': '09',
+  'Out': '10',
+  'Nov': '11',
+  'Dez': '12',
+};
+
+/**
+ * Receives a Date with the libraries' format and returns a DateTime
+ */
+DateTime parseDate(String libraryDate) {
+  final List<String> data = libraryDate.split('/');
+  return DateTime.parse(data[2] + '-' + monthToNum[data[1]] + '-' + data[0]);
 }
