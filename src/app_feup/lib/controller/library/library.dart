@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:html/dom.dart';
@@ -10,6 +11,7 @@ import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/controller/local_storage/app_shared_preferences.dart';
+import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni/model/entities/search_filters.dart';
@@ -17,12 +19,17 @@ import 'package:uni/model/entities/search_filters.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 
+// ignore: implementation_imports
+import 'package:redux/src/store.dart';
+import 'package:uni/redux/actions.dart';
+
 extension UriString on String {
   /// Converts a [String] to an [Uri].
   Uri toUri() => Uri.parse(this);
 }
 
 class Library implements LibraryInterface {
+  Store<AppState> store;
   final _client = http.Client();
   final cookies = CookieJar();
   Cookie pdsCookie;
@@ -34,11 +41,14 @@ class Library implements LibraryInterface {
    * Need to create a factory function since we need the constructor
    *  to have an async method
    */
-  static Future<Library> create({Cookie pdsCookie}) async {
+  static Future<Library> create(
+      {Cookie pdsCookie, Store<AppState> store}) async {
     final library = Library();
     if (pdsCookie != null) {
       library.pdsCookie = pdsCookie; // Set libraries' pds cookie if exists
     }
+
+    if (store != null) library.store = store;
 
     try {
       library.faculty = (await AppSharedPreferences.getUserFaculties()).first;
@@ -59,8 +69,47 @@ class Library implements LibraryInterface {
 
     final List<Cookie> cookies = [alephCookie];
     if (pdsCookie != null) cookies.add(pdsCookie);
+    return await getHtml(url, cookies: cookies);
+  }
+
+  /**
+   * Wrapper to send a request
+   * pdsCookie and alephCookies are an optional argument
+   */
+  Future<http.Response> libRequest(String url,
+      {Cookie pdsCookie, Cookie alephCookie}) async {
+    final List<Cookie> cookies = [];
+    if (pdsCookie != null) cookies.add(pdsCookie);
+    if (alephCookie != null) cookies.add(alephCookie);
+
+    final http.Response htmlResponse = await getHtml(url, cookies: cookies);
+
+    if (hasSSOerror(htmlResponse)) {
+      alephCookie = await parseAlephCookie();
+      // Update alephCookie
+      store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
+      // Update cookies to send in request
+      for (Cookie cookie in cookies) {
+        if (cookie.name == 'ALEPH_SESSION_ID') {
+          cookie.value = alephCookie.value;
+          break;
+        }
+      }
+    }
 
     return await getHtml(url, cookies: cookies);
+  }
+
+  /**
+   * Checks if html has PDS SSO error
+   */
+  bool hasSSOerror(http.Response response) {
+    final document = html.parse(utf8.decode(response.bodyBytes));
+
+    final title = document.querySelector('head > title')?.text?.trim();
+
+    return title == 'PDS SSO';
   }
 
   // TODO after get cookie from login receive it on this function and use it

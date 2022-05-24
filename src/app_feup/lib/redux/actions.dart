@@ -25,16 +25,6 @@ class SetLoginStatusAction {
   SetLoginStatusAction(this.status);
 }
 
-class SaveCatalogLoginDataAction {
-  Cookie cookie;
-  SaveCatalogLoginDataAction(this.cookie);
-}
-
-class SetCatalogLoginStatusAction {
-  RequestStatus status;
-  SetCatalogLoginStatusAction(this.status);
-}
-
 class SetExamsAction {
   List<Exam> exams;
   SetExamsAction(this.exams);
@@ -202,4 +192,19 @@ class SetCatalogReservations {
 class SetCatalogReservationsStatus {
   RequestStatus status;
   SetCatalogReservationsStatus(this.status);
+}
+
+class SaveCatalogPdsCookie {
+  Cookie cookie;
+  SaveCatalogPdsCookie(this.cookie);
+}
+
+class SaveCatalogAlephCookie {
+  Cookie cookie;
+  SaveCatalogAlephCookie(this.cookie);
+}
+
+class SetCatalogLoginStatusAction {
+  RequestStatus status;
+  SetCatalogLoginStatusAction(this.status);
 }

@@ -56,10 +56,13 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
-        final Library library = await Library.create();
+        final Library library = await Library.create(store: store);
 
         final Cookie pdsCookie = await library.catalogLogin();
-        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
+
+        final Cookie alephCookie = await Library.parseAlephCookie();
+        store.dispatch(SaveCatalogAlephCookie(alephCookie));
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
@@ -112,7 +115,7 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
 
         final Library library = await Library.create();
         final Cookie pdsCookie = await library.catalogLogin();
-        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
