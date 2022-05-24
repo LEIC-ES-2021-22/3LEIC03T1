@@ -67,7 +67,7 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         // Update aleph cookie to just search from faculty
         await Library.getHtml(getFacultyBaseUrl(faculty),
             cookies: [alephCookie, pdsCookie]);
-          
+
         await loadRemoteUserInfoToState(store);
 
         action?.complete();
@@ -229,8 +229,7 @@ Future<List<Book>> extractBooks(
   return libraryBooks.toList();
 }
 
-ThunkAction<AppState> getLibraryBooks(
-    Completer<Null> action,
+ThunkAction<AppState> getLibraryBooks(Completer<Null> action,
     [String searchQuery = '']) {
   return (Store<AppState> store) async {
     try {

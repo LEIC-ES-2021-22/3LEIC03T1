@@ -15,5 +15,5 @@ abstract class ParserLibraryInterface {
    * Parses an html and gets reservations from it
    */
   Future<Set<BookReservation>> parseReservations(
-      http.Response response, String faculty, bool isHistoryReservation);
+      http.Response response, String faculty, int reservationType);
 }

@@ -26,14 +26,24 @@ String loginUrl(String faculty) {
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
 }
 
-String reservationUrl(String faculty, String pdsHandle) {
+String reservationRequestUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-hold&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
-String reservationHistoryUrl(String faculty, String pdsHandle) {
+/* String reservationRequestHistoryUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
+} */
+
+String reservationHistoryUrl(String faculty, String pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String reservationUrl(String faculty, String pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-loan&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
 String bookDetailsUrl(String docNumber) {
