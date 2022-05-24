@@ -33,7 +33,7 @@ class BookDetailsWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: vs(200.0, context),
+          height: vs(240.0, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
@@ -74,14 +74,14 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
+          padding: EdgeInsets.fromLTRB(150, 240, 15, 0),
           child: Row (
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: bookActionButtons(context, this.book),
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
+          padding: EdgeInsets.fromLTRB(30, 305, 30, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: this.createBookDetails(context, this.book),
@@ -94,12 +94,14 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
 
-    themes.add(Text(
+    themes.add(
+        Text(
       'Temas',
       style: const TextStyle(
         fontSize: 18,
+        ),
       ),
-    ));
+    );
 
     themes.add(SizedBox(
       height: vs(18, context),
@@ -137,17 +139,17 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(8, context)));
+    headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(
       Container(
-        height: 30,
+        height: 40,
         child: Text(
           book.author,
           overflow: TextOverflow.fade,
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(10, context)));
+    headerInfo.add(SizedBox(height: vs(12, context)));
 
 
     var totalUnits = '';
