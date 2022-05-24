@@ -82,12 +82,17 @@ class Library implements LibraryInterface {
     if (pdsCookie != null) cookies.add(pdsCookie);
     if (alephCookie != null) cookies.add(alephCookie);
 
-    final http.Response htmlResponse = await getHtml(url, cookies: cookies);
+    http.Response htmlResponse = await getHtml(url, cookies: cookies);
 
     if (hasSSOerror(htmlResponse)) {
+      // Update alephCookie and reset base faculty for that cookie
       alephCookie = await parseAlephCookie();
-      // Update alephCookie
-      store.dispatch(SaveCatalogAlephCookie(alephCookie));
+      this.store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
+      final List<Cookie> newCookies = [alephCookie];
+      if (pdsCookie != null) newCookies.add(pdsCookie);
+
+      await getHtml(getFacultyBaseUrl(faculty), cookies: newCookies);
 
       // Update cookies to send in request
       for (Cookie cookie in cookies) {
@@ -96,9 +101,11 @@ class Library implements LibraryInterface {
           break;
         }
       }
+
+      htmlResponse = await getHtml(url, cookies: cookies);
     }
 
-    return await getHtml(url, cookies: cookies);
+    return htmlResponse;
   }
 
   /**
@@ -112,19 +119,23 @@ class Library implements LibraryInterface {
     return title == 'PDS SSO';
   }
 
-  // TODO after get cookie from login receive it on this function and use it
   @override
-  Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
+  Future<Set<Book>> getLibraryBooks(
+      String query, SearchFilters filters, Cookie alephCookie) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
 
-    final http.Response response =
-        await libRequestWithAleph(baseSearchUrl(query, filters));
+    final http.Response response = await libRequest(
+        baseSearchUrl(query, filters),
+        alephCookie: alephCookie);
 
-    final Set<Book> libraryBooks = await parserLibrary.parseBooksFeed(response);
+    final Set<Book> libraryBooks =
+        await parserLibrary.parseBooksFeed(response, alephCookie: alephCookie);
 
     return libraryBooks;
   }
 
+  // TODO Change this libRequestWithAleph to use libRequest
+  // and receive aleph cookie by argument
   @override
   Future<Set<BookReservation>> getReservations() async {
     final reservationHistoryResponse = await libRequestWithAleph(
@@ -289,6 +300,8 @@ class Library implements LibraryInterface {
   /**
    * Gets the profile html and updates the aleph cookie
    */
+  // TODO change this libRequestWithAleph to libRequest and receive aleph
+  // cookie By argument
   Future<http.Response> getProfileHtml(Cookie pdsCookie) async {
     final profileLink =
         'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${pdsCookie.value}';

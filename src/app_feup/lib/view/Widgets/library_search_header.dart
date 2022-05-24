@@ -107,11 +107,11 @@ class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
     return InputDecoration(
         // Key for flutter_gherkin
         icon: IconButton(
-            icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
-            onPressed: () {
-              searchNode.unfocus();
+          icon: Icon(Icons.search, color: Colors.grey, key: Key('search')),
+          onPressed: () {
+            searchNode.unfocus();
 
-              StoreProvider.of<AppState>(context).dispatch(
+            StoreProvider.of<AppState>(context).dispatch(
                 getLibraryBooks(Completer(), Library(), searchController.text));
           },
         ),

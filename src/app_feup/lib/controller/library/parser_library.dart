@@ -121,7 +121,8 @@ class ParserLibrary implements ParserLibraryInterface {
   }
 
   @override
-  Future<Set<Book>> parseBooksFeed(http.Response response) async {
+  Future<Set<Book>> parseBooksFeed(http.Response response,
+      {Cookie alephCookie}) async {
     final document = parse(response.body);
 
     final Set<Book> booksList = Set();
@@ -146,8 +147,9 @@ class ParserLibrary implements ParserLibraryInterface {
       final String year = rows.elementAt(yearInfoIdx).text.trim();
 
       // TODO Check if other text fields need to be decoded
-      final String documentType = rows.elementAt(documentTypeIdx).text.trim();
-
+      final String encDocumentType =
+          rows.elementAt(documentTypeIdx).text.trim();
+      final String documentType = decodeLibraryText(encDocumentType);
       // getting the img from catalog
       final String isbnHtml = rows.elementAt(isbnIdx).innerHtml;
 
@@ -212,7 +214,7 @@ class ParserLibrary implements ParserLibraryInterface {
 
       int unitsAvailable = 0;
       int totalUnits = 0;
-      if (units != '<br>') {
+      if (units != '<br>' && units != '') {
         // has content so lets get the faculty. If has more than 1, we're getting
         // just the first one
         units = rows.elementAt(unitsIdx).firstChild.text.trim();
@@ -233,7 +235,6 @@ class ParserLibrary implements ParserLibraryInterface {
                   2)
           .replaceAll('amp;', ''); // remove ; " and &amp;
 
-      final Cookie alephCookie = await Library.parseAlephCookie();
       final http.Response bdResponse =
           await Library.getHtml(bookDetailsLink, cookies: [alephCookie]);
 

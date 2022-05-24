@@ -5,6 +5,10 @@ final String catalogUrl = 'https://catalogo.up.pt';
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
+String getFacultyBaseUrl(String faculty) {
+  return 'https://catalogo.up.pt/F/?func=find-b-0&local_base=$faculty';
+}
+
 String loginUrl(String faculty) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
