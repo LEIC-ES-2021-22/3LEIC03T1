@@ -72,8 +72,7 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         final Completer<Null> searchBooks = Completer();
 
         // TODO Novidades do dia/mês
-        store
-            .dispatch(getLibraryBooks(searchBooks, library, 'Design Patterns'));
+        store.dispatch(getLibraryBooks(searchBooks, 'Design Patterns'));
 
         store.dispatch(getCatalogReservations(Completer(), library));
 
@@ -126,7 +125,7 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, library, '\\n'));
+        store.dispatch(getLibraryBooks(searchBooks, '\\n'));
 
         store.dispatch(getCatalogReservations(Completer(), library));
       } else {
@@ -235,17 +234,18 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
   };
 }
 
-Future<List<Book>> extractBooks(Store<AppState> store, LibraryInterface library,
-    String query, SearchFilters filters) async {
-  final Set<Book> libraryBooks = await library.getLibraryBooks(
-      query, filters, store.state.content['catalogAlephCookie']);
+Future<List<Book>> extractBooks(
+    LibraryInterface library, String query, SearchFilters filters) async {
+  final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
 }
 
 ThunkAction<AppState> getLibraryBooks(
-    Completer<Null> action, LibraryInterface library, String searchQuery) {
+    Completer<Null> action, String searchQuery) {
   return (Store<AppState> store) async {
     try {
+      final LibraryInterface library = await Library.create(store: store);
+
       // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
       if (searchQuery == null || searchQuery == '') {
@@ -256,7 +256,7 @@ ThunkAction<AppState> getLibraryBooks(
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
       final List<Book> books =
-          await extractBooks(store, library, searchQuery, filters);
+          await extractBooks(library, searchQuery, filters);
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));

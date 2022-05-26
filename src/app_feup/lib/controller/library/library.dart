@@ -19,8 +19,7 @@ import 'package:uni/model/entities/search_filters.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 
-// ignore: implementation_imports
-import 'package:redux/src/store.dart';
+import 'package:redux/redux.dart';
 import 'package:uni/redux/actions.dart';
 
 extension UriString on String {
@@ -120,10 +119,9 @@ class Library implements LibraryInterface {
   }
 
   @override
-  Future<Set<Book>> getLibraryBooks(
-      String query, SearchFilters filters, Cookie alephCookie) async {
+  Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
-
+    final Cookie alephCookie = this.store.state.content['catalogAlephCookie'];
     final http.Response response = await libRequest(
         baseSearchUrl(query, filters),
         alephCookie: alephCookie);

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:uni/controller/library/library.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/redux/action_creators.dart';
 import 'package:uni/view/Pages/library_reservations_page_view.dart';
@@ -70,8 +69,8 @@ class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
         onFieldSubmitted: (term) {
           searchNode.unfocus();
 
-          StoreProvider.of<AppState>(context).dispatch(
-              getLibraryBooks(Completer(), Library(), searchController.text));
+          StoreProvider.of<AppState>(context)
+              .dispatch(getLibraryBooks(Completer(), searchController.text));
         },
         textInputAction: TextInputAction.done,
         textAlign: TextAlign.left,
@@ -111,8 +110,8 @@ class LibrarySearchHeaderState extends State<LibrarySearchHeader> {
           onPressed: () {
             searchNode.unfocus();
 
-            StoreProvider.of<AppState>(context).dispatch(
-                getLibraryBooks(Completer(), Library(), searchController.text));
+            StoreProvider.of<AppState>(context)
+                .dispatch(getLibraryBooks(Completer(), searchController.text));
           },
         ),
         hintText: placeholder,

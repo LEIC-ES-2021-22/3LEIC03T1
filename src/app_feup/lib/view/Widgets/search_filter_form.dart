@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tuple/tuple.dart';
-import 'package:uni/controller/library/library.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/search_filters.dart';
 import 'package:uni/redux/action_creators.dart';
@@ -212,7 +210,7 @@ class _SearchFilterFormState extends State<SearchFilterForm> {
     final String searchQuery = LibrarySearchHeaderState.searchController.text;
 
     StoreProvider.of<AppState>(context)
-        .dispatch(getLibraryBooks(Completer(), Library(), searchQuery));
+        .dispatch(getLibraryBooks(Completer(), searchQuery));
 
     this.updateSearchFilters = true;
     Navigator.pop(context);
