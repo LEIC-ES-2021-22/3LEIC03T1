@@ -6,6 +6,7 @@ import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/library_interface.dart';
+import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/load_info.dart';
 import 'package:uni/controller/load_static/terms_and_conditions.dart';
 import 'package:uni/controller/local_storage/app_bus_stop_database.dart';
@@ -56,14 +57,22 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         await loadRemoteUserInfoToState(store);
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
-        final Library library = await Library.create();
+        final Library library = await Library.create(store: store);
 
         final Cookie pdsCookie = await library.catalogLogin();
-        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
+
+        final Cookie alephCookie = await Library.parseAlephCookie();
+        store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
+        // Update aleph cookie to just search form faculty
+        await Library.getHtml(getFacultyBaseUrl(faculty),
+            cookies: [alephCookie, pdsCookie]);
 
         final Completer<Null> searchBooks = Completer();
+
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+        store.dispatch(getLibraryBooks(searchBooks, 'Design Patterns'));
 
         store.dispatch(getCatalogReservations(Completer(), library));
 
@@ -110,13 +119,13 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         passwordController.clear();
         await acceptTermsAndConditions();
 
-        final Library library = await Library.create();
+        final Library library = await Library.create(store: store);
         final Cookie pdsCookie = await library.catalogLogin();
-        store.dispatch(SaveCatalogLoginDataAction(pdsCookie));
+        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, Library(), '\\n'));
+        store.dispatch(getLibraryBooks(searchBooks, '\\n'));
 
         store.dispatch(getCatalogReservations(Completer(), library));
       } else {
@@ -225,16 +234,18 @@ ThunkAction<AppState> updateStateBasedOnLocalRefreshTimes() {
   };
 }
 
-Future<List<Book>> extractBooks(Store<AppState> store, LibraryInterface library,
-    String query, SearchFilters filters) async {
+Future<List<Book>> extractBooks(
+    LibraryInterface library, String query, SearchFilters filters) async {
   final Set<Book> libraryBooks = await library.getLibraryBooks(query, filters);
   return libraryBooks.toList();
 }
 
 ThunkAction<AppState> getLibraryBooks(
-    Completer<Null> action, LibraryInterface library, String searchQuery) {
+    Completer<Null> action, String searchQuery) {
   return (Store<AppState> store) async {
     try {
+      final LibraryInterface library = await Library.create(store: store);
+
       // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
       if (searchQuery == null || searchQuery == '') {
@@ -245,7 +256,7 @@ ThunkAction<AppState> getLibraryBooks(
       store.dispatch(SetBooksStatusAction(RequestStatus.busy));
 
       final List<Book> books =
-          await extractBooks(store, library, searchQuery, filters);
+          await extractBooks(library, searchQuery, filters);
 
       store.dispatch(SetBooksStatusAction(RequestStatus.successful));
       store.dispatch(SetBooksAction(books));

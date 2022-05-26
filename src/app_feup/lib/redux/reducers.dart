@@ -10,8 +10,10 @@ AppState appReducers(AppState state, dynamic action) {
     return setCatalogLoginStatus(state, action);
   } else if (action is SetLoginStatusAction) {
     return setLoginStatus(state, action);
-  } else if (action is SaveCatalogLoginDataAction) {
-    return setCatalogLoginCookie(state, action);
+  } else if (action is SaveCatalogPdsCookie) {
+    return setCatalogPdsCookie(state, action);
+  } else if (action is SaveCatalogAlephCookie) {
+    return setCatalogAlephCookie(state, action);
   } else if (action is SetExamsAction) {
     return setExams(state, action);
   } else if (action is SetExamsStatusAction) {
@@ -92,10 +94,14 @@ AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   return state.cloneAndUpdateValue('loginStatus', action.status);
 }
 
-AppState setCatalogLoginCookie(
-    AppState state, SaveCatalogLoginDataAction action) {
-  Logger().i('setting catalog state: ' + action.cookie.toString());
-  return state.cloneAndUpdateValue('catalogLoginCookie', action.cookie);
+AppState setCatalogPdsCookie(AppState state, SaveCatalogPdsCookie action) {
+  Logger().i('setting catalog pds cookie: ' + action.cookie.toString());
+  return state.cloneAndUpdateValue('catalogPdsCookie', action.cookie);
+}
+
+AppState setCatalogAlephCookie(AppState state, SaveCatalogAlephCookie action) {
+  Logger().i('setting catalog aleph cookie: ' + action.cookie.toString());
+  return state.cloneAndUpdateValue('catalogAlephCookie', action.cookie);
 }
 
 AppState setCatalogLoginStatus(

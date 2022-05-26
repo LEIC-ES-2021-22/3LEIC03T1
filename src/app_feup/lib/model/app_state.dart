@@ -43,7 +43,8 @@ class AppState {
       'searchBooks': <Book>[],
       'searchBooksStatus': RequestStatus.none,
       'bookSearchFilters': SearchFilters(),
-      'catalogLoginCookie': Cookie,
+      'catalogAlephCookie': Cookie,
+      'catalogPdsCookie': Cookie,
       'catalogReservations:': <BookReservation>[],
       'catalogReservationsStatus:': RequestStatus.none
     };

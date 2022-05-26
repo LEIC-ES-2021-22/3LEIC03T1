@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:html/dom.dart';
@@ -10,6 +11,7 @@ import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
 import 'package:uni/controller/local_storage/app_shared_preferences.dart';
+import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni/model/entities/search_filters.dart';
@@ -17,12 +19,16 @@ import 'package:uni/model/entities/search_filters.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 
+import 'package:redux/redux.dart';
+import 'package:uni/redux/actions.dart';
+
 extension UriString on String {
   /// Converts a [String] to an [Uri].
   Uri toUri() => Uri.parse(this);
 }
 
 class Library implements LibraryInterface {
+  Store<AppState> store;
   final _client = http.Client();
   final cookies = CookieJar();
   Cookie pdsCookie;
@@ -34,11 +40,14 @@ class Library implements LibraryInterface {
    * Need to create a factory function since we need the constructor
    *  to have an async method
    */
-  static Future<Library> create({Cookie pdsCookie}) async {
+  static Future<Library> create(
+      {Cookie pdsCookie, Store<AppState> store}) async {
     final library = Library();
     if (pdsCookie != null) {
       library.pdsCookie = pdsCookie; // Set libraries' pds cookie if exists
     }
+
+    if (store != null) library.store = store;
 
     try {
       library.faculty = (await AppSharedPreferences.getUserFaculties()).first;
@@ -59,23 +68,72 @@ class Library implements LibraryInterface {
 
     final List<Cookie> cookies = [alephCookie];
     if (pdsCookie != null) cookies.add(pdsCookie);
-
     return await getHtml(url, cookies: cookies);
   }
 
-  // TODO after get cookie from login receive it on this function and use it
+  /**
+   * Wrapper to send a request
+   * pdsCookie and alephCookies are an optional argument
+   */
+  Future<http.Response> libRequest(String url,
+      {Cookie pdsCookie, Cookie alephCookie}) async {
+    final List<Cookie> cookies = [];
+    if (pdsCookie != null) cookies.add(pdsCookie);
+    if (alephCookie != null) cookies.add(alephCookie);
+
+    http.Response htmlResponse = await getHtml(url, cookies: cookies);
+
+    if (hasSSOerror(htmlResponse)) {
+      // Update alephCookie and reset base faculty for that cookie
+      alephCookie = await parseAlephCookie();
+      this.store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
+      final List<Cookie> newCookies = [alephCookie];
+      if (pdsCookie != null) newCookies.add(pdsCookie);
+
+      await getHtml(getFacultyBaseUrl(faculty), cookies: newCookies);
+
+      // Update cookies to send in request
+      for (Cookie cookie in cookies) {
+        if (cookie.name == 'ALEPH_SESSION_ID') {
+          cookie.value = alephCookie.value;
+          break;
+        }
+      }
+
+      htmlResponse = await getHtml(url, cookies: cookies);
+    }
+
+    return htmlResponse;
+  }
+
+  /**
+   * Checks if html has PDS SSO error
+   */
+  bool hasSSOerror(http.Response response) {
+    final document = html.parse(utf8.decode(response.bodyBytes));
+
+    final title = document.querySelector('head > title')?.text?.trim();
+
+    return title == 'PDS SSO';
+  }
+
   @override
   Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
+    final Cookie alephCookie = this.store.state.content['catalogAlephCookie'];
+    final http.Response response = await libRequest(
+        baseSearchUrl(query, filters),
+        alephCookie: alephCookie);
 
-    final http.Response response =
-        await libRequestWithAleph(baseSearchUrl(query, filters));
-
-    final Set<Book> libraryBooks = await parserLibrary.parseBooksFeed(response);
+    final Set<Book> libraryBooks =
+        await parserLibrary.parseBooksFeed(response, alephCookie: alephCookie);
 
     return libraryBooks;
   }
 
+  // TODO Change this libRequestWithAleph to use libRequest
+  // and receive aleph cookie by argument
   @override
   Future<Set<BookReservation>> getReservations() async {
     final reservationHistoryResponse = await libRequestWithAleph(
@@ -240,6 +298,8 @@ class Library implements LibraryInterface {
   /**
    * Gets the profile html and updates the aleph cookie
    */
+  // TODO change this libRequestWithAleph to libRequest and receive aleph
+  // cookie By argument
   Future<http.Response> getProfileHtml(Cookie pdsCookie) async {
     final profileLink =
         'https://catalogo.up.pt/F/?func=bor-info&pds_handle=${pdsCookie.value}';
