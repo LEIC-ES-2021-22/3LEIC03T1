@@ -122,9 +122,10 @@ class Library implements LibraryInterface {
   Future<Set<Book>> getLibraryBooks(String query, SearchFilters filters) async {
     final ParserLibraryInterface parserLibrary = ParserLibrary();
     final Cookie alephCookie = this.store.state.content['catalogAlephCookie'];
-    final http.Response response = await libRequest(
-        baseSearchUrl(query, filters),
-        alephCookie: alephCookie);
+    final String url = query != '' ? baseSearchUrl(query, filters) : newsUrl();
+
+    final http.Response response =
+        await libRequest(url, alephCookie: alephCookie);
 
     final Set<Book> libraryBooks =
         await parserLibrary.parseBooksFeed(response, alephCookie: alephCookie);
