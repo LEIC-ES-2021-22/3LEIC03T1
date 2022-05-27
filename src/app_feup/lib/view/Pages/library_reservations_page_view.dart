@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tuple/tuple.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/model/entities/book_reservation.dart';
@@ -68,16 +69,18 @@ final List<BookReservation> mockedReservations = [
 class LibraryReservationsState extends SecondaryPageViewState {
   @override
   Widget getBody(BuildContext context) {
-    return StoreConnector<AppState, List<dynamic>>(
+    return StoreConnector<AppState, Tuple2<List<dynamic>, RequestStatus>>(
       converter: (store) {
-        // TODO Connect with search
-        // CHANGE THIS
         final List<BookReservation> reservations =
-            store.state.content['reservations'];
-        return reservations;
+            store.state.content['catalogReservations'];
+        return Tuple2(
+            reservations, store.state.content['catalogReservationsStatus']);
       },
-      builder: (context, reservations) {
-        return LibraryReservationsBody(reservations: mockedReservations);
+      builder: (context, reservationsInfo) {
+        return LibraryReservationsBody(
+          reservations: reservationsInfo.item1,
+          reservationsStatus: reservationsInfo.item2,
+        );
       },
     );
   }
@@ -85,30 +88,61 @@ class LibraryReservationsState extends SecondaryPageViewState {
 
 class LibraryReservationsBody extends StatelessWidget {
   final List<BookReservation> reservations;
+  final RequestStatus reservationsStatus;
 
-  LibraryReservationsBody({Key key, @required this.reservations})
+  LibraryReservationsBody(
+      {Key key, @required this.reservations, this.reservationsStatus})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Container(
-          child: Column(
-            key: Key('reservationsFeedColumn'),
-            mainAxisSize: MainAxisSize.max,
-            children: this.createReservationsFeed(context, reservations),
-          ),
-        )
-      ]
-    );
+    return ListView(children: <Widget>[
+      Container(
+        child: Column(
+          key: Key('reservationsFeedColumn'),
+          mainAxisSize: MainAxisSize.max,
+          children: this.createReservationsFeed(context, reservations),
+        ),
+      )
+    ]);
   }
 
   List<Widget> createReservationsFeed(context, reservations) {
     final List<Widget> columns = <Widget>[];
     columns.add(LibraryReservationsHeader());
 
-    for (int i = 0; i < reservations.length; ++i) {
-      columns.add(ReservationContainer(reservation: reservations[i]));
+    switch (reservationsStatus) {
+      case RequestStatus.successful:
+        if (reservations.isEmpty) {
+          columns.add(SizedBox(height: 5));
+          columns.add(Text('Não foram encontradas reservas',
+              maxLines: 2,
+              overflow: TextOverflow.fade,
+              style: Theme.of(context).textTheme.headline4));
+          break;
+        }
+
+        reservations.forEach((reservation) {
+          columns.add(ReservationContainer(reservation: reservation));
+        });
+
+        break;
+      case RequestStatus.busy:
+        columns.add(Container(
+            padding: EdgeInsets.all(22.0),
+            child: Center(child: CircularProgressIndicator())));
+        break;
+      case RequestStatus.failed:
+        columns.add(SizedBox(height: 5));
+        columns.add(Text('Não foi possível obter as reservas',
+            maxLines: 2,
+            overflow: TextOverflow.fade,
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                .apply(color: Colors.red[800])));
+        break;
+      default:
+        break;
     }
 
     return columns;

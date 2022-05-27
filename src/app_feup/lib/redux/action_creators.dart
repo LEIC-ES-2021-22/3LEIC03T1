@@ -54,9 +54,6 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
           await NetworkRouter.login(username, password, faculty, true);
       store.dispatch(SaveLoginDataAction(session));
       if (session.authenticated) {
-        await loadRemoteUserInfoToState(store);
-        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
-
         final Library library = await Library.create(store: store);
 
         final Cookie pdsCookie = await library.catalogLogin();
@@ -65,16 +62,13 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         final Cookie alephCookie = await Library.parseAlephCookie();
         store.dispatch(SaveCatalogAlephCookie(alephCookie));
 
-        // Update aleph cookie to just search form faculty
+        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
+
+        // Update aleph cookie to just search from faculty
         await Library.getHtml(getFacultyBaseUrl(faculty),
             cookies: [alephCookie, pdsCookie]);
-
-        final Completer<Null> searchBooks = Completer();
-
-        // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, ''));
-
-        store.dispatch(getCatalogReservations(Completer(), library));
+          
+        await loadRemoteUserInfoToState(store);
 
         action?.complete();
       } else {
@@ -106,9 +100,6 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
           username, password, faculties[0], persistentSession);
       store.dispatch(SaveLoginDataAction(session));
       if (session.authenticated) {
-        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
-        await loadUserInfoToState(store);
-
         /// Faculties chosen in the dropdown
         store.dispatch(SetUserFaculties(faculties));
         if (persistentSession) {
@@ -123,11 +114,9 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         final Cookie pdsCookie = await library.catalogLogin();
         store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 
-        final Completer<Null> searchBooks = Completer();
-        // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, ''));
+        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
-        store.dispatch(getCatalogReservations(Completer(), library));
+        await loadUserInfoToState(store);
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }
@@ -241,14 +230,14 @@ Future<List<Book>> extractBooks(
 }
 
 ThunkAction<AppState> getLibraryBooks(
-    Completer<Null> action, String searchQuery) {
+    Completer<Null> action,
+    [String searchQuery = '']) {
   return (Store<AppState> store) async {
     try {
       final LibraryInterface library = await Library.create(store: store);
 
-      // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
-      if (searchQuery == null || searchQuery == '') {
+      if (searchQuery == '') {
         searchQuery = filters.hasFilters() ? 'alldocuments' : '';
       }
 

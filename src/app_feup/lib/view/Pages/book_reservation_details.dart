@@ -182,7 +182,8 @@ class ReservationDetailsWidget extends StatelessWidget {
   reservationActionButtons(BuildContext context, BookReservation reservation) {
     final List<Widget> buttons = <Widget>[];
 
-    if (reservation.book.unitsAvailable > 0) {
+    if (reservation.book.unitsAvailable != null &&
+        reservation.book.unitsAvailable > 0) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(minimumSize: Size(50, 40)),
         onPressed: () {
