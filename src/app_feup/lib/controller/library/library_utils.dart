@@ -1,9 +1,21 @@
+import 'package:intl/intl.dart';
 import 'package:uni/model/entities/search_filters.dart';
+
+final int numberDays = 15;
 
 final String catalogUrl = 'https://catalogo.up.pt';
 
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
+
+String newsUrl() {
+  final DateTime now = DateTime.now();
+  final DateTime oldDays = now.subtract(Duration(days: numberDays));
+  final String formattedNow = DateFormat('yyyyMMdd').format(now);
+  final String formattedOld = DateFormat('yyyyMMdd').format(oldDays);
+
+  return 'https://catalogo.up.pt/F/?func=find-c&ccl_term=WDT=$formattedOld->$formattedNow&sort_option=07---D';
+}
 
 String getFacultyBaseUrl(String faculty) {
   return 'https://catalogo.up.pt/F/?func=find-b-0&local_base=$faculty';

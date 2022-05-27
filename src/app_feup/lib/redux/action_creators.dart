@@ -72,7 +72,7 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         final Completer<Null> searchBooks = Completer();
 
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, 'Design Patterns'));
+        store.dispatch(getLibraryBooks(searchBooks, ''));
 
         store.dispatch(getCatalogReservations(Completer(), library));
 
@@ -125,7 +125,7 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
 
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, '\\n'));
+        store.dispatch(getLibraryBooks(searchBooks, ''));
 
         store.dispatch(getCatalogReservations(Completer(), library));
       } else {
@@ -249,7 +249,7 @@ ThunkAction<AppState> getLibraryBooks(
       // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
       if (searchQuery == null || searchQuery == '') {
-        searchQuery = filters.hasFilters() ? 'alldocuments' : '\\n';
+        searchQuery = filters.hasFilters() ? 'alldocuments' : '';
       }
 
       //need to get student course here
