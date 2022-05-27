@@ -230,14 +230,14 @@ Future<List<Book>> extractBooks(
 }
 
 ThunkAction<AppState> getLibraryBooks(
-    Completer<Null> action, String searchQuery) {
+    Completer<Null> action,
+    [String searchQuery = '']) {
   return (Store<AppState> store) async {
     try {
       final LibraryInterface library = await Library.create(store: store);
 
-      // TODO This should return the news of the day/month instead of \\n
       final SearchFilters filters = store.state.content['bookSearchFilters'];
-      if (searchQuery == null || searchQuery == '') {
+      if (searchQuery == '') {
         searchQuery = filters.hasFilters() ? 'alldocuments' : '';
       }
 
