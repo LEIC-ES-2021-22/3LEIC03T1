@@ -112,9 +112,19 @@ class LibraryReservationsBody extends StatelessWidget {
 
     switch (reservationsStatus) {
       case RequestStatus.successful:
-        for (int i = 0; i < reservations.length; ++i) {
-          columns.add(ReservationContainer(reservation: reservations[i]));
+        if (reservations.isEmpty) {
+          columns.add(SizedBox(height: 5));
+          columns.add(Text('Não foram encontradas reservas',
+              maxLines: 2,
+              overflow: TextOverflow.fade,
+              style: Theme.of(context).textTheme.headline4));
+          break;
         }
+
+        reservations.forEach((reservation) {
+          columns.add(ReservationContainer(reservation: reservation));
+        });
+
         break;
       case RequestStatus.busy:
         columns.add(Container(

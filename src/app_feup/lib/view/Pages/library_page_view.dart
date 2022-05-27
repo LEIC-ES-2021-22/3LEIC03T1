@@ -98,8 +98,8 @@ class LibrarySearch extends StatelessWidget {
           break;
         }
 
-        for (int i = 0; i < books.length; ++i) {
-          columns.add(BookContainer(book: books[i]));
+        for (Book book in books) {
+          columns.add(BookContainer(book: book));
         }
 
         break;
