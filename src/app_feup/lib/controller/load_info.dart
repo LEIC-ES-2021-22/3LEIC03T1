@@ -58,6 +58,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       trips = Completer(),
       lastUpdate = Completer(),
       restaurants = Completer(),
+      searchBooks = Completer(),
       catalogReservations = Completer();
 
   final Library library = await Library.create(
@@ -70,6 +71,9 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
   store.dispatch(getUserBusTrips(trips));
   store.dispatch(getRestaurantsFromFetcher(restaurants));
   store.dispatch(getCatalogReservations(catalogReservations, library));
+
+  // TODO Novidades do dia/mês
+  store.dispatch(getLibraryBooks(searchBooks, '\\n'));
 
   final Tuple2<String, String> userPersistentInfo =
       await AppSharedPreferences.getPersistentUserInfo();
