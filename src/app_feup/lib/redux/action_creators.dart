@@ -54,9 +54,6 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
           await NetworkRouter.login(username, password, faculty, true);
       store.dispatch(SaveLoginDataAction(session));
       if (session.authenticated) {
-        await loadRemoteUserInfoToState(store);
-        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
-
         final Library library = await Library.create(store: store);
 
         final Cookie pdsCookie = await library.catalogLogin();
@@ -65,16 +62,17 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
         final Cookie alephCookie = await Library.parseAlephCookie();
         store.dispatch(SaveCatalogAlephCookie(alephCookie));
 
-        // Update aleph cookie to just search form faculty
+        // Update aleph cookie to just search from faculty
         await Library.getHtml(getFacultyBaseUrl(faculty),
             cookies: [alephCookie, pdsCookie]);
+          
+        await loadRemoteUserInfoToState(store);
+        store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
         final Completer<Null> searchBooks = Completer();
 
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, ''));
-
-        store.dispatch(getCatalogReservations(Completer(), library));
+        store.dispatch(getLibraryBooks(searchBooks, '\\n'));
 
         action?.complete();
       } else {
@@ -107,7 +105,6 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
       store.dispatch(SaveLoginDataAction(session));
       if (session.authenticated) {
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
-        await loadUserInfoToState(store);
 
         /// Faculties chosen in the dropdown
         store.dispatch(SetUserFaculties(faculties));
@@ -123,11 +120,11 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         final Cookie pdsCookie = await library.catalogLogin();
         store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 
+        await loadUserInfoToState(store);
+
         final Completer<Null> searchBooks = Completer();
         // TODO Novidades do dia/mês
-        store.dispatch(getLibraryBooks(searchBooks, ''));
-
-        store.dispatch(getCatalogReservations(Completer(), library));
+        store.dispatch(getLibraryBooks(searchBooks, '\\n'));
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));
       }

@@ -4,6 +4,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tuple/tuple.dart';
 import 'package:redux/redux.dart';
+import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/local_storage/image_offline_storage.dart';
 import 'package:uni/controller/parsers/parser_exams.dart';
 import 'package:uni/model/app_state.dart';
@@ -56,7 +57,11 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
       coursesStates = Completer(),
       trips = Completer(),
       lastUpdate = Completer(),
-      restaurants = Completer();
+      restaurants = Completer(),
+      catalogReservations = Completer();
+
+  final Library library = await Library.create(
+      store: store, pdsCookie: store.state.content['catalogPdsCookie']);
 
   store.dispatch(getUserInfo(userInfo));
   store.dispatch(getUserPrintBalance(printBalance));
@@ -64,6 +69,7 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
   store.dispatch(getUserCoursesState(coursesStates));
   store.dispatch(getUserBusTrips(trips));
   store.dispatch(getRestaurantsFromFetcher(restaurants));
+  store.dispatch(getCatalogReservations(catalogReservations, library));
 
   final Tuple2<String, String> userPersistentInfo =
       await AppSharedPreferences.getPersistentUserInfo();
