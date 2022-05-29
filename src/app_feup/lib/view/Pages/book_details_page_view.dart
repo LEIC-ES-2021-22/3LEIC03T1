@@ -183,7 +183,7 @@ class BookDetailsWidget extends StatelessWidget {
 
     final List<Widget> buttons = <Widget>[];
 
-    if (book.unitsAvailable > 0) {
+    if (book.unitsAvailable <= 0) {
       buttons.add(
           ElevatedButton(
             key: Key('reserveBook'),

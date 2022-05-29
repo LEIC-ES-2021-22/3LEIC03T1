@@ -8,6 +8,8 @@ final String catalogUrl = 'https://catalogo.up.pt';
 final String testUrl =
     'https://catalogo.up.pt/F/?func=find-b&request=Design+Patterns';
 
+final String postUrl = 'https://catalogo.up.pt/F/'; // Always the same URL
+
 String newsUrl() {
   final DateTime now = DateTime.now();
   final DateTime oldDays = now.subtract(Duration(days: numberDays));

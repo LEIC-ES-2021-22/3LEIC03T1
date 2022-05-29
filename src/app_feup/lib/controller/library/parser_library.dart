@@ -45,7 +45,7 @@ class ParserLibrary implements ParserLibraryInterface {
       'year': '',
       'isbn': '',
       'digitalURL': '',
-      'themes': List<String>.filled(0, '')
+      'themes': List<String>.empty()
     };
 
     // get all the information tags
@@ -95,6 +95,7 @@ class ParserLibrary implements ParserLibraryInterface {
             bookDetails['digitalURL'] = digitalUrl;
             break;
           }
+        case 'assunto':
         case 'assunto(s)':
           {
             // it has at least 1 theme
@@ -111,6 +112,14 @@ class ParserLibrary implements ParserLibraryInterface {
               currIdx += 2;
               elemInfo = elements.elementAt(currIdx).text.trim();
             }
+            break;
+          }
+        case 'link partilhável':
+          {
+            final String docNumPattern = 'doc_number=';
+            bookDetails['docNumber'] = info.substring(
+                info.indexOf(docNumPattern) + docNumPattern.length,
+                info.indexOf('&local_base='));
             break;
           }
       }
@@ -257,6 +266,7 @@ class ParserLibrary implements ParserLibraryInterface {
         documentType: documentType,
         isbnCode: bookIsbn,
         themes: List<String>.from(bookDetailsMap['themes']),
+        docNumber: bookDetailsMap['docNumber'],
       );
 
       booksList.add(book);
@@ -391,7 +401,8 @@ class ParserLibrary implements ParserLibraryInterface {
                   ? gBookUrl(bookDetails['isbn'])
                   : '',
               isbnCode: bookDetails['isbn'],
-              themes: bookDetails['themes']));
+              themes: bookDetails['themes'],
+              docNumber: docNumber));
 
       reservations.add(bookReservation);
     }

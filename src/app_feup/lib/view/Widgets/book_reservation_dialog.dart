@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
+import 'package:uni/controller/library/library.dart';
+import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/utils/methods.dart';
 
@@ -10,7 +13,7 @@ class BookReservationDialog extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _BookReservationDialogState();
+    return _BookReservationDialogState(book: book);
   }
 }
 
@@ -24,6 +27,11 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
   bool isUrgent;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _isButtonTapped = false;
+  final Book book;
+
+  _BookReservationDialogState({@required this.book});
 
   Widget _buildBeginDateField() {
     return TextFormField(
@@ -82,7 +90,7 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
         return null;
       },
       onSaved: (String value) {
-        beginDate = value;
+        endDate = value;
       },
       readOnly: true,
       //set it true, so that user will not able to edit text
@@ -184,31 +192,41 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
       actions: [
         TextButton(
           child: Text('SUBMIT'),
-          onPressed: () {
-            if (!_formKey.currentState.validate()) {
-              return;
-            }
-
-            _formKey.currentState.save();
-
-            //TODO: Book Reservation Logic
-            Navigator.of(context).pop();
-          },
+          onPressed: submitReservationForm,
         ),
         TextButton(
           child: Text('CANCEL'),
           onPressed: () {
-            if (!_formKey.currentState.validate()) {
-              return;
-            }
-
-            _formKey.currentState.save();
-
-            //TODO: Book Reservation Logic
             Navigator.of(context).pop();
           },
         )
       ],
     );
+  }
+
+  void submitReservationForm() async {
+    if (!_formKey.currentState.validate() || _isButtonTapped) {
+      return;
+    }
+
+    setState(() {
+      _isButtonTapped = true;
+    });
+
+    _formKey.currentState.save();
+
+    final Library library = await Library.create(
+        store: StoreProvider.of<AppState>(context),
+        pdsCookie: StoreProvider.of<AppState>(context)
+            .state
+            .content['catalogPdsCookie']);
+
+    await library.reserveBook(beginDate, endDate, notes, isUrgent, book);
+
+    Navigator.of(context).pop();
+
+    setState(() {
+      _isButtonTapped = false;
+    });
   }
 }

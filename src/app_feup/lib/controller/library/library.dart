@@ -62,12 +62,12 @@ class Library implements LibraryInterface {
    * pdsCookie is an optional argument
    */
   static Future<http.Response> libRequestWithAleph(String url,
-      {Cookie pdsCookie}) async {
+      {Cookie pdsCookie, bool isPost = false, Object body = null}) async {
     final Cookie alephCookie = await parseAlephCookie();
 
     final List<Cookie> cookies = [alephCookie];
     if (pdsCookie != null) cookies.add(pdsCookie);
-    return await getHtml(url, cookies: cookies);
+    return await getHtml(url, cookies: cookies, isPost: isPost, body: body);
   }
 
   /**
@@ -75,12 +75,16 @@ class Library implements LibraryInterface {
    * pdsCookie and alephCookies are an optional argument
    */
   Future<http.Response> libRequest(String url,
-      {Cookie pdsCookie, Cookie alephCookie}) async {
+      {Cookie pdsCookie,
+      Cookie alephCookie,
+      bool isPost = false,
+      Object body = null}) async {
     final List<Cookie> cookies = [];
     if (pdsCookie != null) cookies.add(pdsCookie);
     if (alephCookie != null) cookies.add(alephCookie);
 
-    http.Response htmlResponse = await getHtml(url, cookies: cookies);
+    http.Response htmlResponse =
+        await getHtml(url, cookies: cookies, isPost: isPost, body: body);
 
     if (hasSSOerror(htmlResponse)) {
       // Update alephCookie and reset base faculty for that cookie
@@ -92,15 +96,7 @@ class Library implements LibraryInterface {
 
       await getHtml(getFacultyBaseUrl(faculty), cookies: newCookies);
 
-      // Update cookies to send in request
-      for (Cookie cookie in cookies) {
-        if (cookie.name == 'ALEPH_SESSION_ID') {
-          cookie.value = alephCookie.value;
-          break;
-        }
-      }
-
-      htmlResponse = await getHtml(url, cookies: cookies);
+      htmlResponse = await getHtml(url, cookies: newCookies);
     }
 
     return htmlResponse;
@@ -163,6 +159,48 @@ class Library implements LibraryInterface {
     reservations.addAll(activeReservations);
 
     return reservations;
+  }
+
+  @override
+  Future<int> reserveBook(String beginDate, String endDate, String notes,
+      bool isUrgent, Book book) async {
+    final List<String> fromParams = beginDate.split('-');
+    final List<String> toParams = endDate.split('-');
+
+    final String fromDate = fromParams[2] + fromParams[1] + fromParams[0];
+    final String toDate = toParams[2] + toParams[1] + toParams[0];
+
+    final Map<String, dynamic> body = Map();
+    body['func'] = 'item-hold-request-c';
+    body['doc_library'] = libraryFacCodes[faculty];
+    body['adm_doc_number'] = book.docNumber;
+    body['sub_library'] = faculty.toUpperCase();
+    body['pickup'] = faculty.toUpperCase();
+    body['from'] = fromDate;
+    body['to'] = toDate;
+    body['note1'] = notes ?? '';
+    body['rush_request'] = isUrgent ? 'Sim' : 'Não';
+
+    /*final Map<String, dynamic> bodyPrev = Map();
+    bodyPrev['func'] = 'item-hold-request-b';
+    bodyPrev['doc_library'] = libraryFacCodes[faculty];
+    bodyPrev['adm_doc_number'] = book.docNumber;
+    bodyPrev['sub_library'] = faculty.toUpperCase();
+    bodyPrev['pickup'] = faculty.toUpperCase();
+    bodyPrev['from'] = fromDate;
+    bodyPrev['to'] = toDate;
+    bodyPrev['note1'] = notes ?? '';
+    bodyPrev['rush_request'] = isUrgent ? 'Sim' : 'Não';
+
+    final responsePrev = await libRequestWithAleph(postUrl,
+        isPost: true, body: bodyPrev, pdsCookie: this.pdsCookie);*/
+
+    final response = await libRequest(postUrl,
+        isPost: true, body: body, pdsCookie: this.pdsCookie);
+
+    // Logger().i('odeio este prev', responsePrev.body);
+    Logger().i('odeio este curso', response.body);
+    return 0;
   }
 
   /**
@@ -361,7 +399,9 @@ class Library implements LibraryInterface {
 
   // Gets the Html of a get Request to Url with or without cookies
   static Future<http.Response> getHtml(String url,
-      {List<Cookie> cookies = null}) async {
+      {List<Cookie> cookies = null,
+      bool isPost = false,
+      Object body = null}) async {
     final Map<String, String> headers = Map<String, String>();
     if (cookies != null) {
       headers['cookie'] = '';
@@ -371,8 +411,9 @@ class Library implements LibraryInterface {
       }
     }
 
-    final http.Response response =
-        await http.get(url.toUri(), headers: headers);
+    final http.Response response = isPost
+        ? await http.post(url.toUri(), headers: headers, body: body)
+        : await http.get(url.toUri(), headers: headers);
 
     if (response.statusCode == 200) {
       return response;
