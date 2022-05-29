@@ -20,6 +20,8 @@ class Book {
   String isbnCode;
   List<String> themes;
 
+  String docNumber;
+
   Book(
       {this.title,
       this.author,
@@ -35,7 +37,8 @@ class Book {
       this.imageURL,
       this.documentType,
       this.isbnCode,
-      this.themes});
+      this.themes,
+      this.docNumber});
 
   String getUnitsText() {
     if (unitsAvailable == 1) return '1 unidade';
@@ -46,7 +49,7 @@ class Book {
   String toString() {
     return '''$title - $author - $editor - $releaseYear - $language - $country - \
       $unitsAvailable - $totalUnits - $hasPhysicalVersion - $hasDigitalVersion - \
-      $digitalURL - $imageURL - $documentType - $isbnCode - $themes''';
+      $digitalURL - $imageURL - $documentType - $isbnCode - $themes - $docNumber''';
   }
 
   @override
@@ -68,7 +71,8 @@ class Book {
           digitalURL == other.digitalURL &&
           imageURL == other.imageURL &&
           documentType == other.documentType &&
-          isbnCode == other.isbnCode;
+          isbnCode == other.isbnCode &&
+          docNumber == other.docNumber;
 
   @override
   int get hashCode =>
@@ -86,5 +90,6 @@ class Book {
       digitalURL.hashCode ^
       imageURL.hashCode ^
       documentType.hashCode ^
-      isbnCode.hashCode;
+      isbnCode.hashCode ^
+      docNumber.hashCode;
 }

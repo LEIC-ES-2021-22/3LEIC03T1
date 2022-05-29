@@ -176,7 +176,7 @@ class BookDetailsWidget extends StatelessWidget {
   bookActionButtons(BuildContext context, Book book) {
     final List<Widget> buttons = <Widget>[];
 
-    if (book.unitsAvailable > 0) {
+    if (book.unitsAvailable <= 0) {
       buttons.add(
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -335,6 +335,6 @@ class BookDetailsWidget extends StatelessWidget {
 
   Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
       context: context,
-      builder: (context) => bookReservationDialog(book: this.book)
+      builder: (context) => BookReservationDialog(book: this.book)
   );
 }

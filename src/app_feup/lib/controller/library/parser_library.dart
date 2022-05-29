@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
@@ -45,7 +46,7 @@ class ParserLibrary implements ParserLibraryInterface {
       'year': '',
       'isbn': '',
       'digitalURL': '',
-      'themes': []
+      'themes': List<String>.empty()
     };
 
     // get all the information tags
@@ -95,6 +96,7 @@ class ParserLibrary implements ParserLibraryInterface {
             bookDetails['digitalURL'] = digitalUrl;
             break;
           }
+        case 'assunto':
         case 'assunto(s)':
           {
             // it has at least 1 theme
@@ -111,6 +113,14 @@ class ParserLibrary implements ParserLibraryInterface {
               currIdx += 2;
               elemInfo = elements.elementAt(currIdx).text.trim();
             }
+            break;
+          }
+        case 'link partilhável':
+          {
+            final String docNumPattern = 'doc_number=';
+            bookDetails['docNumber'] = info.substring(
+                info.indexOf(docNumPattern) + docNumPattern.length,
+                info.indexOf('&local_base='));
             break;
           }
       }
@@ -257,6 +267,7 @@ class ParserLibrary implements ParserLibraryInterface {
         documentType: documentType,
         isbnCode: bookIsbn,
         themes: List<String>.from(bookDetailsMap['themes']),
+        docNumber: bookDetailsMap['docNumber'],
       );
 
       booksList.add(book);
@@ -360,7 +371,8 @@ class ParserLibrary implements ParserLibraryInterface {
                   ? gBookUrl(bookDetails['isbn'])
                   : '',
               isbnCode: bookDetails['isbn'],
-              themes: bookDetails['themes']));
+              themes: bookDetails['themes'],
+              docNumber: docNumber));
 
       reservations.add(bookReservation);
     }
