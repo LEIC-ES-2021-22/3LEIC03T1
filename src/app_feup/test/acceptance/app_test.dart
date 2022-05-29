@@ -3,6 +3,7 @@ import 'package:flutter_gherkin/flutter_gherkin.dart';
 import 'package:gherkin/gherkin.dart';
 import 'package:glob/glob.dart';
 
+import 'steps/first_widget.dart';
 import 'steps/navigate.dart';
 
 Future<void> main() {
@@ -13,9 +14,10 @@ Future<void> main() {
       TestRunSummaryReporter(),
       JsonReporter(path: 'test/acceptance/report.json')
     ]
-    ..stepDefinitions = [navigate()]
+    ..stepDefinitions = [navigate(), firstWidget()]
     ..customStepParameterDefinitions = []
     ..restartAppBetweenScenarios = true
-    ..targetAppPath = 'test/acceptance/app.dart';
+    ..targetAppPath = 'test/acceptance/app.dart'
+    ..defaultTimeout = Duration(seconds: 60);
   return GherkinRunner().execute(config);
 }

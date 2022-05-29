@@ -88,6 +88,16 @@
 | *Normal flow* | 1. The UP member accesses the book reservation details page. <br> 2. The UP member clicks the *Renew Reservation* button. <br> 3. The application displays a confirmation pop-up. <br> 4. The user clicks in the confirm button of the pop-up. <br> 5. The user is redirected to the Reservation History page.
 | *Alternative flows and exceptions* | 1. [Library API Error] If the Library API returns any error in the results, a warning with the error’s description will be displayed to the user, the reservation will not be renewed and step 5 of the normal flow will not be executed |
 
+|||
+| --- | --- |
+| *Name* | Login |
+| *Actor* |  UP Member | 
+| *Description* | The UP member can login in the application |
+| *Preconditions* | - The UP member has a valid UP account |
+| *Postconditions* | - The UP member is logged in |
+| *Normal flow* | 1. The UP member opens the application. <br> 2. The UP member is greeted with the login form. <br> 3. The UP member fills the form with their credentials. <br> 4. The UP member clicks in the login button. <br> 5. The UP member is redirected to the application's main page.
+| *Alternative flows and exceptions* | 1. [API Error] If the UP member inserted wrong credentials, a warning will be displayed and the application will ask for new credentials |
+
 ### Domain model
 
  <p align="center" justify="center">
