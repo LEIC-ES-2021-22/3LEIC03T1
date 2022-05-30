@@ -32,40 +32,71 @@ class ReservationDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String pickupLoc = '${this.reservation.pickupLocation}'.toUpperCase();
     return Stack(
       children: [
         Container(
-          height: vs(138, context),
-          width: MediaQuery.of(context).size.width,
-          color: Colors.black12,
+          height: vs(220, context),
+          width: hs(MediaQuery.of(context).size.width, context),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(3),
+                  topRight: Radius.circular(3),
+                  bottomLeft: Radius.circular(7),
+                  bottomRight: Radius.circular(7)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 10,
+                  offset: Offset(hs(4, context),
+                      vs(3, context)), // changes position of shadow
+                ),
+              ]),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(hs(15, context), vs(20, context),
+                hs(0, context), vs(0, context)),
             child: Text(
               'Detalhes da Reserva',
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.fade,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 18,
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
+          padding: EdgeInsets.fromLTRB(hs(20, context), vs(80, context),
+              hs(0, context), vs(30, context)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
                 tag: this.reservation.book.title,
-                child: Image.network(
-                  this.reservation.book.imageURL,
-                  width: hs(60, context),
-                  height: vs(80, context),
-                  fit: BoxFit.fill,
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 2,
+                        offset: Offset(2,2), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Image.network(
+                    this.reservation.book.imageURL,
+                    width: hs(80, context),
+                    height: vs(145, context),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
+                  padding: EdgeInsets.fromLTRB(hs(7, context), vs(10, context),
+                      hs(7, context), vs(0, context)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: this
@@ -77,14 +108,16 @@ class ReservationDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(150, 105, 15, 0),
+          padding: EdgeInsets.fromLTRB(hs(150, context), vs(105, context),
+              hs(15, context), vs(0, context)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: reservationActionButtons(context, this.reservation),
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
+          padding: EdgeInsets.fromLTRB(hs(10, context), vs(260, context),
+              hs(60, context), vs(0, context)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +134,7 @@ class ReservationDetailsWidget extends StatelessWidget {
                   Text(
                     'Data de aquisição: \n${this.reservation.getAcquisitionDate()}',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                   SizedBox(
@@ -110,16 +143,16 @@ class ReservationDetailsWidget extends StatelessWidget {
                   Text(
                     'Data de devolução: \n${this.reservation.getReturnDate()}',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                   SizedBox(
                     height: vs(15, context),
                   ),
                   Text(
-                    'Local de Levantamento: \n${this.reservation.pickupLocation}',
+                    'Local de Levantamento: \n${pickupLoc}',
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -139,7 +172,7 @@ class ReservationDetailsWidget extends StatelessWidget {
                           Text(
                             'Nº Reserva :\n${this.reservation.reservationNumber}',
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           ),
                           SizedBox(
@@ -148,7 +181,7 @@ class ReservationDetailsWidget extends StatelessWidget {
                           Text(
                             'Devolução: \n${this.reservation.getDateIndicator()}',
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           ),
                         ]),
@@ -166,11 +199,11 @@ class ReservationDetailsWidget extends StatelessWidget {
 
     headerInfo.add(Text(
       reservation.book.title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0),
     ));
-    headerInfo.add(SizedBox(height: vs(6, context)));
+    headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(Text(reservation.book.author));
-    headerInfo.add(SizedBox(height: vs(6, context)));
+    headerInfo.add(SizedBox(height: vs(20, context)));
     headerInfo.add(Text(
       '${toString(reservation.status)}',
       style: TextStyle(color: reservation.getStatusColor()),
@@ -185,7 +218,8 @@ class ReservationDetailsWidget extends StatelessWidget {
     if (reservation.book.unitsAvailable != null &&
         reservation.book.unitsAvailable > 0) {
       buttons.add(ElevatedButton(
-        style: ElevatedButton.styleFrom(minimumSize: Size(50, 40)),
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size(hs(50, context), vs(40, context))),
         onPressed: () {
           //TODO: GoToReservationPage but with information from the current reservation
         },
@@ -196,7 +230,7 @@ class ReservationDetailsWidget extends StatelessWidget {
     if (reservation.book.hasDigitalVersion) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(40, 40),
+          minimumSize: Size(hs(50, context), vs(40, context)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
           ),
