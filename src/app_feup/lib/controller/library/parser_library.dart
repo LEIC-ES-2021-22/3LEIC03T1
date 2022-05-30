@@ -229,8 +229,9 @@ class ParserLibrary implements ParserLibraryInterface {
         units = rows.elementAt(unitsIdx).firstChild.text.trim();
         units = units.substring(units.indexOf('(') + '('.length);
         totalUnits = int.parse(units.substring(0, units.indexOf('/')));
-        unitsAvailable = int.parse(
-            units.substring(units.indexOf('/') + 1, units.length - 1));
+        unitsAvailable = totalUnits -
+            int.parse(
+                units.substring(units.indexOf('/') + 1, units.length - 1));
       }
 
       final String bookDetailsHtml = rows.elementAt(bookDetailsIdx).innerHtml;
@@ -403,7 +404,7 @@ class ParserLibrary implements ParserLibraryInterface {
                   : '',
               isbnCode: bookDetails['isbn'],
               themes: bookDetails['themes'],
-              docNumber: docNumber));
+              docNumber: bookDetailsReference));
 
       reservations.add(bookReservation);
     }
@@ -411,9 +412,6 @@ class ParserLibrary implements ParserLibraryInterface {
     return reservations;
   }
 
-  /**
-   * 
-   */
   Future<Map<String, dynamic>> parseLoanDetails(http.Response response) async {
     final document = parse(utf8.decode(response.bodyBytes));
 
@@ -447,5 +445,22 @@ class ParserLibrary implements ParserLibraryInterface {
         .text;
 
     return bookDetails;
+  }
+
+  @override
+  Future<String> parseReservationError(http.Response response) {
+    final Document document = parse(utf8.decode(response.bodyBytes));
+    final Element error = document.querySelector('.feedbackbar');
+
+    if (error == null ||
+        error.innerHtml
+            .replaceAll(' ', '')
+            .replaceAll('&nbsp;', '')
+            .replaceAll('\n', '')
+            .isEmpty) {
+      return Future.value(''); // Empty when there is no error
+    } else {
+      return Future.value(error.text);
+    }
   }
 }
