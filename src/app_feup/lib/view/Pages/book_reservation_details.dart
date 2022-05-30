@@ -97,7 +97,7 @@ class ReservationDetailsWidget extends StatelessWidget {
                           //size: Size.fromRadius(55), // Image radius
                           child: Image.network(
                             this.reservation.book.imageURL,
-                            width: hs(80, context),
+                            width: hs(90, context),
                             height: vs(145, context),
                             fit: BoxFit.fill,
                           ))),
