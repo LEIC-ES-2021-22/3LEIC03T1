@@ -5,6 +5,7 @@ import 'package:uni/controller/library/library.dart';
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/utils/methods.dart';
+import 'package:redux/redux.dart';
 
 class BookReservationDialog extends StatefulWidget {
   BookReservationDialog({Key key, @required this.book}) : super(key: key);
@@ -29,6 +30,7 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isButtonTapped = false;
+  String catalogError = '';
   final Book book;
 
   _BookReservationDialogState({@required this.book});
@@ -156,6 +158,22 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
   List<Widget> createFormField() {
     final List<Widget> formWidgets = [];
 
+    if (catalogError != '') {
+      formWidgets.add(
+        Text(
+          'Occorreu um erro :(',
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+      formWidgets.add(SizedBox(height: 5));
+      formWidgets.add(
+        Text(
+          'Por favor, tente reservar em catalogo.up.pt',
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
     formWidgets.add(_buildBeginDateField());
     formWidgets.add(SizedBox(
       height: 15,
@@ -184,14 +202,14 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
         padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: _isButtonTapped
             ? Container(
-            padding: EdgeInsets.all(22.0),
-            child: Center(child: CircularProgressIndicator()))
+                padding: EdgeInsets.all(22.0),
+                child: Center(child: CircularProgressIndicator()))
             : Form(
-          key: _formKey,
-          child: ListView(
-            children: createFormField(),
-          ),
-        ),
+                key: _formKey,
+                child: ListView(
+                  children: createFormField(),
+                ),
+              ),
       ),
       actions: [
         TextButton(
@@ -212,19 +230,24 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
     });
 
     _formKey.currentState.save();
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
 
     final Library library = await Library.create(
-        store: StoreProvider.of<AppState>(context),
-        pdsCookie: StoreProvider.of<AppState>(context)
+        store: store, pdsCookie: store
             .state
             .content['catalogPdsCookie']);
 
-    await library.reserveBook(beginDate, endDate, notes, isUrgent, book);
+    final String error = await library.reserveBook(
+      beginDate, endDate, notes, isUrgent, book
+    );
 
-    Navigator.of(context).pop();
+    if (error == '') {
+      Navigator.of(context).pop();
+    }
 
     setState(() {
       _isButtonTapped = false;
+      catalogError = error;
     });
   }
 }

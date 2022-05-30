@@ -153,7 +153,7 @@ class Library implements LibraryInterface {
   }
 
   @override
-  Future<int> reserveBook(String beginDate, String endDate, String notes,
+  Future<String> reserveBook(String beginDate, String endDate, String notes,
       bool isUrgent, Book book) async {
     final List<String> fromParams = beginDate.split('-');
     final List<String> toParams = endDate.split('-');
@@ -172,26 +172,14 @@ class Library implements LibraryInterface {
     body['note1'] = notes ?? '';
     body['rush_request'] = isUrgent ? 'Sim' : 'Não';
 
-    /*final Map<String, dynamic> bodyPrev = Map();
-    bodyPrev['func'] = 'item-hold-request-b';
-    bodyPrev['doc_library'] = libraryFacCodes[faculty];
-    bodyPrev['adm_doc_number'] = book.docNumber;
-    bodyPrev['sub_library'] = faculty.toUpperCase();
-    bodyPrev['pickup'] = faculty.toUpperCase();
-    bodyPrev['from'] = fromDate;
-    bodyPrev['to'] = toDate;
-    bodyPrev['note1'] = notes ?? '';
-    bodyPrev['rush_request'] = isUrgent ? 'Sim' : 'Não';
-
-    final responsePrev = await libRequestWithAleph(postUrl,
-        isPost: true, body: bodyPrev, pdsCookie: this.pdsCookie);*/
-
     final response = await libRequest(postUrl,
-        isPost: true, body: body, pdsCookie: this.pdsCookie);
+        isPost: true,
+        body: body,
+        pdsCookie: this.pdsCookie,
+        alephCookie: this.store.state.content['catalogAlephCookie']);
 
-    // Logger().i('odeio este prev', responsePrev.body);
-    Logger().i('odeio este curso', response.body);
-    return 0;
+    final ParserLibraryInterface parserLibrary = ParserLibrary();
+    return parserLibrary.parseReservationError(response);
   }
 
   /**
