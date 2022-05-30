@@ -10,8 +10,10 @@ AppState appReducers(AppState state, dynamic action) {
     return setCatalogLoginStatus(state, action);
   } else if (action is SetLoginStatusAction) {
     return setLoginStatus(state, action);
-  } else if (action is SaveCatalogLoginDataAction) {
-    return setCatalogLoginCookie(state, action);
+  } else if (action is SaveCatalogPdsCookie) {
+    return setCatalogPdsCookie(state, action);
+  } else if (action is SaveCatalogAlephCookie) {
+    return setCatalogAlephCookie(state, action);
   } else if (action is SetExamsAction) {
     return setExams(state, action);
   } else if (action is SetExamsStatusAction) {
@@ -74,6 +76,10 @@ AppState appReducers(AppState state, dynamic action) {
     return setUserFaculties(state, action);
   } else if (action is SetRestaurantsAction) {
     return setRestaurantsAction(state, action);
+  } else if (action is SetCatalogReservations) {
+    return setCatalogReservations(state, action);
+  } else if (action is SetCatalogReservationsStatus) {
+    return setCatalogReservationsStatus(state, action);
   }
   return state;
 }
@@ -88,10 +94,14 @@ AppState setLoginStatus(AppState state, SetLoginStatusAction action) {
   return state.cloneAndUpdateValue('loginStatus', action.status);
 }
 
-AppState setCatalogLoginCookie(
-    AppState state, SaveCatalogLoginDataAction action) {
-  Logger().i('setting catalog state: ' + action.cookie.toString());
-  return state.cloneAndUpdateValue('catalogLoginCookie', action.cookie);
+AppState setCatalogPdsCookie(AppState state, SaveCatalogPdsCookie action) {
+  Logger().i('setting catalog pds cookie: ' + action.cookie.toString());
+  return state.cloneAndUpdateValue('catalogPdsCookie', action.cookie);
+}
+
+AppState setCatalogAlephCookie(AppState state, SaveCatalogAlephCookie action) {
+  Logger().i('setting catalog aleph cookie: ' + action.cookie.toString());
+  return state.cloneAndUpdateValue('catalogAlephCookie', action.cookie);
 }
 
 AppState setCatalogLoginStatus(
@@ -255,4 +265,15 @@ AppState setExamFilter(AppState state, SetExamFilter action) {
 AppState setUserFaculties(AppState state, SetUserFaculties action) {
   Logger().i('setting user faculty(ies) ' + action.faculties.toString());
   return state.cloneAndUpdateValue('userFaculties', action.faculties);
+}
+
+AppState setCatalogReservations(AppState state, SetCatalogReservations action) {
+  Logger().i('setting reservations: ' + action.reservations.length.toString());
+  return state.cloneAndUpdateValue('catalogReservations', action.reservations);
+}
+
+AppState setCatalogReservationsStatus(
+    AppState state, SetCatalogReservationsStatus action) {
+  Logger().i('setting reservations: ' + action.status.toString());
+  return state.cloneAndUpdateValue('catalogReservationsStatus', action.status);
 }

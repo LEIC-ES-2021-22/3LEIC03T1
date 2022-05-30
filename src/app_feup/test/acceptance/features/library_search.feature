@@ -8,4 +8,4 @@ Feature: Library Search
     And I tap the "search" icon
     And I wait until the widget of type "CircularProgressIndicator" is absent
     Then I expect the text "C++" to be present
-    # Replace this test with another one, this is impossible to test properly
+    # There's something preventing us from comparing the book titles
