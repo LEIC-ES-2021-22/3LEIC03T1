@@ -312,6 +312,6 @@ class BookDetailsWidget extends StatelessWidget {
 
   Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
       context: context,
-      builder: (context) => bookReservationDialog(book: this.book)
+      builder: (context) => BookReservationDialog(book: this.book)
   );
 }
