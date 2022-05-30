@@ -30,15 +30,31 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
+    final borderRadius = BorderRadius.circular(3);
     return Stack(
       children: [
         Container(
-          height: vs(240.0, context),
-          width: MediaQuery.of(context).size.width,
-          color: Colors.black12,
+          height: vs(230.0, context),
+          width: hs(MediaQuery.of(context).size.width, context),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(2),
+                  topRight: Radius.circular(2),
+                  bottomLeft: Radius.circular(6),
+                  bottomRight: Radius.circular(6)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 10,
+                  offset: Offset(hs(4, context),
+                      vs(3, context)), // changes position of shadow
+                ),
+              ]),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 17, 0, 0),
+            padding: EdgeInsets.fromLTRB(hs(15, context), vs(25, context),
+                hs(0, context), vs(0, context)),
             child: Text(
               'Detalhes do Livro',
               overflow: TextOverflow.ellipsis,
@@ -49,22 +65,46 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 65, 0, 0),
+          padding: EdgeInsets.fromLTRB(
+              hs(20, context), vs(82, context), hs(0, context), vs(0, context)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
                   tag: book.title,
-                  child: Image.network(
-                    this.book.imageURL == null? 'assets/images/book_placeholder.png' :  this.book.imageURL,
-                    width: hs(100, context),
-                    height: vs(150, context),
-                    fit: BoxFit.fill,
-                  ),
-              ),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 4,
+                            blurRadius: 2,
+                            offset: Offset(2, 2), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                          borderRadius: borderRadius,
+                          child: SizedBox.fromSize(
+                            //size: Size.fromRadius(55), // Image radius
+                            child: Image.network(
+                              this.book.imageURL == null
+                                  ? 'assets/images/book_placeholder.png'
+                                  : this.book.imageURL,
+                              width: hs(100, context),
+                              height: vs(154, context),
+                              fit: BoxFit.fill,
+                            ),
+                          )))),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  padding: EdgeInsets.fromLTRB(hs(15, context), vs(0, context),
+                      hs(15, context), vs(0, context)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: this.createBookHeaderInfo(context, this.book),
@@ -75,37 +115,38 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(150, 240, 15, 0),
-          child: Row (
+          padding: EdgeInsets.fromLTRB(hs(150, context), vs(180, context),
+              hs(15, context), vs(0, context)),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: bookActionButtons(context, this.book),
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(30, 305, 30, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: this.createBookDetails(context, this.book),
-          )
-        ),
+            padding: EdgeInsets.fromLTRB(hs(30, context), vs(260, context),
+                hs(30, context), vs(0, context)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: this.createBookDetails(context, this.book),
+            )),
       ],
     );
   }
 
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
-
-    themes.add(
-        Text(
+    themes.add(SizedBox(
+      height: vs(20, context),
+    ));
+    themes.add(Text(
       'Temas',
       style: const TextStyle(
-        fontSize: 18,
-        ),
+        fontSize: 14,
       ),
-    );
+    ));
 
     themes.add(SizedBox(
-      height: vs(18, context),
+      height: vs(20, context),
     ));
 
     if (book.themes != null && book.themes.isNotEmpty) {
@@ -114,13 +155,14 @@ class BookDetailsWidget extends StatelessWidget {
           Text('\u2022  ${book.themes[i]}'),
         );
         themes.add(
-          SizedBox(
-            height: vs(8, context)
-          ),
+          SizedBox(height: vs(8, context)),
         );
       }
     } else {
-      themes.add(Text('Não existem temas disponíveis'));
+      themes.add(Text('Não existem temas disponíveis',
+          style: const TextStyle(
+            fontSize: 14,
+          )));
     }
 
     return themes;
@@ -131,19 +173,18 @@ class BookDetailsWidget extends StatelessWidget {
 
     headerInfo.add(
       Container(
-        height: 80,
+        height: vs(80, context),
         child: Text(
           book.title,
           overflow: TextOverflow.fade,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 17.0),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
         ),
       ),
     );
     headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(
       Container(
-        height: 40,
+        height: vs(30, context),
         child: Text(
           book.author,
           overflow: TextOverflow.fade,
@@ -151,7 +192,6 @@ class BookDetailsWidget extends StatelessWidget {
       ),
     );
     headerInfo.add(SizedBox(height: vs(12, context)));
-
 
     var totalUnits = '';
     if (book.totalUnits != null) {
@@ -161,14 +201,14 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
         headerInfo.add(Text(
-            '${book.unitsAvailable} ${totalUnits} unidade disponível',
-            style: TextStyle(color: Colors.red[700]),
+          '${book.unitsAvailable} ${totalUnits} unidade disponível',
+          style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
         headerInfo.add(Text(
-              '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
-              style: TextStyle(color: Colors.black),
-          ));
+          '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
+          style: TextStyle(color: Colors.black),
+        ));
       } else {
         headerInfo.add(Text(
           'Nenhuma unidade disponível',
@@ -185,42 +225,35 @@ class BookDetailsWidget extends StatelessWidget {
   }
 
   bookActionButtons(BuildContext context, Book book) {
-
     final List<Widget> buttons = <Widget>[];
 
     if (book.unitsAvailable != null && book.unitsAvailable <= 0) {
-      buttons.add(
-          ElevatedButton(
-            key: Key('reserveBook'),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(90, 45)
-            ),
-            onPressed: () {
-              openBookReservationDialog(context, book);
-            },
-            child: Text('RESERVAR'),
-          )
-      );
+      buttons.add(ElevatedButton(
+        key: Key('reserveBook'),
+        style: ElevatedButton.styleFrom(minimumSize: Size(90, 45)),
+        onPressed: () {
+          openBookReservationDialog(context, book);
+        },
+        child: Text('RESERVAR'),
+      ));
     }
 
     if (book.hasDigitalVersion) {
-      buttons.add(
-          ElevatedButton(
-            key: Key('downloadButton'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(50, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-            ),
-            onPressed: () async {
-              await launch(book.digitalURL);
-            },
-            child: Icon(
-              Icons.download_sharp,
-            ),
-          )
-      );
+      buttons.add(ElevatedButton(
+        key: Key('downloadButton'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(50, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+        ),
+        onPressed: () async {
+          await launch(book.digitalURL);
+        },
+        child: Icon(
+          Icons.download_sharp,
+        ),
+      ));
     }
     return buttons;
   }
@@ -229,6 +262,8 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> bookDetailsRight = <Widget>[];
 
     if (this.book.language != null && this.book.language.isNotEmpty) {
+      //headerInfo.add(SizedBox(height: vs(8, context)));
+      bookDetailsRight.add(SizedBox(width: hs(20, context)));
       bookDetailsRight.add(
         Icon(
           Icons.language,
@@ -246,7 +281,7 @@ class BookDetailsWidget extends StatelessWidget {
         Text(
           '${this.book.language}',
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 12,
           ),
         ),
       );
@@ -258,21 +293,16 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookDetails(BuildContext context, Book book) {
     final List<Widget> bookDetails = <Widget>[];
 
-    bookDetails.add(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: this.createBookThemes(context, this.book),
-        )
-    );
+    bookDetails.add(Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: this.createBookThemes(context, this.book),
+    ));
 
-    bookDetails.add(
-        SizedBox(
-          height: vs(45,context),
-        )
-    );
+    bookDetails.add(SizedBox(
+      height: vs(45, context),
+    ));
 
     if (this.book.language != null && this.book.language.isNotEmpty) {
-
       bookDetails.add(
         Row(
           children: [
@@ -286,7 +316,7 @@ class BookDetailsWidget extends StatelessWidget {
             Text(
               '${this.book.language}',
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 12,
               ),
             ),
           ],
@@ -298,16 +328,14 @@ class BookDetailsWidget extends StatelessWidget {
           height: vs(20, context),
         ),
       );
-
     }
-
 
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetails.add(
         Text(
           'Ano: ${this.book.releaseYear}',
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 12,
           ),
         ),
       );
@@ -324,7 +352,7 @@ class BookDetailsWidget extends StatelessWidget {
         Text(
           'Editor: ${this.book.editor}',
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 12,
           ),
         ),
       );
@@ -341,7 +369,7 @@ class BookDetailsWidget extends StatelessWidget {
         Text(
           'ISBN: ${this.book.isbnCode}',
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 12,
           ),
         ),
       );
@@ -350,8 +378,8 @@ class BookDetailsWidget extends StatelessWidget {
     return bookDetails;
   }
 
-  Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
-      context: context,
-      builder: (context) => BookReservationDialog(book: this.book)
-  );
+  Future openBookReservationDialog(BuildContext context, Book book) =>
+      showDialog(
+          context: context,
+          builder: (context) => BookReservationDialog(book: this.book));
 }

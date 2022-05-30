@@ -33,6 +33,7 @@ class ReservationDetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String pickupLoc = '${this.reservation.pickupLocation}'.toUpperCase();
+    final borderRadius = BorderRadius.circular(3); 
     return Stack(
       children: [
         Container(
@@ -41,10 +42,10 @@ class ReservationDetailsWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(3),
-                  topRight: Radius.circular(3),
-                  bottomLeft: Radius.circular(7),
-                  bottomRight: Radius.circular(7)),
+                  topLeft: Radius.circular(2),
+                  topRight: Radius.circular(2),
+                  bottomLeft: Radius.circular(6),
+                  bottomRight: Radius.circular(6)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12.withOpacity(0.5),
@@ -68,7 +69,7 @@ class ReservationDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(hs(20, context), vs(80, context),
-              hs(0, context), vs(30, context)),
+              hs(30, context), vs(30, context)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -76,26 +77,35 @@ class ReservationDetailsWidget extends StatelessWidget {
                 tag: this.reservation.book.title,
                 child: Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                        bottomRight: Radius.circular(8)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 4,
                         blurRadius: 2,
-                        offset: Offset(2,2), // changes position of shadow
+                        offset: Offset(2, 2), // changes position of shadow
                       ),
                     ],
                   ),
-                  child: Image.network(
-                    this.reservation.book.imageURL,
-                    width: hs(80, context),
-                    height: vs(145, context),
-                    fit: BoxFit.fill,
-                  ),
+                  child: ClipRRect(
+                      borderRadius: borderRadius,
+                      child: SizedBox.fromSize(
+                          //size: Size.fromRadius(55), // Image radius
+                          child: Image.network(
+                            this.reservation.book.imageURL,
+                            width: hs(80, context),
+                            height: vs(145, context),
+                            fit: BoxFit.fill,
+                          ))),
                 ),
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(hs(7, context), vs(10, context),
+                  padding: EdgeInsets.fromLTRB(hs(15, context), vs(10, context),
                       hs(7, context), vs(0, context)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
