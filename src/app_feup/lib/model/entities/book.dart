@@ -42,6 +42,7 @@ class Book {
 
   String getUnitsText() {
     if (unitsAvailable == 1) return '1 unidade';
+    if (unitsAvailable == 0) return 'Apenas por reserva';
     return '$unitsAvailable unidades';
   }
 
