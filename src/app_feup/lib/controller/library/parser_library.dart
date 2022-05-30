@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:logger/logger.dart';
 import 'package:uni/controller/library/library.dart';
 import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/controller/library/parser_library_interface.dart';
@@ -222,8 +221,8 @@ class ParserLibrary implements ParserLibraryInterface {
 
       String units = rows.elementAt(unitsIdx).innerHtml.trim();
 
-      int unitsAvailable = 0;
-      int totalUnits = 0;
+      int unitsAvailable;
+      int totalUnits;
       if (units != '<br>' && units != '') {
         // has content so lets get the faculty. If has more than 1, we're getting
         // just the first one
@@ -260,7 +259,8 @@ class ParserLibrary implements ParserLibraryInterface {
         country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
-        hasPhysicalVersion: totalUnits > 0 || unitsAvailable > 0 ? true : false,
+        hasPhysicalVersion: (totalUnits != null && totalUnits > 0) ||
+            (unitsAvailable != null && unitsAvailable > 0),
         hasDigitalVersion: hasDigitalVersion,
         digitalURL: digitalURL,
         imageURL: bookImageUrl,

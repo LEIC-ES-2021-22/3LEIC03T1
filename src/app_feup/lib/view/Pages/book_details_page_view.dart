@@ -169,6 +169,11 @@ class BookDetailsWidget extends StatelessWidget {
           style: TextStyle(color: Colors.red[900]),
         ));
       }
+    } else {
+      headerInfo.add(Text(
+        'Disponibilidade desconhecida',
+        style: TextStyle(color: Colors.black),
+      ));
     }
     return headerInfo;
   }
@@ -176,7 +181,7 @@ class BookDetailsWidget extends StatelessWidget {
   bookActionButtons(BuildContext context, Book book) {
     final List<Widget> buttons = <Widget>[];
 
-    if (book.unitsAvailable <= 0) {
+    if (book.unitsAvailable != null && book.unitsAvailable <= 0) {
       buttons.add(
           ElevatedButton(
             style: ElevatedButton.styleFrom(
