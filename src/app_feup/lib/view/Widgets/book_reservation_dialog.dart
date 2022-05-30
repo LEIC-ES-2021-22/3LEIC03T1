@@ -54,7 +54,8 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          final String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+          final String formattedDate =
+              DateFormat('dd-MM-yyyy').format(pickedDate);
 
           setState(() {
             beginDateController.text =
@@ -94,7 +95,8 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
             lastDate: DateTime(DateTime.now().year + 1));
 
         if (pickedDate != null) {
-          final String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+          final String formattedDate =
+              DateFormat('dd-MM-yyyy').format(pickedDate);
 
           setState(() {
             endDateController.text =
@@ -124,7 +126,6 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
   }
 
   Widget _buildIsUrgentField() {
-
     return CheckboxListTile(
       title: Text('Urgent'),
       controlAffinity: ListTileControlAffinity.leading,
@@ -148,11 +149,17 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
     final List<Widget> formWidgets = [];
 
     formWidgets.add(_buildBeginDateField());
-    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(SizedBox(
+      height: 15,
+    ));
     formWidgets.add(_buildEndDateField());
-    formWidgets.add(SizedBox(height: 50,));
+    formWidgets.add(SizedBox(
+      height: 50,
+    ));
     formWidgets.add(_buildNotesField());
-    formWidgets.add(SizedBox(height: 15,));
+    formWidgets.add(SizedBox(
+      height: 15,
+    ));
     formWidgets.add(_buildIsUrgentField());
 
     return formWidgets;
@@ -161,34 +168,47 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Center(child: Text('Reserva do Livro')),
-        content: Container(
-          constraints: BoxConstraints(maxHeight: 370),
-          height: vs(350.0, context),
-          width: hs(250.0, context),
-          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-                  children: createFormField(),
-                ),
+      title: Center(child: Text('Reserva do Livro')),
+      content: Container(
+        constraints: BoxConstraints(maxHeight: 370),
+        height: vs(350.0, context),
+        width: hs(250.0, context),
+        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: createFormField(),
           ),
         ),
-        actions: [
-          TextButton(
-            child: Text('ENVIAR'),
-            onPressed: () {
-              if (!_formKey.currentState.validate()) {
-                return;
-              }
+      ),
+      actions: [
+        TextButton(
+          child: Text('SUBMIT'),
+          onPressed: () {
+            if (!_formKey.currentState.validate()) {
+              return;
+            }
 
-              _formKey.currentState.save();
+            _formKey.currentState.save();
 
-              //TODO: Book Reservation Logic
-              Navigator.of(context).pop();
-            },
-          )
-        ],
-      );
+            //TODO: Book Reservation Logic
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text('CANCEL'),
+          onPressed: () {
+            if (!_formKey.currentState.validate()) {
+              return;
+            }
+
+            _formKey.currentState.save();
+
+            //TODO: Book Reservation Logic
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+    );
   }
 }
