@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
-<<<<<<< HEAD
 import 'package:uni/view/Widgets/book_reservation_dialog.dart';
-=======
->>>>>>> master
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
 
@@ -33,18 +30,11 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     
     return Stack(
       children: [
         Container(
           height: vs(240.0, context),
-=======
-    return Stack(
-      children: [
-        Container(
-          height: vs(200.0, context),
->>>>>>> master
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
@@ -64,7 +54,6 @@ class BookDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-<<<<<<< HEAD
                   tag: book.title,
                   child: Image.network(
                     this.book.imageURL == null? 'assets/images/book_placeholder.png' :  this.book.imageURL,
@@ -72,17 +61,6 @@ class BookDetailsWidget extends StatelessWidget {
                     height: vs(150, context),
                     fit: BoxFit.fill,
                   ),
-=======
-                tag: book.title,
-                child: Image.network(
-                  this.book.imageURL == null
-                      ? 'assets/images/book_placeholder.png'
-                      : this.book.imageURL,
-                  width: hs(100, context),
-                  height: vs(150, context),
-                  fit: BoxFit.fill,
-                ),
->>>>>>> master
               ),
               Expanded(
                 child: Padding(
