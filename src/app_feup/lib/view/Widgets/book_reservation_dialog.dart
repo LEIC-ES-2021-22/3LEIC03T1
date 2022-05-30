@@ -182,7 +182,11 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
         height: vs(350.0, context),
         width: hs(250.0, context),
         padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-        child: Form(
+        child: _isButtonTapped
+            ? Container(
+            padding: EdgeInsets.all(22.0),
+            child: Center(child: CircularProgressIndicator()))
+            : Form(
           key: _formKey,
           child: ListView(
             children: createFormField(),
