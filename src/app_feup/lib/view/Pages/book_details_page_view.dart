@@ -200,12 +200,7 @@ class BookDetailsWidget extends StatelessWidget {
               ),
             ),
             onPressed: () async {
-              const url = 'https://flutter.io';
-              if (await canLaunch(url)) {
-                await launch(url);
-              } else {
-                throw 'Could not launch $url';
-              }
+              await launch(book.digitalURL);
             },
             child: Icon(
               Icons.download_sharp,
