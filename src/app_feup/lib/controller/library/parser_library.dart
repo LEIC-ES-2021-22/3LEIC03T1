@@ -334,6 +334,8 @@ class ParserLibrary implements ParserLibraryInterface {
 
         final Map<String, dynamic> reservationDetailsInfo =
             await this.parseLoanDetails(reservationDetailsRes);
+
+        Logger().i("reservationDetailsInfO:", reservationDetailsInfo);
       }
 
       final String reservationNumber = children.elementAt(0).text.trim();
@@ -406,84 +408,36 @@ class ParserLibrary implements ParserLibraryInterface {
    */
   Future<Map<String, dynamic>> parseLoanDetails(http.Response response) async {
     final document = parse(utf8.decode(response.bodyBytes));
-    Logger().i("loan details html:", document.body.text);
 
     final Map<String, dynamic> bookDetails = {
       'reservationDate': '',
       'barcode': ''
     };
 
-    return bookDetails;
-
     // get all the information tags
-    final List<Element> elements = document.querySelectorAll('[class=td1]');
-    int idx = 0;
-    while (idx < elements.length) {
-      // first <td> has the information name, like language, Editor, year ...
-      // Second <td> has its value, the language, year, editor's name ...
-      final Element element = elements.elementAt(idx);
+    final List<Element> tables =
+        document.querySelectorAll('table[cellspacing="2"]');
 
-      String elemInfo = element.text.trim().toLowerCase();
+    final Element loanDetailsTable = tables[0];
+    final Element bookDetailsTable = tables[1];
 
-      String info = elements.elementAt(idx + 1).text.trim();
+    bookDetails['reservationDate'] = loanDetailsTable.children
+        .elementAt(0)
+        .children
+        .elementAt(0)
+        .children
+        .elementAt(1)
+        .text;
 
-      switch (elemInfo) {
-        case 'título':
-          bookDetails['title'] = info;
-          break;
-        case 'autor':
-          bookDetails['author'] = info;
-          break;
-        case 'língua':
-          bookDetails['language'] = info;
-          break;
-        case 'local':
-          bookDetails['local'] = info;
-          break;
-        case 'editor':
-          bookDetails['editor'] = info;
-          break;
-        case 'ano':
-          bookDetails['year'] = info;
-          break;
-        case 'isbn':
-          bookDetails['isbn'] = info;
-          break;
-        case 'Objeto Digital':
-          {
-            final Element elem =
-                document.querySelector('#iconFullText').firstChild;
-            String digitalUrl = elem.attributes['href'];
-            digitalUrl = digitalUrl.substring(
-                digitalUrl.indexOf('javascript:open_window("') +
-                    'javascript:open_window("'.length,
-                digitalUrl.length - 3);
+    final List<Element> bookDetailRows =
+        bookDetailsTable.children.elementAt(0).children;
 
-            bookDetails['digitalURL'] = digitalUrl;
-            break;
-          }
-        case 'assunto(s)':
-          {
-            // it has at least 1 theme
-            bookDetails['themes'] = [elements.elementAt(idx + 1).text.trim()];
+    bookDetails['barcode'] = bookDetailRows
+        .elementAt(bookDetailRows.length - 2)
+        .children
+        .elementAt(1)
+        .text;
 
-            // get next theme
-            int currIdx = idx + 2;
-            elemInfo = elements.elementAt(currIdx).text.trim();
-
-            while (elemInfo == '') {
-              info = elements.elementAt(currIdx + 1).text.trim();
-              // get the theme and add it to the list
-              bookDetails['themes'].add(info);
-              currIdx += 2;
-              elemInfo = elements.elementAt(currIdx).text.trim();
-            }
-            break;
-          }
-      }
-
-      idx += 2;
-    }
     return bookDetails;
   }
 }
