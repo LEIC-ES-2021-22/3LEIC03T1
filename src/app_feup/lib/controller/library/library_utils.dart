@@ -50,6 +50,10 @@ String bookDetailsUrl(String docNumber) {
   return 'https://catalogo.up.pt/F/?func=direct&doc_number=$docNumber';
 }
 
+String urlWithPds(String url, String pdsHandle) {
+  return '$url&pds_handle=$pdsHandle';
+}
+
 final String baseUrl = 'https://catalogo.up.pt/F';
 
 String baseSearchUrl(String query, SearchFilters filters) {
@@ -143,6 +147,6 @@ final Map<String, String> monthToNum = {
  * Receives a Date with the libraries' format and returns a DateTime
  */
 DateTime parseDate(String libraryDate) {
-  final List<String> data = libraryDate.split('/');
+  final List<String> data = libraryDate?.split('/');
   return DateTime.parse(data[2] + '-' + monthToNum[data[1]] + '-' + data[0]);
 }

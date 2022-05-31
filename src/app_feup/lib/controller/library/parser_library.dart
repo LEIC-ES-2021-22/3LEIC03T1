@@ -292,22 +292,28 @@ class ParserLibrary implements ParserLibraryInterface {
 
   @override
   Future<Set<BookReservation>> parseReservations(
-      http.Response response, String faculty, int reservationType) async {
+      http.Response response, String faculty, int reservationType,
+      {Cookie pdsCookie}) async {
     final Document document = parse(utf8.decode(response.bodyBytes));
     final Set<BookReservation> reservations = Set();
 
+    /* IF LOAN -> GET BARCODE FOR BOOK DETAILS
+      ELSE GET DOCNUM FOR BOOKDETAILS
+     */
+
     final List<Element> rows = document.querySelectorAll('#centered');
     final String docNumPattern =
-        reservationType == 0 ? 'doc_number=' : 'loan_number=';
+        reservationType == 2 ? 'loan_number=' : 'doc_number=';
     final String docNumEndPattern =
-        reservationType == 0 ? '&item_sequence=' : '&adm_library=';
+        reservationType == 2 ? '&adm_library=' : '&item_sequence=';
     for (Element row in rows) {
       final List<Element> children = row.parent.children;
 
-      String docNumber = children.elementAt(0).firstChild.attributes['href'];
-      docNumber = docNumber.substring(
-          docNumber.indexOf(docNumPattern) + docNumPattern.length,
-          docNumber.indexOf(docNumEndPattern));
+      String reservationDetailsUrl =
+          children.elementAt(0).firstChild.attributes['href'];
+      final String docNumber = reservationDetailsUrl.substring(
+          reservationDetailsUrl.indexOf(docNumPattern) + docNumPattern.length,
+          reservationDetailsUrl.indexOf(docNumEndPattern));
 
       final String detailsUrl = bookDetailsUrl(docNumber);
 
@@ -317,6 +323,19 @@ class ParserLibrary implements ParserLibraryInterface {
       final Map<String, dynamic> bookDetails =
           await this.parseBookDetailsHtml(detailsResponse);
 
+      // Parse Reservation Details
+      if (reservationType == 1) {
+        reservationDetailsUrl =
+            urlWithPds(reservationDetailsUrl, pdsCookie.value);
+        // change this to >= 1 later on (after parsing gabinetes)
+        Logger().i("ReservationDetailsUrl:", reservationDetailsUrl);
+        final http.Response reservationDetailsRes =
+            await Library.libRequestWithAleph(reservationDetailsUrl);
+
+        final Map<String, dynamic> reservationDetailsInfo =
+            await this.parseLoanDetails(reservationDetailsRes);
+      }
+
       final String reservationNumber = children.elementAt(0).text.trim();
       String author;
       String title;
@@ -325,21 +344,30 @@ class ParserLibrary implements ParserLibraryInterface {
       String endReservationDate;
       ReservationStatus status;
 
+      author = bookDetails['author'];
+      publishYear = bookDetails['year'];
       if (reservationType == 2) {
-        author = bookDetails['author'];
         title = children.elementAt(1).text.trim();
-        publishYear = bookDetails['year'];
         reservationDate = children.elementAt(2).text.trim();
         endReservationDate = children.elementAt(4).text.trim();
         status = ReservationStatus.finished;
       } else if (reservationType == 0) {
-        author = bookDetails['author'];
         title = children.elementAt(1).text.trim();
-        publishYear = bookDetails['year'];
         reservationDate = children.elementAt(2).text.trim();
         endReservationDate = children.elementAt(3).text.trim();
         status = ReservationStatus.pending;
         // TODO Check this value and change it accordingly to catalog output
+      } else if (reservationType == 1) {
+        title = children
+            .elementAt(2)
+            .text
+            .trim(); // TODO: Should we get title from bookDetails?
+        endReservationDate = children.elementAt(3).text.trim();
+        status = ReservationStatus.collected;
+        // TODO Check this value and change it accordingly to catalog output
+
+        // Parse Reservation details to get reservationDate
+        reservationDate = endReservationDate;
       } else {}
 
       final BookReservation bookReservation = BookReservation(
@@ -371,5 +399,91 @@ class ParserLibrary implements ParserLibraryInterface {
     }
 
     return reservations;
+  }
+
+  /**
+   * 
+   */
+  Future<Map<String, dynamic>> parseLoanDetails(http.Response response) async {
+    final document = parse(utf8.decode(response.bodyBytes));
+    Logger().i("loan details html:", document.body.text);
+
+    final Map<String, dynamic> bookDetails = {
+      'reservationDate': '',
+      'barcode': ''
+    };
+
+    return bookDetails;
+
+    // get all the information tags
+    final List<Element> elements = document.querySelectorAll('[class=td1]');
+    int idx = 0;
+    while (idx < elements.length) {
+      // first <td> has the information name, like language, Editor, year ...
+      // Second <td> has its value, the language, year, editor's name ...
+      final Element element = elements.elementAt(idx);
+
+      String elemInfo = element.text.trim().toLowerCase();
+
+      String info = elements.elementAt(idx + 1).text.trim();
+
+      switch (elemInfo) {
+        case 'título':
+          bookDetails['title'] = info;
+          break;
+        case 'autor':
+          bookDetails['author'] = info;
+          break;
+        case 'língua':
+          bookDetails['language'] = info;
+          break;
+        case 'local':
+          bookDetails['local'] = info;
+          break;
+        case 'editor':
+          bookDetails['editor'] = info;
+          break;
+        case 'ano':
+          bookDetails['year'] = info;
+          break;
+        case 'isbn':
+          bookDetails['isbn'] = info;
+          break;
+        case 'Objeto Digital':
+          {
+            final Element elem =
+                document.querySelector('#iconFullText').firstChild;
+            String digitalUrl = elem.attributes['href'];
+            digitalUrl = digitalUrl.substring(
+                digitalUrl.indexOf('javascript:open_window("') +
+                    'javascript:open_window("'.length,
+                digitalUrl.length - 3);
+
+            bookDetails['digitalURL'] = digitalUrl;
+            break;
+          }
+        case 'assunto(s)':
+          {
+            // it has at least 1 theme
+            bookDetails['themes'] = [elements.elementAt(idx + 1).text.trim()];
+
+            // get next theme
+            int currIdx = idx + 2;
+            elemInfo = elements.elementAt(currIdx).text.trim();
+
+            while (elemInfo == '') {
+              info = elements.elementAt(currIdx + 1).text.trim();
+              // get the theme and add it to the list
+              bookDetails['themes'].add(info);
+              currIdx += 2;
+              elemInfo = elements.elementAt(currIdx).text.trim();
+            }
+            break;
+          }
+      }
+
+      idx += 2;
+    }
+    return bookDetails;
   }
 }
