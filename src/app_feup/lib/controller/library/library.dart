@@ -146,7 +146,8 @@ class Library implements LibraryInterface {
         reservationHistoryUrl(this.faculty, this.pdsCookie.value));
 
     final Set<BookReservation> reservationHistory = await ParserLibrary()
-        .parseReservations(reservationHistoryRes, this.faculty, 2);
+        .parseReservations(reservationHistoryRes, this.faculty, 2,
+            pdsCookie: this.pdsCookie);
 
     final activeReservationsRes = await libRequestWithAleph(
         reservationUrl(this.faculty, this.pdsCookie.value));
@@ -157,11 +158,9 @@ class Library implements LibraryInterface {
 
     final Set<BookReservation> reservations = Set();
     reservations.addAll(reservationRequests);
-    // TODO: FILTER CHAVES DOS GABINETES
+
     reservations.addAll(reservationHistory);
     reservations.addAll(activeReservations);
-
-    Logger().i("Reservations:", reservations);
 
     return reservations;
   }
