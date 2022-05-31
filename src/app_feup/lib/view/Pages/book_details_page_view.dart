@@ -6,6 +6,7 @@ import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/secondary_page_view.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
+import 'package:uni/view/Widgets/book_reservation_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
 
@@ -350,4 +351,9 @@ class BookDetailsWidget extends StatelessWidget {
 
     return bookDetails;
   }
+
+  Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
+      context: context,
+      builder: (context) => BookReservationDialog(book: this.book)
+  );
 }
