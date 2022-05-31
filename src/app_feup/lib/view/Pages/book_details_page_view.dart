@@ -34,7 +34,7 @@ class BookDetailsWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: vs(230.0, context),
+          height: vs(265.0, context),
           width: hs(MediaQuery.of(context).size.width, context),
           decoration: BoxDecoration(
               color: Colors.grey.shade200,
@@ -66,7 +66,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(
-              hs(20, context), vs(82, context), hs(0, context), vs(0, context)),
+              hs(20, context), vs(90, context), hs(0, context), vs(0, context)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -97,7 +97,7 @@ class BookDetailsWidget extends StatelessWidget {
                                   ? 'assets/images/book_placeholder.png'
                                   : this.book.imageURL,
                               width: hs(100, context),
-                              height: vs(154, context),
+                              height: vs(190, context),
                               fit: BoxFit.fill,
                             ),
                           )))),
@@ -115,8 +115,8 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(hs(150, context), vs(180, context),
-              hs(15, context), vs(0, context)),
+          padding: EdgeInsets.fromLTRB(hs(165, context), vs(240, context),
+              hs(15, context), vs(15, context)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: bookActionButtons(context, this.book),
@@ -125,10 +125,24 @@ class BookDetailsWidget extends StatelessWidget {
         Padding(
             padding: EdgeInsets.fromLTRB(hs(30, context), vs(260, context),
                 hs(30, context), vs(0, context)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: this.createBookDetails(context, this.book),
-            )),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: this.createBookDetails(context, this.book)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:
+                              this.createBookDetailsRight(context, this.book))
+                    ],
+                  )
+                ])),
       ],
     );
   }
@@ -136,7 +150,7 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
     themes.add(SizedBox(
-      height: vs(20, context),
+      height: vs(60, context),
     ));
     themes.add(Text(
       'Temas',
@@ -155,7 +169,7 @@ class BookDetailsWidget extends StatelessWidget {
           Text('\u2022  ${book.themes[i]}'),
         );
         themes.add(
-          SizedBox(height: vs(8, context)),
+          SizedBox(height: vs(10, context)),
         );
       }
     } else {
@@ -191,7 +205,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(12, context)));
+    //headerInfo.add(SizedBox(height: vs(15, context)));
 
     var totalUnits = '';
     if (book.totalUnits != null) {
@@ -214,6 +228,7 @@ class BookDetailsWidget extends StatelessWidget {
           'Nenhuma unidade disponível',
           style: TextStyle(color: Colors.red[900]),
         ));
+        headerInfo.add(SizedBox(height: vs(15, context)));
       }
     } else {
       headerInfo.add(Text(
@@ -242,7 +257,7 @@ class BookDetailsWidget extends StatelessWidget {
       buttons.add(ElevatedButton(
         key: Key('downloadButton'),
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(50, 50),
+          minimumSize: Size(35, 35),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
           ),
@@ -261,9 +276,12 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookDetailsRight(BuildContext context, Book book) {
     final List<Widget> bookDetailsRight = <Widget>[];
 
+    bookDetailsRight.add(
+      SizedBox(
+        height: vs(60, context),
+      ),
+    );
     if (this.book.language != null && this.book.language.isNotEmpty) {
-      //headerInfo.add(SizedBox(height: vs(8, context)));
-      bookDetailsRight.add(SizedBox(width: hs(20, context)));
       bookDetailsRight.add(
         Icon(
           Icons.language,
@@ -273,18 +291,22 @@ class BookDetailsWidget extends StatelessWidget {
 
       bookDetailsRight.add(
         SizedBox(
-          width: hs(10, context),
+          width: hs(60, context),
         ),
       );
 
-      bookDetailsRight.add(
-        Text(
-          '${this.book.language}',
-          style: const TextStyle(
-            fontSize: 12,
-          ),
-        ),
-      );
+      bookDetailsRight.add(Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start),
+          Text(
+            '${this.book.language}',
+            style: const TextStyle(
+              fontSize: 12,
+            ),
+          )
+        ],
+      ));
     }
 
     return bookDetailsRight;
@@ -301,34 +323,6 @@ class BookDetailsWidget extends StatelessWidget {
     bookDetails.add(SizedBox(
       height: vs(45, context),
     ));
-
-    if (this.book.language != null && this.book.language.isNotEmpty) {
-      bookDetails.add(
-        Row(
-          children: [
-            Icon(
-              Icons.language,
-              color: Colors.black,
-            ),
-            SizedBox(
-              width: hs(10, context),
-            ),
-            Text(
-              '${this.book.language}',
-              style: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-      );
-
-      bookDetails.add(
-        SizedBox(
-          height: vs(20, context),
-        ),
-      );
-    }
 
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetails.add(

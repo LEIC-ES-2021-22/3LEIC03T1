@@ -25,6 +25,7 @@ class BookReservation {
   String getDateIndicator() {
     switch (this.status) {
       case ReservationStatus.pending:
+        return ' - ';
       case ReservationStatus.finished:
         return formatter.format(this.acquisitionDate) +
             ' - ' +
