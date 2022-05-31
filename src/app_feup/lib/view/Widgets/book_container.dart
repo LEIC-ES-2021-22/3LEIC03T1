@@ -10,8 +10,7 @@ class BookContainer extends GenericLibraryContainer {
   @override
   final Book book;
 
-  BookContainer({Key key, @required this.book})
-      : super(key: key, book: book);
+  BookContainer({Key key, @required this.book}) : super(key: key, book: book);
 
   @override
   Widget buildLibraryContainerBody(BuildContext context) {
@@ -75,13 +74,12 @@ class BookContainer extends GenericLibraryContainer {
   }
 
   @override
-  void onClick(BuildContext context) { 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              BookDetails(book: this.book),
-        ),
-      );
+  void onClick(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookDetails(book: this.book),
+      ),
+    );
   }
 }

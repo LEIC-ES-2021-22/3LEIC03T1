@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
+import 'package:uni/model/entities/book_reservation.dart';
 import 'package:uni/model/entities/course_unit.dart';
 import 'package:uni/model/entities/exam.dart';
 import 'package:uni/model/entities/lecture.dart';
@@ -22,16 +23,6 @@ class SaveLoginDataAction {
 class SetLoginStatusAction {
   RequestStatus status;
   SetLoginStatusAction(this.status);
-}
-
-class SaveCatalogLoginDataAction {
-  Cookie cookie;
-  SaveCatalogLoginDataAction(this.cookie);
-}
-
-class SetCatalogLoginStatusAction {
-  RequestStatus status;
-  SetCatalogLoginStatusAction(this.status);
 }
 
 class SetExamsAction {
@@ -191,4 +182,29 @@ class SetExamFilter {
 class SetUserFaculties {
   List<String> faculties;
   SetUserFaculties(this.faculties);
+}
+
+class SetCatalogReservations {
+  List<BookReservation> reservations;
+  SetCatalogReservations(this.reservations);
+}
+
+class SetCatalogReservationsStatus {
+  RequestStatus status;
+  SetCatalogReservationsStatus(this.status);
+}
+
+class SaveCatalogPdsCookie {
+  Cookie cookie;
+  SaveCatalogPdsCookie(this.cookie);
+}
+
+class SaveCatalogAlephCookie {
+  Cookie cookie;
+  SaveCatalogAlephCookie(this.cookie);
+}
+
+class SetCatalogLoginStatusAction {
+  RequestStatus status;
+  SetCatalogLoginStatusAction(this.status);
 }

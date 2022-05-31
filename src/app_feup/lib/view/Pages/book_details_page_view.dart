@@ -83,8 +83,7 @@ class BookDetailsWidget extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(30, 305, 30, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: this.createBookDetails(context, this.book),
           )
         ),
@@ -95,14 +94,12 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
 
-    themes.add(
-        Text(
+    themes.add(Text(
       'Temas',
       style: const TextStyle(
         fontSize: 18,
-        ),
       ),
-    );
+    ));
 
     themes.add(SizedBox(
       height: vs(18, context),
@@ -114,9 +111,7 @@ class BookDetailsWidget extends StatelessWidget {
           Text('\u2022  ${book.themes[i]}'),
         );
         themes.add(
-          SizedBox(
-            height: vs(8, context)
-          ),
+          SizedBox(height: vs(8, context)),
         );
       }
     } else {
@@ -135,23 +130,21 @@ class BookDetailsWidget extends StatelessWidget {
         child: Text(
           book.title,
           overflow: TextOverflow.fade,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 17.0),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(10, context)));
+    headerInfo.add(SizedBox(height: vs(8, context)));
     headerInfo.add(
       Container(
-        height: 40,
+        height: 30,
         child: Text(
           book.author,
           overflow: TextOverflow.fade,
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(12, context)));
-
+    headerInfo.add(SizedBox(height: vs(10, context)));
 
     var totalUnits = '';
     if (book.totalUnits != null) {
@@ -161,14 +154,14 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
         headerInfo.add(Text(
-            '${book.unitsAvailable} ${totalUnits} unidade disponível',
-            style: TextStyle(color: Colors.red[700]),
+          '${book.unitsAvailable} ${totalUnits} unidade disponível',
+          style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
         headerInfo.add(Text(
-              '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
-              style: TextStyle(color: Colors.black),
-          ));
+          '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
+          style: TextStyle(color: Colors.black),
+        ));
       } else {
         headerInfo.add(Text(
           'Nenhuma unidade disponível',
@@ -235,7 +228,7 @@ class BookDetailsWidget extends StatelessWidget {
 
     bookDetails.add(
         SizedBox(
-          height: vs(45,context),
+          height: vs(35,context),
         )
     );
 
@@ -266,9 +259,7 @@ class BookDetailsWidget extends StatelessWidget {
           height: vs(20, context),
         ),
       );
-
     }
-
 
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetails.add(
@@ -320,6 +311,6 @@ class BookDetailsWidget extends StatelessWidget {
 
   Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
       context: context,
-      builder: (context) => bookReservationDialog(book: this.book)
+      builder: (context) => BookReservationDialog(book: this.book)
   );
 }
