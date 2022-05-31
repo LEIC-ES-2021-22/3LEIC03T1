@@ -176,7 +176,7 @@ class _bookReservationDialogState extends State<bookReservationDialog> {
         ),
         actions: [
           TextButton(
-            child: Text('SUBMIT'),
+            child: Text('ENVIAR'),
             onPressed: () {
               if (!_formKey.currentState.validate()) {
                 return;
