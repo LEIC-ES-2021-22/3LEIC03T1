@@ -200,6 +200,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.hasDigitalVersion) {
       buttons.add(
           ElevatedButton(
+            key: Key('downloadButton'),
             style: ElevatedButton.styleFrom(
               minimumSize: Size(50, 50),
               shape: RoundedRectangleBorder(
