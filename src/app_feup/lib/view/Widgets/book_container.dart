@@ -4,6 +4,8 @@ import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/book_details_page_view.dart';
 import 'package:uni/view/Widgets/generic_library_container.dart';
 
+enum BookContainerType { searchResult, reservation }
+
 class BookContainer extends GenericLibraryContainer {
   @override
   final Book book;
@@ -81,3 +83,4 @@ class BookContainer extends GenericLibraryContainer {
     );
   }
 }
+

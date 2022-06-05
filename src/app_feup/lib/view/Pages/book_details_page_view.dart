@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
+import 'package:uni/view/Widgets/book_reservation_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni/utils/methods.dart';
 
@@ -29,10 +30,11 @@ class BookDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Stack(
       children: [
         Container(
-          height: vs(200.0, context),
+          height: vs(240.0, context),
           width: MediaQuery.of(context).size.width,
           color: Colors.black12,
           child: Padding(
@@ -52,15 +54,13 @@ class BookDetailsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Hero(
-                tag: book.title,
-                child: Image.network(
-                  this.book.imageURL == null
-                      ? 'assets/images/book_placeholder.png'
-                      : this.book.imageURL,
-                  width: hs(100, context),
-                  height: vs(150, context),
-                  fit: BoxFit.fill,
-                ),
+                  tag: book.title,
+                  child: Image.network(
+                    this.book.imageURL == null? 'assets/images/book_placeholder.png' :  this.book.imageURL,
+                    width: hs(100, context),
+                    height: vs(150, context),
+                    fit: BoxFit.fill,
+                  ),
               ),
               Expanded(
                 child: Padding(
@@ -75,18 +75,19 @@ class BookDetailsWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(150, 180, 15, 0),
-          child: Row(
+          padding: EdgeInsets.fromLTRB(150, 240, 15, 0),
+          child: Row (
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: bookActionButtons(context, this.book),
           ),
         ),
         Padding(
-            padding: EdgeInsets.fromLTRB(30, 260, 30, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: this.createBookDetails(context, this.book),
-            )),
+          padding: EdgeInsets.fromLTRB(30, 305, 30, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: this.createBookDetails(context, this.book),
+          )
+        ),
       ],
     );
   }
@@ -94,12 +95,14 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookThemes(BuildContext context, Book book) {
     final List<Widget> themes = <Widget>[];
 
-    themes.add(Text(
+    themes.add(
+        Text(
       'Temas',
       style: const TextStyle(
         fontSize: 18,
+        ),
       ),
-    ));
+    );
 
     themes.add(SizedBox(
       height: vs(18, context),
@@ -111,7 +114,9 @@ class BookDetailsWidget extends StatelessWidget {
           Text('\u2022  ${book.themes[i]}'),
         );
         themes.add(
-          SizedBox(height: vs(8, context)),
+          SizedBox(
+            height: vs(8, context)
+          ),
         );
       }
     } else {
@@ -130,21 +135,23 @@ class BookDetailsWidget extends StatelessWidget {
         child: Text(
           book.title,
           overflow: TextOverflow.fade,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 17.0),
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(8, context)));
+    headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(
       Container(
-        height: 30,
+        height: 40,
         child: Text(
           book.author,
           overflow: TextOverflow.fade,
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(10, context)));
+    headerInfo.add(SizedBox(height: vs(12, context)));
+
 
     var totalUnits = '';
     if (book.totalUnits != null) {
@@ -154,14 +161,14 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.unitsAvailable != null) {
       if (book.unitsAvailable == 1) {
         headerInfo.add(Text(
-          '${book.unitsAvailable} ${totalUnits} unidade disponível',
-          style: TextStyle(color: Colors.red[700]),
+            '${book.unitsAvailable} ${totalUnits} unidade disponível',
+            style: TextStyle(color: Colors.red[700]),
         ));
       } else if (book.unitsAvailable > 1) {
         headerInfo.add(Text(
-          '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
-          style: TextStyle(color: Colors.black),
-        ));
+              '${book.unitsAvailable} ${totalUnits} unidades disponíveis',
+              style: TextStyle(color: Colors.black),
+          ));
       } else {
         headerInfo.add(Text(
           'Nenhuma unidade disponível',
@@ -173,40 +180,41 @@ class BookDetailsWidget extends StatelessWidget {
   }
 
   bookActionButtons(BuildContext context, Book book) {
+
     final List<Widget> buttons = <Widget>[];
 
     if (book.unitsAvailable > 0) {
-      buttons.add(ElevatedButton(
-        style: ElevatedButton.styleFrom(minimumSize: Size(90, 45)),
-        onPressed: () {
-          //TODO: Reserve Action here
-        },
-        child: Text('RESERVAR'),
-      ));
+      buttons.add(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                minimumSize: Size(90, 45)
+            ),
+            onPressed: () {
+              openBookReservationDialog(context, book);
+            },
+            child: Text('RESERVAR'),
+          )
+      );
     }
 
     if (book.hasDigitalVersion) {
-      buttons.add(ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(50, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-          ),
-        ),
-        onPressed: () async {
-          const url = 'https://flutter.io';
-          if (await canLaunch(url)) {
-            await launch(url);
-          } else {
-            throw 'Could not launch $url';
-          }
-        },
-        child: Icon(
-          Icons.download_sharp,
-        ),
-      ));
+      buttons.add(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size(50, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+            ),
+            onPressed: () async {
+              await launch(book.digitalURL);
+            },
+            child: Icon(
+              Icons.download_sharp,
+            ),
+          )
+      );
     }
-
     return buttons;
   }
 
@@ -243,16 +251,21 @@ class BookDetailsWidget extends StatelessWidget {
   List<Widget> createBookDetails(BuildContext context, Book book) {
     final List<Widget> bookDetails = <Widget>[];
 
-    bookDetails.add(Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: this.createBookThemes(context, this.book),
-    ));
+    bookDetails.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: this.createBookThemes(context, this.book),
+        )
+    );
 
-    bookDetails.add(SizedBox(
-      height: vs(45, context),
-    ));
+    bookDetails.add(
+        SizedBox(
+          height: vs(45,context),
+        )
+    );
 
     if (this.book.language != null && this.book.language.isNotEmpty) {
+
       bookDetails.add(
         Row(
           children: [
@@ -278,7 +291,9 @@ class BookDetailsWidget extends StatelessWidget {
           height: vs(20, context),
         ),
       );
+
     }
+
 
     if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
       bookDetails.add(
@@ -327,4 +342,9 @@ class BookDetailsWidget extends StatelessWidget {
 
     return bookDetails;
   }
+
+  Future openBookReservationDialog(BuildContext context, Book book) => showDialog(
+      context: context,
+      builder: (context) => BookReservationDialog(book: this.book)
+  );
 }
