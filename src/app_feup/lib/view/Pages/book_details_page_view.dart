@@ -186,6 +186,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.unitsAvailable > 0) {
       buttons.add(
           ElevatedButton(
+            key: Key('reserveBook'),
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(90, 45)
             ),
