@@ -47,6 +47,34 @@ class BookReservation {
     return '';
   }
 
+  bool showDevolutionTime() {
+    return ![ReservationStatus.pending, ReservationStatus.finished]
+        .contains(this.status);
+  }
+
+  String getRemainingDays() {
+    return '1 dia';
+    switch (this.status) {
+      case ReservationStatus.pending:
+      case ReservationStatus.finished:
+        return ' - ';
+      case ReservationStatus.readyForCollection:
+      case ReservationStatus.collected:
+        final int remainingDays =
+            this.returnDate.difference(DateTime.now()).inDays;
+
+        if (remainingDays == 1) return '1 dia';
+        return '$remainingDays dias';
+      case ReservationStatus.delayed:
+        final int delayedDays =
+            DateTime.now().difference(this.returnDate).inDays;
+
+        if (delayedDays == 1) return '1 dia atrasado';
+        return '$delayedDays dias atrasado';
+    }
+    return '';
+  }
+
   String getReturnDate() {
     return formatter.format(this.returnDate);
   }

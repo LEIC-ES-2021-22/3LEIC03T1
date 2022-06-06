@@ -35,7 +35,7 @@ class ReservationDetailsWidget extends StatelessWidget {
     final String pickupLoc = '${this.reservation.pickupLocation}'.toUpperCase();
     final borderRadius = BorderRadius.circular(3);
 
-    final grayAreaHeight = vs(220, context);
+    final grayAreaHeight = vs(210, context);
     final fullWidth = hs(MediaQuery.of(context).size.width, context);
     final btnsHeight = vs(40, context);
     final topContainerHeight = grayAreaHeight + btnsHeight;
@@ -138,7 +138,7 @@ class ReservationDetailsWidget extends StatelessWidget {
                 )),
             Positioned(
                 top: grayAreaHeight - btnsHeight / 2,
-                left: fullWidth / 2,
+                left: fullWidth / 2 + hs(50, context),
                 child: Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: Row(
@@ -150,78 +150,66 @@ class ReservationDetailsWidget extends StatelessWidget {
           ]),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(hs(10, context), vs(260, context),
-              hs(60, context), vs(0, context)),
+          padding: EdgeInsets.fromLTRB(
+              hs(20, context), vs(0, context), hs(20, context), vs(0, context)),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: vs(15, context),
+                      ),
+                      Text(
+                        'Data de aquisição: \n${this.reservation.getAcquisitionDate()}',
+                        style: const TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                      SizedBox(
+                        height: vs(30, context),
+                      ),
+                      Text(
+                        'Data de devolução: \n${this.reservation.getReturnDate()}',
+                        style: const TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                      SizedBox(
+                        height: vs(30, context),
+                      ),
+                      Text(
+                        'Levantamento: \n${pickupLoc}',
+                        style: const TextStyle(fontSize: 16, height: 1.5),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: vs(15, context),
-                  ),
-                  Text(
-                    'Data de aquisição: \n${this.reservation.getAcquisitionDate()}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                  SizedBox(
-                    height: vs(15, context),
-                  ),
-                  Text(
-                    'Data de devolução: \n${this.reservation.getReturnDate()}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                  SizedBox(
-                    height: vs(15, context),
-                  ),
-                  Text(
-                    'Local de Levantamento: \n${pickupLoc}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(crossAxisAlignment: CrossAxisAlignment.start),
-                          SizedBox(
-                            width: hs(10, context),
-                            height: vs(15, context),
-                          ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: vs(15, context),
+                        ),
+                        Text(
+                          'Nº Reserva :\n${this.reservation.reservationNumber}',
+                          style: const TextStyle(fontSize: 16, height: 1.5),
+                        ),
+                        SizedBox(
+                          height: vs(30, context),
+                        ),
+                        if (!this.reservation.showDevolutionTime()) ...[
                           Text(
-                            'Nº Reserva :\n${this.reservation.reservationNumber}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          SizedBox(
-                            height: vs(15, context),
-                          ),
-                          Text(
-                            'Devolução: \n${this.reservation.getDateIndicator()}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ]),
-                  ]),
-            ],
-          ),
+                            'Devolver em: \n${this.reservation.getRemainingDays()}',
+                            style: const TextStyle(fontSize: 16, height: 1.5),
+                            overflow: TextOverflow.fade,
+                          )
+                        ]
+                      ]),
+                ),
+              ]),
         ),
       ],
     );
@@ -249,7 +237,7 @@ class ReservationDetailsWidget extends StatelessWidget {
   reservationActionButtons(BuildContext context, BookReservation reservation) {
     final List<Widget> buttons = <Widget>[];
 
-    if (reservation.book.unitsAvailable != null &&
+    /* if (reservation.book.unitsAvailable != null &&
         reservation.book.unitsAvailable > 0) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -259,7 +247,7 @@ class ReservationDetailsWidget extends StatelessWidget {
         },
         child: Text('RENOVAR'),
       ));
-    }
+    } */
 
     if (/* reservation.book.hasDigitalVersion */ true) {
       buttons.add(ElevatedButton(
