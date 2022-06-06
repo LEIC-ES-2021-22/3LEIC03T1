@@ -213,15 +213,15 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
       ),
       actions: [
         TextButton(
-          child: Text('SUBMIT'),
-          onPressed: submitReservationForm,
-        ),
-        TextButton(
-          child: Text('CANCEL'),
+          child: Text('Cancelar'),
           onPressed: () {
             Navigator.of(context).pop();
           },
-        )
+        ),
+        ElevatedButton(
+          child: Text('Reservar'),
+          onPressed: submitReservationForm,
+        ),
       ],
     );
   }
