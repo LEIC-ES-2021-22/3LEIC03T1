@@ -13,37 +13,6 @@ class LibraryPage extends StatefulWidget {
   State<StatefulWidget> createState() => LibraryPageState();
 }
 
-final List<Book> mockedBooks = [
-  Book(
-    title: 'Programming - principles and practice using C++',
-    author: 'Stroustrup, Bjarne',
-    unitsAvailable: 5,
-    totalUnits: 7,
-    hasDigitalVersion: true,
-    hasPhysicalVersion: true,
-    imageURL:
-        'https://books.google.com/books/content?id=hxOpAwAAQBAJ&printsec=frontcover&img=1&zoom=5',
-  ),
-  Book(
-    title: 'Modern condensed matter physics',
-    author: 'Girvin, Steven M.',
-    unitsAvailable: 3,
-    hasDigitalVersion: false,
-    hasPhysicalVersion: true,
-    imageURL:
-        'https://books.google.com/books/content?id=YYKFDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl',
-  ),
-  Book(
-    title: 'Os 4 elementos',
-    author: 'Pereira, Paulo',
-    unitsAvailable: 1,
-    hasDigitalVersion: true,
-    hasPhysicalVersion: false,
-    imageURL:
-        'https://catalogo.up.pt/exlibris/aleph/a23_1/apache_media/IGPUKB5JD1LIFR6JQLBX5ET2EE91C9D6PXF.jpg',
-  )
-];
-
 class LibraryPageState extends SecondaryPageViewState {
   @override
   Widget getBody(BuildContext context) {

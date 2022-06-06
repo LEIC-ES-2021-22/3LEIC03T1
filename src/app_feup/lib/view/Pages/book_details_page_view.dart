@@ -92,19 +92,19 @@ class BookDetailsWidget extends StatelessWidget {
                           borderRadius: borderRadius,
                           child: SizedBox.fromSize(
                             //size: Size.fromRadius(55), // Image radius
-                            child:  this.book.imageURL == null ? 
-                            Image.asset(
-                                  'assets/images/book_placeholder.png',
-                                  width: hs(70, context),
-                                  height: vs(105, context),
-                                  fit: BoxFit.fill)
-                              // TODO: Sould we use FileImage like general_page_view?
-                              : Image.network(
-                                  book.imageURL,
-                                  width: hs(70, context),
-                                  height: vs(105, context),
-                                  fit: BoxFit.fill,
-                                ),
+                            child: this.book.imageURL == null
+                                ? Image.asset(
+                                    'assets/images/book_placeholder.png',
+                                    width: hs(70, context),
+                                    height: vs(105, context),
+                                    fit: BoxFit.fill)
+                                // TODO: Sould we use FileImage like general_page_view?
+                                : Image.network(
+                                    book.imageURL,
+                                    width: hs(70, context),
+                                    height: vs(105, context),
+                                    fit: BoxFit.fill,
+                                  ),
                           )))),
               Expanded(
                 child: Padding(
