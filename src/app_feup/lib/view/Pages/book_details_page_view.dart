@@ -186,6 +186,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.unitsAvailable > 0) {
       buttons.add(
           ElevatedButton(
+            key: Key('reserveBook'),
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(90, 45)
             ),
@@ -200,6 +201,7 @@ class BookDetailsWidget extends StatelessWidget {
     if (book.hasDigitalVersion) {
       buttons.add(
           ElevatedButton(
+            key: Key('downloadButton'),
             style: ElevatedButton.styleFrom(
               minimumSize: Size(50, 50),
               shape: RoundedRectangleBorder(

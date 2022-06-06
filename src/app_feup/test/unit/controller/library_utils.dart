@@ -54,4 +54,14 @@ void main() {
       expect(filters.hasFilters(), false);
     });
   });
+
+  group('Date Parsing', () {
+    test('When given a date with the catalog format', () {
+      final String date = '01/Jan/2019';
+      final DateTime result = parseDate(date);
+      expect(result.year, 2019);
+      expect(result.month, 1);
+      expect(result.day, 1);
+    });
+  });
 }
