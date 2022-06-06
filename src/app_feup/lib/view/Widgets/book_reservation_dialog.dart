@@ -161,7 +161,7 @@ class _BookReservationDialogState extends State<BookReservationDialog> {
     if (catalogError != '') {
       formWidgets.add(
         Text(
-          'Occorreu um erro :(',
+          'Occorreu um erro.',
           style: TextStyle(color: Colors.red),
         ),
       );
