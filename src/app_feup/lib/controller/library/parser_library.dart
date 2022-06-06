@@ -45,7 +45,7 @@ class ParserLibrary implements ParserLibraryInterface {
       'year': '',
       'isbn': '',
       'digitalURL': '',
-      'themes': []
+      'themes': List<String>.filled(0, '')
     };
 
     // get all the information tags
@@ -290,22 +290,46 @@ class ParserLibrary implements ParserLibraryInterface {
 
   @override
   Future<Set<BookReservation>> parseReservations(
-      http.Response response, String faculty, bool isHistoryReservation) async {
+      http.Response response, String faculty, int reservationType,
+      {Cookie pdsCookie}) async {
     final Document document = parse(utf8.decode(response.bodyBytes));
     final Set<BookReservation> reservations = Set();
 
-    final List<Element> rows = document.querySelectorAll('#centered');
+    /* IF LOAN -> GET BARCODE FOR BOOK DETAILS
+      ELSE GET DOCNUM FOR BOOKDETAILS
+     */
 
+    final List<Element> rows = document.querySelectorAll('#centered');
     final String docNumPattern = 'doc_number=';
+    final String docNumEndPattern = '&item_sequence=';
     for (Element row in rows) {
       final List<Element> children = row.parent.children;
 
-      String docNumber = children.elementAt(0).firstChild.attributes['href'];
-      docNumber = docNumber.substring(
-          docNumber.indexOf(docNumPattern) + docNumPattern.length,
-          docNumber.indexOf('&item_sequence='));
+      String reservationDetailsUrl =
+          children.elementAt(0).firstChild.attributes['href'];
 
-      final String detailsUrl = bookDetailsUrl(docNumber);
+      Map<String, dynamic> reservationDetailsInfo;
+      String bookDetailsReference;
+      if (reservationType >= 1) {
+        // change to >= 1
+        reservationDetailsUrl =
+            urlWithPds(reservationDetailsUrl, pdsCookie?.value);
+        final http.Response reservationDetailsRes =
+            await Library.libRequestWithAleph(reservationDetailsUrl);
+
+        reservationDetailsInfo =
+            await this.parseLoanDetails(reservationDetailsRes);
+
+        bookDetailsReference = reservationDetailsInfo['barcode'];
+      } else {
+        bookDetailsReference = reservationDetailsUrl.substring(
+            reservationDetailsUrl.indexOf(docNumPattern) + docNumPattern.length,
+            reservationDetailsUrl.indexOf(docNumEndPattern));
+      }
+
+      final String detailsUrl = reservationType == 0
+          ? bookDetailsUrl(bookDetailsReference)
+          : bookBarcodeUrl(bookDetailsReference);
 
       final http.Response detailsResponse =
           await Library.libRequestWithAleph(detailsUrl);
@@ -320,22 +344,29 @@ class ParserLibrary implements ParserLibraryInterface {
       String reservationDate;
       String endReservationDate;
       ReservationStatus status;
-      if (isHistoryReservation) {
-        author = children.elementAt(1).text.trim();
-        title = children.elementAt(2).text.trim();
-        publishYear = children.elementAt(3).text.trim();
-        reservationDate = children.elementAt(5).text.trim();
-        endReservationDate = children.elementAt(6).text.trim();
-        status = ReservationStatus.finished;
-      } else {
-        author = bookDetails['author'];
+
+      author = bookDetails['author'];
+      publishYear = bookDetails['year'];
+      if (reservationType == 2) {
         title = children.elementAt(1).text.trim();
-        publishYear = bookDetails['year'];
+        if (title.contains(
+            'Chaves dos gabinetes de estudo do piso 6 da Biblioteca')) continue;
+        reservationDate = children.elementAt(2).text.trim();
+        endReservationDate = children.elementAt(4).text.trim();
+        status = ReservationStatus.finished;
+      } else if (reservationType == 0) {
+        title = children.elementAt(1).text.trim();
         reservationDate = children.elementAt(2).text.trim();
         endReservationDate = children.elementAt(3).text.trim();
-        status = ReservationStatus.pending;
         // TODO Check this value and change it accordingly to catalog output
-      }
+        status = ReservationStatus.pending;
+      } else if (reservationType == 1) {
+        title = children.elementAt(2).text.trim();
+        endReservationDate = children.elementAt(3).text.trim();
+        // TODO Check this value and change it accordingly to catalog output
+        status = ReservationStatus.collected;
+        reservationDate = reservationDetailsInfo['reservationDate'];
+      } else {}
 
       final BookReservation bookReservation = BookReservation(
           reservationNumber: int.parse(reservationNumber),
@@ -366,5 +397,43 @@ class ParserLibrary implements ParserLibraryInterface {
     }
 
     return reservations;
+  }
+
+  /**
+   * 
+   */
+  Future<Map<String, dynamic>> parseLoanDetails(http.Response response) async {
+    final document = parse(utf8.decode(response.bodyBytes));
+
+    final Map<String, dynamic> bookDetails = {
+      'reservationDate': '',
+      'barcode': ''
+    };
+
+    // get all the information tags
+    final List<Element> tables =
+        document.querySelectorAll('table[cellspacing="2"]');
+
+    final Element loanDetailsTable = tables[0];
+    final Element bookDetailsTable = tables[1];
+
+    bookDetails['reservationDate'] = loanDetailsTable.children
+        .elementAt(0)
+        .children
+        .elementAt(0)
+        .children
+        .elementAt(1)
+        .text;
+
+    final List<Element> bookDetailRows =
+        bookDetailsTable.children.elementAt(0).children;
+
+    bookDetails['barcode'] = bookDetailRows
+        .elementAt(bookDetailRows.length - 2)
+        .children
+        .elementAt(1)
+        .text;
+
+    return bookDetails;
   }
 }

@@ -15,7 +15,6 @@ import 'package:uni/model/app_state.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:http/http.dart' as http;
 import 'package:uni/model/entities/search_filters.dart';
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:uni/model/entities/book_reservation.dart';
 
@@ -137,20 +136,30 @@ class Library implements LibraryInterface {
   // and receive aleph cookie by argument
   @override
   Future<Set<BookReservation>> getReservations() async {
-    final reservationHistoryResponse = await libRequestWithAleph(
+    final reservationRequestResponse = await libRequestWithAleph(
+        reservationRequestUrl(this.faculty, this.pdsCookie.value));
+
+    final Set<BookReservation> reservationRequests = await ParserLibrary()
+        .parseReservations(reservationRequestResponse, this.faculty, 0);
+
+    final reservationHistoryRes = await libRequestWithAleph(
         reservationHistoryUrl(this.faculty, this.pdsCookie.value));
 
-    final Set<BookReservation> reservationsHistory = await ParserLibrary()
-        .parseReservations(reservationHistoryResponse, this.faculty, true);
+    final Set<BookReservation> reservationHistory = await ParserLibrary()
+        .parseReservations(reservationHistoryRes, this.faculty, 2,
+            pdsCookie: this.pdsCookie);
 
-    final reservationResponse = await libRequestWithAleph(
+    final activeReservationsRes = await libRequestWithAleph(
         reservationUrl(this.faculty, this.pdsCookie.value));
 
     final Set<BookReservation> activeReservations = await ParserLibrary()
-        .parseReservations(reservationResponse, this.faculty, false);
+        .parseReservations(activeReservationsRes, this.faculty, 1,
+            pdsCookie: this.pdsCookie);
 
     final Set<BookReservation> reservations = Set();
-    reservations.addAll(reservationsHistory);
+    reservations.addAll(reservationRequests);
+
+    reservations.addAll(reservationHistory);
     reservations.addAll(activeReservations);
 
     return reservations;

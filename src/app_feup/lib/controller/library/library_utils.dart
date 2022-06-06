@@ -26,18 +26,31 @@ String loginUrl(String faculty) {
   return 'https://catalogo.up.pt/shib/$facCode/pds_main?func=load-login&calling_system=aleph&institute=$facCode&PDS_HANDLE=&url=https://catalogo.up.pt:443/F/?func=BOR-INFO/';
 }
 
-String reservationUrl(String faculty, String pdsHandle) {
+String reservationRequestUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
   return 'https://catalogo.up.pt:443/F/?func=bor-hold&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
 String reservationHistoryUrl(String faculty, String pdsHandle) {
   final String facCode = libraryFacCodes[faculty];
-  return 'https://catalogo.up.pt:443/F/?func=bor-history-hold&adm_library=$facCode&pds_handle=$pdsHandle';
+  return 'https://catalogo.up.pt:443/F/?func=bor-history-loan&adm_library=$facCode&pds_handle=$pdsHandle';
+}
+
+String reservationUrl(String faculty, String pdsHandle) {
+  final String facCode = libraryFacCodes[faculty];
+  return 'https://catalogo.up.pt:443/F/?func=bor-loan&adm_library=$facCode&pds_handle=$pdsHandle';
 }
 
 String bookDetailsUrl(String docNumber) {
   return 'https://catalogo.up.pt/F/?func=direct&doc_number=$docNumber';
+}
+
+String bookBarcodeUrl(String barcode) {
+  return 'https://catalogo.up.pt/F/?func=find-b&request=$barcode&find_code=BAR';
+}
+
+String urlWithPds(String url, String pdsHandle) {
+  return '$url&pds_handle=$pdsHandle';
 }
 
 final String baseUrl = 'https://catalogo.up.pt/F';
@@ -133,6 +146,6 @@ final Map<String, String> monthToNum = {
  * Receives a Date with the libraries' format and returns a DateTime
  */
 DateTime parseDate(String libraryDate) {
-  final List<String> data = libraryDate.split('/');
+  final List<String> data = libraryDate?.split('/');
   return DateTime.parse(data[2] + '-' + monthToNum[data[1]] + '-' + data[0]);
 }

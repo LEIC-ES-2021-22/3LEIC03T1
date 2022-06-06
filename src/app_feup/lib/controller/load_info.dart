@@ -70,8 +70,8 @@ Future loadRemoteUserInfoToState(Store<AppState> store) async {
   store.dispatch(getUserCoursesState(coursesStates));
   store.dispatch(getUserBusTrips(trips));
   store.dispatch(getRestaurantsFromFetcher(restaurants));
-  store.dispatch(getCatalogReservations(catalogReservations, library));
   store.dispatch(getLibraryBooks(searchBooks));
+  store.dispatch(getCatalogReservations(catalogReservations, library));
 
   final Tuple2<String, String> userPersistentInfo =
       await AppSharedPreferences.getPersistentUserInfo();
