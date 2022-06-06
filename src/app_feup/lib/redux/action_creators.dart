@@ -120,6 +120,10 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
 
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
+        // Update aleph cookie to just search from faculty
+        await Library.getHtml(getFacultyBaseUrl(faculties[0]),
+            cookies: [alephCookie, pdsCookie]);
+
         await loadUserInfoToState(store);
       } else {
         store.dispatch(SetLoginStatusAction(RequestStatus.failed));

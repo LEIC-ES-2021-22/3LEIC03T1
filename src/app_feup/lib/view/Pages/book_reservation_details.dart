@@ -34,100 +34,121 @@ class ReservationDetailsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final String pickupLoc = '${this.reservation.pickupLocation}'.toUpperCase();
     final borderRadius = BorderRadius.circular(3);
-    return Stack(
+
+    final grayAreaHeight = vs(220, context);
+    final fullWidth = hs(MediaQuery.of(context).size.width, context);
+    final btnsHeight = vs(40, context);
+    final topContainerHeight = grayAreaHeight + btnsHeight;
+
+    return ListView(
       children: [
         Container(
-            height: vs(220, context),
-            width: hs(MediaQuery.of(context).size.width, context),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(2),
-                    topRight: Radius.circular(2),
-                    bottomLeft: Radius.circular(6),
-                    bottomRight: Radius.circular(6)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 10,
-                    offset: Offset(hs(4, context),
-                        vs(3, context)), // changes position of shadow
-                  ),
-                ]),
-            child: Container(
-              padding:
-                  EdgeInsets.fromLTRB(hs(20, context), vs(10, context), 0, 0),
-              child: Column(
-                key: Key('reservationDetailsCol'),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      'Detalhes da Reserva',
-                      overflow: TextOverflow.fade,
-                      style: const TextStyle(
-                        fontSize: 20,
+          height: topContainerHeight,
+          width: fullWidth,
+          child: Stack(children: [
+            Container(
+                height: grayAreaHeight,
+                width: fullWidth,
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(2),
+                        topRight: Radius.circular(2),
+                        bottomLeft: Radius.circular(6),
+                        bottomRight: Radius.circular(6)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12.withOpacity(0.5),
+                        spreadRadius: 3,
+                        blurRadius: 10,
+                        offset: Offset(hs(4, context),
+                            vs(3, context)), // changes position of shadow
                       ),
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  SizedBox(height: vs(15, context)),
-                  Row(
+                    ]),
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(
+                      hs(20, context), vs(10, context), 0, 0),
+                  child: Column(
+                    key: Key('reservationDetailsCol'),
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
-                        tag: this.reservation.book.title,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
-                                bottomLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(8)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 4,
-                                blurRadius: 2,
-                                offset:
-                                    Offset(2, 2), // changes position of shadow
-                              ),
-                            ],
+                      Container(
+                        child: Text(
+                          'Detalhes da Reserva',
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                            fontSize: 20,
                           ),
-                          child: ClipRRect(
-                              borderRadius: borderRadius,
-                              child: SizedBox.fromSize(
-                                  //size: Size.fromRadius(55), // Image radius
-                                  child: Image.network(
-                                this.reservation.book.imageURL,
-                                width: hs(90, context),
-                                height: vs(140, context),
-                                fit: BoxFit.fill,
-                              ))),
+                          textAlign: TextAlign.start,
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(hs(15, context),
-                              vs(10, context), hs(7, context), vs(0, context)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: this.createReservationHeaderInfo(
-                                context, this.reservation),
+                      SizedBox(height: vs(15, context)),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Hero(
+                            tag: this.reservation.book.title,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                    bottomLeft: Radius.circular(8),
+                                    bottomRight: Radius.circular(8)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 4,
+                                    blurRadius: 2,
+                                    offset: Offset(
+                                        2, 2), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                  borderRadius: borderRadius,
+                                  child: SizedBox.fromSize(
+                                      //size: Size.fromRadius(55), // Image radius
+                                      child: Image.network(
+                                    this.reservation.book.imageURL,
+                                    width: hs(90, context),
+                                    height: vs(140, context),
+                                    fit: BoxFit.fill,
+                                  ))),
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  hs(15, context),
+                                  vs(15, context),
+                                  hs(7, context),
+                                  vs(0, context)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this.createReservationHeaderInfo(
+                                    context, this.reservation),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  Row(
+                )),
+            Positioned(
+                top: grayAreaHeight - btnsHeight / 2,
+                left: fullWidth / 2,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children:
                         reservationActionButtons(context, this.reservation),
                   ),
-                ],
-              ),
-            )),
+                )),
+          ]),
+        ),
         Padding(
           padding: EdgeInsets.fromLTRB(hs(10, context), vs(260, context),
               hs(60, context), vs(0, context)),
@@ -240,7 +261,7 @@ class ReservationDetailsWidget extends StatelessWidget {
       ));
     }
 
-    if (reservation.book.hasDigitalVersion) {
+    if (/* reservation.book.hasDigitalVersion */ true) {
       buttons.add(ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: Size(hs(50, context), vs(40, context)),
