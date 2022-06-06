@@ -119,15 +119,14 @@ class ReservationDetailsWidget extends StatelessWidget {
     final List<Widget> headerInfo = <Widget>[];
 
     headerInfo.add(Container(
-      height: vs(33, context),
+      height: vs(40, context),
       child: Text(
         reservation.book.title,
         overflow: TextOverflow.clip,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+        maxLines: 2,
       ),
     ));
-
-    headerInfo.add(SizedBox(height: vs(6, context)));
 
     headerInfo.add(Container(
       height: vs(30, context),
@@ -135,6 +134,7 @@ class ReservationDetailsWidget extends StatelessWidget {
         reservation.book.author,
         overflow: TextOverflow.clip,
         style: const TextStyle(fontSize: 14.0),
+        maxLines: 2,
       ),
     ));
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uni/controller/library/library_utils.dart';
 import 'package:uni/model/entities/book.dart';
 import 'package:uni/view/Pages/unnamed_page_view.dart';
 import 'package:uni/view/Widgets/book_reservation_dialog.dart';
@@ -72,7 +73,7 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> themes = <Widget>[];
     themes.add(Text(
       'Temas:',
-      style: const TextStyle(fontSize: 20, height: 1.5),
+      style: const TextStyle(fontSize: 20, height: 1),
     ));
 
     themes.add(SizedBox(
@@ -106,15 +107,15 @@ class BookDetailsWidget extends StatelessWidget {
 
     headerInfo.add(
       Container(
-        height: vs(30, context),
+        height: vs(40, context),
         child: Text(
           book.title,
           overflow: TextOverflow.clip,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
+          maxLines: 2,
         ),
       ),
     );
-    headerInfo.add(SizedBox(height: vs(10, context)));
     headerInfo.add(
       Container(
         height: vs(40, context),
@@ -122,6 +123,7 @@ class BookDetailsWidget extends StatelessWidget {
           book.author,
           overflow: TextOverflow.clip,
           style: const TextStyle(fontSize: 13.0),
+          maxLines: 2,
         ),
       ),
     );
@@ -204,25 +206,45 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> bookDetailsRight = <Widget>[];
 
     if (this.book.language != null && this.book.language.isNotEmpty) {
+      String language;
+      if (initToLang.containsKey(this.book.language)) {
+        language = initToLang[this.book.language];
+      } else {
+        language = 'Português';
+      }
+
       bookDetailsRight.add(Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
             Icons.language,
             color: Colors.black,
-            size: hs(28, context),
+            size: 25,
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
+            margin: EdgeInsets.fromLTRB(7, 0, 0, 0),
             child: Text(
-              '${this.book.language}',
+              language,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 17,
               ),
             ),
           )
         ],
       ));
+
+      bookDetailsRight.add(SizedBox(
+        height: vs(20, context),
+      ));
+    }
+
+    if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
+      bookDetailsRight.add(
+        Text(
+          'Ano: ${this.book.releaseYear}',
+          style: const TextStyle(fontSize: 18, height: 1.5),
+        ),
+      );
     }
 
     return bookDetailsRight;
@@ -232,6 +254,7 @@ class BookDetailsWidget extends StatelessWidget {
     final List<Widget> bookDetails = <Widget>[];
 
     bookDetails.add(Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: this.createBookThemes(context, this.book),
     ));
@@ -239,23 +262,6 @@ class BookDetailsWidget extends StatelessWidget {
     bookDetails.add(SizedBox(
       height: vs(20, context),
     ));
-
-    if (this.book.releaseYear != null && this.book.releaseYear.isNotEmpty) {
-      bookDetails.add(
-        Text(
-          'Ano:',
-          style: const TextStyle(fontSize: 18, height: 1.5),
-        ),
-      );
-      bookDetails.add(
-          Text(this.book.releaseYear, style: const TextStyle(fontSize: 16)));
-
-      bookDetails.add(
-        SizedBox(
-          height: vs(20, context),
-        ),
-      );
-    }
 
     if (this.book.editor != null && this.book.editor.isNotEmpty) {
       bookDetails.add(

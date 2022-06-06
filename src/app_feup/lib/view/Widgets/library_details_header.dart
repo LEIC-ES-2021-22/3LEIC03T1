@@ -93,7 +93,7 @@ class LibraryDetailsHeader extends StatelessWidget {
                                   //size: Size.fromRadius(55), // Image radius
                                   child: Image.network(
                                 this.bookUrl,
-                                width: hs(100, context),
+                                width: hs(90, context),
                                 height: vs(140, context),
                                 fit: BoxFit.fill,
                               ))),

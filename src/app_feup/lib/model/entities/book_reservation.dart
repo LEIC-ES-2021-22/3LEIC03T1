@@ -53,7 +53,6 @@ class BookReservation {
   }
 
   String getRemainingDays() {
-    return '1 dia';
     switch (this.status) {
       case ReservationStatus.pending:
       case ReservationStatus.finished:
