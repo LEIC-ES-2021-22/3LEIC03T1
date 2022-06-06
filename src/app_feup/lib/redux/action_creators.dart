@@ -56,11 +56,11 @@ ThunkAction<AppState> reLogin(username, password, faculty, {Completer action}) {
       if (session.authenticated) {
         final Library library = await Library.create(store: store);
 
-        final Cookie pdsCookie = await library.catalogLogin();
-        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
-
         final Cookie alephCookie = await Library.parseAlephCookie();
         store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
+        final Cookie pdsCookie = await library.catalogLogin();
+        store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 
         store.dispatch(SetLoginStatusAction(RequestStatus.successful));
 
@@ -111,6 +111,10 @@ ThunkAction<AppState> login(username, password, faculties, persistentSession,
         await acceptTermsAndConditions();
 
         final Library library = await Library.create(store: store);
+
+        final Cookie alephCookie = await Library.parseAlephCookie();
+        store.dispatch(SaveCatalogAlephCookie(alephCookie));
+
         final Cookie pdsCookie = await library.catalogLogin();
         store.dispatch(SaveCatalogPdsCookie(pdsCookie));
 

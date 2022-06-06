@@ -40,15 +40,18 @@ class BookContainer extends GenericLibraryContainer {
                       Container(
                         alignment: Alignment.bottomLeft,
                         margin: EdgeInsets.only(bottom: 5),
-                        child: Text(
+                        child: book.unitsAvailable != null
+                            ? Text(
                           book.getUnitsText(),
-                          style: book.unitsAvailable > 1
+                          style: book.unitsAvailable != 1
                               ? Theme.of(context).textTheme.bodyText2
                               : Theme.of(context)
                                   .textTheme
                                   .bodyText2
                                   .apply(color: Colors.red[700]),
-                        ),
+                        )
+                            : Text('Disponibilidade desconhecida',
+                                style: Theme.of(context).textTheme.bodyText2),
                       ),
                       buildBookTypesContainer(context)
                     ]))

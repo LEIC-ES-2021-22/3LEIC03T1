@@ -45,7 +45,7 @@ class ParserLibrary implements ParserLibraryInterface {
       'year': '',
       'isbn': '',
       'digitalURL': '',
-      'themes': List<String>.filled(0, '')
+      'themes': List<String>.empty()
     };
 
     // get all the information tags
@@ -95,6 +95,7 @@ class ParserLibrary implements ParserLibraryInterface {
             bookDetails['digitalURL'] = digitalUrl;
             break;
           }
+        case 'assunto':
         case 'assunto(s)':
           {
             // it has at least 1 theme
@@ -111,6 +112,14 @@ class ParserLibrary implements ParserLibraryInterface {
               currIdx += 2;
               elemInfo = elements.elementAt(currIdx).text.trim();
             }
+            break;
+          }
+        case 'link partilhável':
+          {
+            final String docNumPattern = 'doc_number=';
+            bookDetails['docNumber'] = info.substring(
+                info.indexOf(docNumPattern) + docNumPattern.length,
+                info.indexOf('&local_base='));
             break;
           }
       }
@@ -212,16 +221,17 @@ class ParserLibrary implements ParserLibraryInterface {
 
       String units = rows.elementAt(unitsIdx).innerHtml.trim();
 
-      int unitsAvailable = 0;
-      int totalUnits = 0;
+      int unitsAvailable;
+      int totalUnits;
       if (units != '<br>' && units != '') {
         // has content so lets get the faculty. If has more than 1, we're getting
         // just the first one
         units = rows.elementAt(unitsIdx).firstChild.text.trim();
         units = units.substring(units.indexOf('(') + '('.length);
         totalUnits = int.parse(units.substring(0, units.indexOf('/')));
-        unitsAvailable = int.parse(
-            units.substring(units.indexOf('/') + 1, units.length - 1));
+        unitsAvailable = totalUnits -
+            int.parse(
+                units.substring(units.indexOf('/') + 1, units.length - 1));
       }
 
       final String bookDetailsHtml = rows.elementAt(bookDetailsIdx).innerHtml;
@@ -250,13 +260,15 @@ class ParserLibrary implements ParserLibraryInterface {
         country: bookDetailsMap['local'],
         unitsAvailable: unitsAvailable,
         totalUnits: totalUnits,
-        hasPhysicalVersion: totalUnits > 0 || unitsAvailable > 0 ? true : false,
+        hasPhysicalVersion: (totalUnits != null && totalUnits > 0) ||
+            (unitsAvailable != null && unitsAvailable > 0),
         hasDigitalVersion: hasDigitalVersion,
         digitalURL: digitalURL,
         imageURL: bookImageUrl,
         documentType: documentType,
         isbnCode: bookIsbn,
         themes: List<String>.from(bookDetailsMap['themes']),
+        docNumber: bookDetailsMap['docNumber'],
       );
 
       booksList.add(book);
@@ -391,7 +403,8 @@ class ParserLibrary implements ParserLibraryInterface {
                   ? gBookUrl(bookDetails['isbn'])
                   : '',
               isbnCode: bookDetails['isbn'],
-              themes: bookDetails['themes']));
+              themes: bookDetails['themes'],
+              docNumber: bookDetailsReference));
 
       reservations.add(bookReservation);
     }
@@ -399,9 +412,6 @@ class ParserLibrary implements ParserLibraryInterface {
     return reservations;
   }
 
-  /**
-   * 
-   */
   Future<Map<String, dynamic>> parseLoanDetails(http.Response response) async {
     final document = parse(utf8.decode(response.bodyBytes));
 
@@ -435,5 +445,22 @@ class ParserLibrary implements ParserLibraryInterface {
         .text;
 
     return bookDetails;
+  }
+
+  @override
+  Future<String> parseReservationError(http.Response response) {
+    final Document document = parse(utf8.decode(response.bodyBytes));
+    final Element error = document.querySelector('.feedbackbar');
+
+    if (error == null ||
+        error.innerHtml
+            .replaceAll(' ', '')
+            .replaceAll('&nbsp;', '')
+            .replaceAll('\n', '')
+            .isEmpty) {
+      return Future.value(''); // Empty when there is no error
+    } else {
+      return Future.value(error.text);
+    }
   }
 }

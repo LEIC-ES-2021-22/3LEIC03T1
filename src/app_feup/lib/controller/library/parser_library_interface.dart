@@ -17,4 +17,9 @@ abstract class ParserLibraryInterface {
    */
   Future<Set<BookReservation>> parseReservations(
       http.Response response, String faculty, int reservationType);
+
+  /**
+   * Parses an html and gets the reservation error from it
+   */
+  Future<String> parseReservationError(http.Response response);
 }
