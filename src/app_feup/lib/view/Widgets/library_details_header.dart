@@ -90,13 +90,20 @@ class LibraryDetailsHeader extends StatelessWidget {
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(3),
                               child: SizedBox.fromSize(
-                                  //size: Size.fromRadius(55), // Image radius
-                                  child: Image.network(
-                                this.bookUrl,
-                                width: hs(90, context),
-                                height: vs(140, context),
-                                fit: BoxFit.fill,
-                              ))),
+                                //size: Size.fromRadius(55), // Image radius
+                                child: this.bookUrl == null
+                                    ? Image.asset(
+                                        'assets/images/book_placeholder.png',
+                                        width: hs(90, context),
+                                        height: vs(140, context),
+                                        fit: BoxFit.fill)
+                                    : Image.network(
+                                        this.bookUrl,
+                                        width: hs(90, context),
+                                        height: vs(140, context),
+                                        fit: BoxFit.fill,
+                                      ),
+                              )),
                         ),
                       ),
                       Expanded(

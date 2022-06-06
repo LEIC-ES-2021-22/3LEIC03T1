@@ -38,9 +38,7 @@ class BookDetailsWidget extends StatelessWidget {
           key: Key('bookDetailsHeader'),
           headerTitle: 'Detalhes do Livro',
           heroTag: this.book.title,
-          bookUrl: this.book.imageURL == null
-              ? 'assets/images/book_placeholder.png'
-              : this.book.imageURL,
+          bookUrl: this.book.imageURL,
           headerInfo: this.createBookHeaderInfo(context, this.book),
           btnWidgets: bookActionButtons(context, this.book),
         ),
