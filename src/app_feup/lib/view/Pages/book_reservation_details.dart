@@ -41,9 +41,7 @@ class ReservationDetailsWidget extends StatelessWidget {
           key: Key('bookReservationDetailsHeader'),
           headerTitle: 'Detalhes da Reserva',
           heroTag: this.reservation.book.title,
-          bookUrl: this.reservation.book.imageURL == null
-              ? 'assets/images/book_placeholder.png'
-              : this.reservation.book.imageURL,
+          bookUrl: this.reservation.book.imageURL,
           headerInfo:
               this.createReservationHeaderInfo(context, this.reservation),
           btnWidgets: reservationActionButtons(context, this.reservation),
