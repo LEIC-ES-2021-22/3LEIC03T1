@@ -144,6 +144,12 @@ final Map<String, String> monthToNum = {
   'Dez': '12',
 };
 
+final Map<String, String> initToLang = {
+  'por': 'Português',
+  'eng': 'Inglês',
+  'fre': 'Francês',
+};
+
 /**
  * Receives a Date with the libraries' format and returns a DateTime
  */

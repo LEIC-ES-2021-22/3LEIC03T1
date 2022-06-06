@@ -25,6 +25,7 @@ class BookReservation {
   String getDateIndicator() {
     switch (this.status) {
       case ReservationStatus.pending:
+        return ' - ';
       case ReservationStatus.finished:
         return formatter.format(this.acquisitionDate) +
             ' - ' +
@@ -42,6 +43,33 @@ class BookReservation {
 
         if (delayedDays == 1) return '1 dia em atraso';
         return '$delayedDays dias em atraso';
+    }
+    return '';
+  }
+
+  bool showDevolutionTime() {
+    return ![ReservationStatus.pending, ReservationStatus.finished]
+        .contains(this.status);
+  }
+
+  String getRemainingDays() {
+    switch (this.status) {
+      case ReservationStatus.pending:
+      case ReservationStatus.finished:
+        return ' - ';
+      case ReservationStatus.readyForCollection:
+      case ReservationStatus.collected:
+        final int remainingDays =
+            this.returnDate.difference(DateTime.now()).inDays;
+
+        if (remainingDays == 1) return '1 dia';
+        return '$remainingDays dias';
+      case ReservationStatus.delayed:
+        final int delayedDays =
+            DateTime.now().difference(this.returnDate).inDays;
+
+        if (delayedDays == 1) return '1 dia atrasado';
+        return '$delayedDays dias atrasado';
     }
     return '';
   }
